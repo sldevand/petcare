@@ -2,4 +2,5 @@
 /logs/
 !/logs/README.md
 .idea/
+database
 

@@ -17,3 +17,8 @@ $container['logger'] = function ($c) {
     $logger->pushHandler(new Monolog\Handler\StreamHandler($settings['path'], $settings['level']));
     return $logger;
 };
+
+// database
+$container['pdo'] = function ($c) {
+    return \App\Model\Resource\PDOFactory::getSqliteConnexion();
+};

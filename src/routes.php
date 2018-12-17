@@ -3,33 +3,18 @@
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-// Routes
-$app->get('/api/pets', function (Request $request, Response $response, array $args) {
-    $data = [
-        1 => [
-            'name' => 'brownie',
-            'type' => 'cat',
-            'hair' => 'brown'
-        ]
-    ];
+$petRepo = new \App\Model\Repository\PetRepository($container->get('pdo'));
 
-    // Render index view
-    return $response->withJson($data);
+$app->get('/api/pets', function (Request $request, Response $response, array $args) use ($petRepo){
+
+    $data = $petRepo->fetchAll();
+
+    return $response->withJson($data,200);
 });
 
 
-$app->get('/api/pets/{name}', function (Request $request, Response $response, array $args) {
-    $data = [
-        1 => [
-            'name' => $args['name'],
-            'type' => 'cat',
-            'hair' => 'brown'
-        ]
-    ];
+$app->get('/api/pets/{name}', function (Request $request, Response $response, array $args) use ($petRepo){
+    $data = $petRepo->findOneByName($args['name']);
 
-    // Render index view
-    return $response->withJson($data);
+    return $response->withJson($data,200);
 });
-
-
-

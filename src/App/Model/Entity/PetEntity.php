@@ -23,22 +23,9 @@ class PetEntity extends AbstractEntity
      */
     protected $specy;
 
-    /**
-     * AbstractEntity constructor.
-     * @param string $name
-     * @param int $age
-     * @param string $specy
-     * @param int|null $id
-     */
-    public function __construct($name, $age, $specy, $id = null)
-    {
-        parent::__construct($id);
-        $this->name = $name;
-        $this->age = $age;
-        $this->specy = $specy;
-    }
 
-    /**
+
+     /**
      * @return string
      */
     public function getName()

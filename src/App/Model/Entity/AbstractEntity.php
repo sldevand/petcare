@@ -13,14 +13,32 @@ abstract class AbstractEntity implements EntityInterface
      */
     protected $id;
 
+
     /**
      * AbstractEntity constructor.
-     * @param null $id
+     * @param array $attributes
      */
-    public function __construct($id = null)
+    public function __construct($attributes = [])
     {
-        $this->id = $id;
+        if (!empty($attributes)) {
+            $this->hydrate($attributes);
+        }
     }
+
+    /**
+     * @param $attributes
+     */
+    public function hydrate($attributes)
+    {
+        foreach ($attributes as $attribute => $value) {
+            $method = 'set' . str_replace(' ', '', ucwords(str_replace('_', ' ', $attribute)));
+
+            if (is_callable(array($this, $method))) {
+                $this->$method($value);
+            }
+        }
+    }
+
 
     /**
      * @return int
@@ -29,4 +47,16 @@ abstract class AbstractEntity implements EntityInterface
     {
         return $this->id;
     }
+
+    /**
+     * @param $id
+     * @return AbstractEntity
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
 }

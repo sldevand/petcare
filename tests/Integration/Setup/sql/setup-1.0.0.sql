@@ -1,0 +1,11 @@
+DROP TABLE IF EXISTS pet_entity;
+
+CREATE TABLE IF NOT EXISTS pet_entity
+(
+  id    INTEGER NOT NULL,
+  name  TEXT  UNIQUE  NOT NULL,
+  age   INTEGER NOT NULL,
+  specy TEXT    NOT NULL,
+  CONSTRAINT pet_entity_PK PRIMARY KEY (id),
+  CONSTRAINT pet_entity_UN UNIQUE (name) ON CONFLICT ROLLBACK
+);

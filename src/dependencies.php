@@ -20,5 +20,6 @@ $container['logger'] = function ($c) {
 
 // database
 $container['pdo'] = function ($c) {
-    return \App\Model\Resource\PDOFactory::getSqliteConnexion();
+    $settings = $c->get('settings')['pdo'];
+    return \App\Model\Resource\PDOFactory::getSqliteConnexion($settings['file']);
 };

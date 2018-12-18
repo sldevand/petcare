@@ -37,6 +37,7 @@
     },
     "scripts": {
         "start": "php -S localhost:8080 -t public",
+        "installdb":"php src/App/Setup/setup-1.0.0.php",
         "test": "phpunit"
     }
 }

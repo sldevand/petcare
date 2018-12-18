@@ -1,5 +1,6 @@
 <?php
 
+use App\Model\Entity\PetEntity;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -10,6 +11,17 @@ $app->get('/api/pets', function (Request $request, Response $response, array $ar
     $data = $petRepo->fetchAll();
 
     return $response->withJson($data,200);
+});
+
+$app->post('/api/pets/new', function (Request $request, Response $response, array $args) use ($petRepo){
+    $params = $request->getParams();
+    $entity = new PetEntity($params['name'],$params['age'],$params['specy']);
+
+    if(!$petRepo->create($entity)){
+        return $response->withJson(["message" => "entity not created"],204);
+    }
+
+    return $response->withJson($entity,201);
 });
 
 

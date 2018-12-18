@@ -6,6 +6,7 @@ use App\Model\Entity\PetEntity;
 
 /**
  * Class PetRepository
+ * @package App\Model\Repository
  */
 class PetRepository extends AbstractRepository
 {

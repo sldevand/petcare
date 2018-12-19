@@ -114,7 +114,6 @@ abstract class AbstractRepository
         return $this->update($entity);
     }
 
-
     /**
      * @param $id
      *

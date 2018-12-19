@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Model\Resource;
+namespace Lib\Resource;
 
 use PDO;
 use PDOException;
 
 /**
  * Class PDOFactory
- * @package App\Model\Resource
+ * @package Lib\Resource
  */
 class PDOFactory
 {

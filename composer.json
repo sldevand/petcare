@@ -30,6 +30,7 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/",
+            "Lib\\": "lib",
             "App\\": "src/App"
         }
     },

@@ -1,6 +1,5 @@
 <?php
 
-use App\Model\Entity\PetEntity;
 use Firebase\JWT\JWT;
 use Slim\Http\Request;
 use Slim\Http\Response;

@@ -4,19 +4,17 @@ namespace Tests\Integration;
 
 use App\Model\Entity\PetEntity;
 use App\Model\Repository\PetRepository;
-use App\Model\Resource\PDOFactory;
 
 /**
  * Class PetRepositoryTestCase
  * @package Tests\Integration
  */
-class PetRepositoryTest extends \PHPUnit\Framework\TestCase
+class PetRepositoryTest extends  \PHPUnit\Framework\TestCase
 {
     /**
      * @var PetRepository
      */
     protected static $petRepository;
-
 
     /**
      * @var \PDO $db
@@ -25,8 +23,10 @@ class PetRepositoryTest extends \PHPUnit\Framework\TestCase
 
     public static function setUpBeforeClass()
     {
-        require_once 'Setup/setup-1.0.0.php';
-        self::$db = PDOFactory::getSqliteConnexion(__DIR__ . '/../../database/petcare-test.db');
+        $app = BaseTestFramework::generateApp();
+        $container = $app->getContainer();
+        self::$db = $container->get('pdo');
+        $container->get('installDatabase')->execute();
         self::$petRepository = new PetRepository(self::$db);
     }
 

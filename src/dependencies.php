@@ -1,12 +1,18 @@
 <?php
-// DIC configuration
 
+use App\Controller\PetController;
+use App\Model\Repository\PetRepository;
+use App\Setup\InstallDatabase;
+use Lib\Resource\PDOFactory;
+use Slim\Views\PhpRenderer;
+
+// DIC configuration
 $container = $app->getContainer();
 
 // view renderer
 $container['renderer'] = function ($c) {
     $settings = $c->get('settings')['renderer'];
-    return new Slim\Views\PhpRenderer($settings['template_path']);
+    return new PhpRenderer($settings['template_path']);
 };
 
 // monolog
@@ -20,16 +26,22 @@ $container['logger'] = function ($c) {
 
 // database
 $container['pdo'] = function ($c) {
-    $settings = $c->get('settings')['pdo'];
-    return \App\Model\Resource\PDOFactory::getSqliteConnexion($settings['file']);
+    $settings = $c->get('settings')['pdo']['prod'];
+    return PDOFactory::getSqliteConnexion($settings['db-file']);
+};
+
+// InstallDatabase
+$container['installDatabase'] = function ($c) {
+    $settings = $c->get('settings')['pdo']['prod'];
+    return new InstallDatabase($c->get('pdo'),$settings['install-file']);
 };
 
 // controllers
 $container['petController'] = function ($c) {
-    return new \App\Controller\PetController($c);
+    return new PetController($c);
 };
 
 // repositories
 $container['petRepository'] = function ($c) {
-    return new \App\Model\Repository\PetRepository($c->get('pdo'));
+    return new PetRepository($c->get('pdo'));
 };

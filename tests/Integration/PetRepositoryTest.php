@@ -10,7 +10,7 @@ use App\Model\Resource\PDOFactory;
  * Class PetRepositoryTestCase
  * @package Tests\Integration
  */
-class PetRepositoryTestCase extends \PHPUnit\Framework\TestCase
+class PetRepositoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var PetRepository

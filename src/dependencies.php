@@ -23,3 +23,13 @@ $container['pdo'] = function ($c) {
     $settings = $c->get('settings')['pdo'];
     return \App\Model\Resource\PDOFactory::getSqliteConnexion($settings['file']);
 };
+
+// controllers
+$container['petController'] = function ($c) {
+    return new \App\Controller\PetController($c);
+};
+
+// repositories
+$container['petRepository'] = function ($c) {
+    return new \App\Model\Repository\PetRepository($c->get('pdo'));
+};

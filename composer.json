@@ -37,9 +37,9 @@
         "process-timeout": 0
     },
     "scripts": {
-        "start": "php -S localhost:8080 -t public",
+        "start": "php -S localhost:8080 -t public/ -ddisplay_errors=1",
         "installdb":"php src/App/Setup/setup-1.0.0.php",
         "installtestdb":"php tests/Integration/Setup/setup-1.0.0.php",
-        "test": "phpunit"
+        "test": "phpunit -v"
     }
 }

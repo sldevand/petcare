@@ -8,87 +8,147 @@ namespace App\Model\Entity;
  */
 class PetEntity extends AbstractEntity
 {
-    /**
-     * @var string $name
-     */
+    /** @var string */
     protected $name;
 
-    /**
-     * @var int $age ;
-     */
-    protected $age;
+    /** @var string */
+    protected $dob;
 
-    /**
-     * @var string $specy
-     */
+    /** @var string */
     protected $specy;
 
+    /** @var int */
+    protected $imageId;
 
+    /** @var string */
+    protected $createdAt;
 
-     /**
+    /**
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'dob' => $this->dob,
+            'specy' => $this->specy,
+            'imageId' => $this->imageId,
+            'createdAt' => $this->createdAt,
+            'updatedAt' => $this->updatedAt
+        ];
+    }
+
+    /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
+    }
+
+    /** @return string */
+    public function getUpdatedAt(): string
+    {
+        return $this->updatedAt;
+    }
+
+    /** @var string */
+    protected $updatedAt;
+
+
+    /**
+     * @return string
+     */
+    public function getDob(): string
+    {
+        return $this->dob;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSpecy(): string
+    {
+        return $this->specy;
+    }
+
+    /**
+     * @return int
+     */
+    public function getImageId(): int
+    {
+        return $this->imageId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCreatedAt(): string
+    {
+        return $this->createdAt;
     }
 
     /**
      * @param string $name
      * @return PetEntity
      */
-    public function setName($name)
+    public function setName(string $name): PetEntity
     {
         $this->name = $name;
+
         return $this;
     }
 
     /**
-     * @return int
-     */
-    public function getAge()
-    {
-        return $this->age;
-    }
-
-    /**
-     * @param int $age
+     * @param string $dob
      * @return PetEntity
      */
-    public function setAge($age)
+    public function setDob(string $dob): PetEntity
     {
-        $this->age = $age;
-        return $this;
-    }
+        $this->dob = $dob;
 
-    /**
-     * @return string
-     */
-    public function getSpecy()
-    {
-        return $this->specy;
+        return $this;
     }
 
     /**
      * @param string $specy
      * @return PetEntity
      */
-    public function setSpecy($specy)
+    public function setSpecy(string $specy): PetEntity
     {
         $this->specy = $specy;
+
         return $this;
     }
 
     /**
-     * @return array
+     * @param int $imageId
+     * @return PetEntity
      */
-    public function jsonSerialize()
+    public function setImageId(int $imageId): PetEntity
     {
-        return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'specy' => $this->specy,
-            'age' => $this->age
-        ];
+        $this->imageId = $imageId;
+        return $this;
+    }
+
+    /**
+     * @param string $createdAt
+     * @return PetEntity
+     */
+    public function setCreatedAt(string $createdAt): PetEntity
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    /**
+     * @param string $updatedAt
+     * @return PetEntity
+     */
+    public function setUpdatedAt(string $updatedAt): PetEntity
+    {
+        $this->updatedAt = $updatedAt;
+        return $this;
     }
 }

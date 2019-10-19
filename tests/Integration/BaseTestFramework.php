@@ -1,20 +1,21 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: sln
- * Date: 19/12/18
- * Time: 17:53
- */
 
 namespace Tests\Integration;
-
 
 use App\Setup\InstallDatabase;
 use Lib\Resource\PDOFactory;
 
+/**
+ * Class BaseTestFramework
+ * @package Tests\Integration
+ */
 class BaseTestFramework
 {
-    public static function generateApp(){
+    /**
+     * @return \Slim\App
+     */
+    public static function generateApp()
+    {
         $settings = require __DIR__ . '/../../src/settings.php';
         $app = new \Slim\App($settings);
         $container = $app->getContainer();
@@ -26,7 +27,7 @@ class BaseTestFramework
 
         $container['installDatabase'] = function ($c) {
             $settings = $c->get('settings')['pdo']['test'];
-            return new InstallDatabase($c->get('pdo'),$settings['install-file']);
+            return new InstallDatabase($c->get('pdo'), $settings['install-file']);
         };
 
         return $app;

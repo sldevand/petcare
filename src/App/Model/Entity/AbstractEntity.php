@@ -8,11 +8,8 @@ namespace App\Model\Entity;
  */
 abstract class AbstractEntity implements EntityInterface
 {
-    /**
-     * @var int $id
-     */
+    /** @var int $id */
     protected $id;
-
 
     /**
      * AbstractEntity constructor.
@@ -26,7 +23,7 @@ abstract class AbstractEntity implements EntityInterface
     }
 
     /**
-     * @param $attributes
+     * @param array $attributes
      */
     public function hydrate($attributes)
     {
@@ -39,7 +36,6 @@ abstract class AbstractEntity implements EntityInterface
         }
     }
 
-
     /**
      * @return int
      */
@@ -49,7 +45,7 @@ abstract class AbstractEntity implements EntityInterface
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @return AbstractEntity
      */
     public function setId($id)
@@ -58,5 +54,4 @@ abstract class AbstractEntity implements EntityInterface
 
         return $this;
     }
-
 }

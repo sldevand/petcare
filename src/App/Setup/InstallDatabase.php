@@ -4,6 +4,7 @@ namespace App\Setup;
 
 use Lib\Api\InstallDatabaseInterface;
 use PDO;
+use PDOException;
 
 /**
  * Class InstallDatabase
@@ -12,7 +13,7 @@ use PDO;
 class InstallDatabase implements InstallDatabaseInterface
 {
     /**
-     * @var \PDO $pdo
+     * @var PDO $pdo
      */
     protected $pdo;
 
@@ -33,15 +34,14 @@ class InstallDatabase implements InstallDatabaseInterface
     }
 
     /**
-     * @throws \PDOException
+     * @return false|int
      */
     public function execute()
     {
-        $req = '';
         $req = file_get_contents($this->sqlFile);
         $req = str_replace("\n", "", $req);
         $req = str_replace("\r", "", $req);
 
-        $this->pdo->exec($req);
+        return $this->pdo->exec($req);
     }
 }

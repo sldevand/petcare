@@ -4,12 +4,14 @@ namespace Tests\Integration;
 
 use App\Model\Entity\PetEntity;
 use App\Model\Repository\PetRepository;
+use PDO;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class PetRepositoryTestCase
  * @package Tests\Integration
  */
-class PetRepositoryTest extends  \PHPUnit\Framework\TestCase
+class PetRepositoryTest extends  TestCase
 {
     /**
      * @var PetRepository
@@ -17,7 +19,7 @@ class PetRepositoryTest extends  \PHPUnit\Framework\TestCase
     protected static $petRepository;
 
     /**
-     * @var \PDO $db
+     * @var PDO $db
      */
     protected static $db;
 
@@ -33,21 +35,20 @@ class PetRepositoryTest extends  \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $attributes = [
-            "name" => "elie", "age" => '5', "specy" => 'cat'
+            'name' => 'elie', 'dob' => '13/10/2014', 'specy' => 'cat'
         ];
         $entity = new PetEntity($attributes);
         self::$petRepository->create($entity);
     }
 
-
     public function testCreate()
     {
         $attributes = [
-            "name" => "waf", "age" => '5', "specy" => 'dog'
+            'name' => 'waf', 'dob' => '13/10/2014', 'specy' => 'dog'
         ];
         $entity = new PetEntity($attributes);
         $result = self::$petRepository->create($entity);
-        $this->assertTrue($result === true, "Can't create entity");
+        $this->assertTrue($result === true, 'Can\'t create entity');
         $pet = self::$petRepository->findOne(2);
         $entity->setId(2);
 
@@ -59,27 +60,27 @@ class PetRepositoryTest extends  \PHPUnit\Framework\TestCase
         $petBefore = self::$petRepository->findOne(1);
 
         $attributes = [
-            "id" => 1, "name" => "wouf", "age" => 4, "specy" => 'dog'
+            'id' => 1, 'name' => 'wouf', 'dob' => '13/10/2014', 'specy' => 'dog'
         ];
         $entity = new PetEntity($attributes);
         self::$petRepository->update($entity);
 
         $pet = self::$petRepository->findOne(1);
 
-        $this->assertNotEquals($petBefore, $pet, 'THe two entities are equal');
+        $this->assertNotEquals($petBefore, $pet, 'The two entities are equal');
     }
 
     public function testDeleteOne()
     {
         $result = self::$petRepository->deleteOne(1);
-        $this->assertTrue($result === true, "couldn't delete this entity");
+        $this->assertTrue($result === true, 'couldn\'t delete this entity');
         $petAfter = self::$petRepository->findOne(1);
         $this->assertTrue($petAfter === false);
     }
 
     protected function tearDown()
     {
-        self::$db->exec("delete from pet_entity;");
+        self::$db->exec('DELETE FROM pet;');
     }
 
 }

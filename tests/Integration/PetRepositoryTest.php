@@ -26,8 +26,8 @@ class PetRepositoryTest extends TestCase
     {
         $app = BaseTestFramework::generateApp();
         $container = $app->getContainer();
-        self::$db = $container->get('pdo');
-        $container->get('installDatabase')->execute();
+        self::$db = $container->get('pdoTest');
+        $container->get('installerTest')->execute();
         self::$petRepository = new PetRepository(self::$db, new DefaultValidator());
     }
 

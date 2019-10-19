@@ -6,7 +6,7 @@ namespace Framework\Api;
  * Interface InstallDatabaseInterface
  * @package Framework\Api
  */
-interface InstallDatabaseInterface
+interface InstallerInterface
 {
     public function execute();
 }

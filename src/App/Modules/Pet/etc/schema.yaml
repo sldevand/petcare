@@ -1,3 +1,5 @@
+table:
+    pet
 fields:
     name:
         column: name

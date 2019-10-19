@@ -56,7 +56,7 @@ abstract class AbstractEntity implements EntityInterface
         $class = get_class($this);
         if (empty($parsedFile['fields'])) {
             throw new Exception(
-                "$class::getFieldsFromFile --> no config has been set in fields.yaml file !"
+                "$class::getFieldsFromFile --> no config has been set in schema.yaml file !"
             );
         }
 

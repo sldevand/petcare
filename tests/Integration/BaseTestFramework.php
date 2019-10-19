@@ -2,10 +2,11 @@
 
 namespace Tests\Integration;
 
-use App\Common\Setup\InstallDatabase;
+use App\Common\Setup\Installer;
 use Framework\Resource\PDOFactory;
 use Psr\Container\ContainerInterface;
 use Slim\App;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class BaseTestFramework
@@ -18,18 +19,20 @@ class BaseTestFramework
      */
     public static function generateApp()
     {
+        require __DIR__ . '/../../src/bootstrap.php';
         $settings = require __DIR__ . '/../../src/settings.php';
         $app = new App($settings);
         $container = $app->getContainer();
 
-        $container['pdo'] = function (ContainerInterface $c) {
+        $container['pdoTest'] = function (ContainerInterface $c) {
             $settings = $c->get('settings')['pdo']['test'];
             return PDOFactory::getSqliteConnexion($settings['db-file']);
         };
 
-        $container['installDatabase'] = function (ContainerInterface $c) {
+        $container['installerTest'] = function (ContainerInterface $c) {
             $settings = $c->get('settings')['pdo']['test'];
-            return new InstallDatabase($c->get('pdo'), $settings['install-file']);
+            $output = new ConsoleOutput();
+            return new Installer($c->get('pdoTest'), $settings['install-file'], $output);
         };
 
         return $app;

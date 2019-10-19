@@ -2,11 +2,12 @@
 
 namespace App\Common\Command;
 
-use App\Common\Setup\InstallDatabase;
+use App\Common\Setup\Installer;
 use Framework\Resource\PDOFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class SetupInstall
@@ -27,19 +28,21 @@ class SetupInstall extends Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return false|int
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $settings = require __DIR__ . "/../../../settings.php";
+        require __DIR__ . '/../../../bootstrap.php';
+        $settings = require SRC_DIR . '/settings.php';
 
         $prodSettings = $settings['settings']['pdo']['prod'];
 
         $sqliteConnection = PDOFactory::getSqliteConnexion($prodSettings['db-file']);
-        $installDb = new InstallDatabase($sqliteConnection, $prodSettings['install-file']);
-
-        $output->writeln('Installing database');
-
-        return $installDb->execute();
+        $installer = new Installer(
+            $sqliteConnection,
+            $prodSettings['install-file'],
+            $output
+        );
+        $output->writeln('Installing database schema and modules');
+        $installer->execute();
     }
 }

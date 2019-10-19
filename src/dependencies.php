@@ -1,12 +1,13 @@
 <?php
 
-use App\Common\Setup\InstallDatabase;
+use App\Common\Setup\Installer;
 use App\Modules\Pet\Controller\PetController;
 use App\Modules\Pet\Model\Repository\PetRepository;
 use Framework\Resource\PDOFactory;
 use Psr\Container\ContainerInterface;
 use Slim\Views\PhpRenderer;
 use Framework\Model\Validator\DefaultValidator;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 // DIC configuration
 /** @var ContainerInterface $container */
@@ -37,10 +38,10 @@ $container['pdo'] = function (ContainerInterface $c) {
 };
 
 // InstallDatabase
-$container['installDatabase'] = function (ContainerInterface $c) {
+$container['installer'] = function (ContainerInterface $c) {
     $settings = $c->get('settings')['pdo']['prod'];
-
-    return new InstallDatabase($c->get('pdo'), $settings['install-file']);
+    $output = new ConsoleOutput();
+    return new Installer($c->get('pdo'), $settings['install-file'], $output);
 };
 
 // controllers

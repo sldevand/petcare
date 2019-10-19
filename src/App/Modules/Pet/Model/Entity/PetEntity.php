@@ -30,7 +30,7 @@ class PetEntity extends AbstractEntity
 
     public function __construct($attributes = [])
     {
-        $this->configFile = __DIR__ . '/../../etc/fields.yaml';
+        $this->configFile = __DIR__ . '/../../etc/schema.yaml';
         parent::__construct($attributes);
     }
 

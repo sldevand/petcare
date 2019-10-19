@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model\Entity;
+namespace Framework\Api;
 
 use JsonSerializable;
 
@@ -10,5 +10,4 @@ use JsonSerializable;
  */
 interface EntityInterface extends JsonSerializable
 {
-
 }

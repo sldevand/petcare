@@ -1,12 +1,12 @@
 <?php
 
-namespace Lib\Api;
+namespace Framework\Api;
 
 /**
  * Interface InstallDatabaseInterface
- * @package Lib\Api
+ * @package Framework\Api
  */
 interface InstallDatabaseInterface
 {
-    function execute();
+    public function execute();
 }

@@ -1,8 +1,8 @@
 <?php
 
-use Firebase\JWT\JWT;
+use Slim\Middleware\JwtAuthentication;
 
-$app->add(new Slim\Middleware\JwtAuthentication(
+$app->add(new JwtAuthentication(
     [
         "attribute" => "decoded_token_data",
         "secret" => "supersecretkeyyoushouldnotcommittogithub",
@@ -11,5 +11,3 @@ $app->add(new Slim\Middleware\JwtAuthentication(
         "path" => ["/api"]
     ]
 ));
-
-//var_dump(JWT::encode(["J'apprécie les fruits au sirop"],'supersecretkeyyoushouldnotcommittogithub'));

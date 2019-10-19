@@ -1,17 +1,16 @@
 <?php
 
-namespace Lib\Container;
+namespace Framework\Container;
 
 use Psr\Container\ContainerInterface;
 
 /**
  * Class AbstractContainerInjector
+ * @package Framework\Container
  */
 abstract class AbstractContainerInjector
 {
-    /**
-     * @var ContainerInterface $container
-     */
+    /** @var ContainerInterface $container */
     protected $container;
 
     /**

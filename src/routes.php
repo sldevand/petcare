@@ -3,8 +3,11 @@
 use Firebase\JWT\JWT;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use App\Modules\Pet\Model\Repository\PetRepository;
 
-$petRepo = new \App\Model\Repository\PetRepository($container->get('pdo'));
+$container = $app->getContainer();
+
+$petRepo = new PetRepository($container->get('pdo'));
 
 $app->group('/api', function () {
     $this->group('/pets', function () {
@@ -16,9 +19,8 @@ $app->group('/api', function () {
 
 $app->group('/auth', function () {
     $this->get('/generate', function (Request $request, Response $response, array $args) {
-        $data = JWT::encode(["sirop" => "J'apprécie les fruits au sirop"], 'supersecretkeyyoushouldnotcommittogithub');
+        $data = JWT::encode(["key" => "test"], 'supersecretkeyyoushouldnotcommittogithub');
 
         return $response->withJson($data, 200);
     });
 });
-

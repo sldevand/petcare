@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Controller;
+namespace App\Modules\Pet\Controller;
 
-use Lib\Container\AbstractContainerInjector;
-use App\Model\Entity\PetEntity;
+use App\Modules\Pet\Model\Entity\PetEntity;
+use Framework\Container\AbstractContainerInjector;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 /**
  * Class PetController
- * @package App\Controller
+ * @package App\Modules\Pet\Controller
  */
 class PetController extends AbstractContainerInjector
 {

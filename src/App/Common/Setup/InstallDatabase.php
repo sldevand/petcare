@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Setup;
+namespace App\Common\Setup;
 
-use Lib\Api\InstallDatabaseInterface;
+use Framework\Api\InstallDatabaseInterface;
 use PDO;
-use PDOException;
 
 /**
  * Class InstallDatabase

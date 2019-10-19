@@ -1,6 +1,6 @@
 <?php
 
-namespace Lib\Resource;
+namespace Framework\Resource;
 
 use PDO;
 use PDOException;

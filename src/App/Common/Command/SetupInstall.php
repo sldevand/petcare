@@ -1,11 +1,9 @@
 <?php
 
-namespace App\Command;
+namespace App\Common\Command;
 
-use App\Setup\InstallDatabase;
-use Lib\Resource\PDOFactory;
-use Psr\Container\ContainerInterface;
-use Slim\App;
+use App\Common\Setup\InstallDatabase;
+use Framework\Resource\PDOFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,7 +19,8 @@ class SetupInstall extends Command
 
     protected function configure()
     {
-        $this->setDescription('Installs database setups.')
+        $this
+            ->setDescription('Setup database modules.')
             ->setHelp('This command allows you to setup install your petcare app');
     }
 
@@ -32,7 +31,7 @@ class SetupInstall extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $settings = require __DIR__ . "/../../settings.php";
+        $settings = require __DIR__ . "/../../../settings.php";
 
         $prodSettings = $settings['settings']['pdo']['prod'];
 

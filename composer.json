@@ -22,19 +22,22 @@
         "monolog/monolog": "^1.17",
         "ext-pdo": "*",
         "tuupola/slim-jwt-auth": "^2.4",
-        "symfony/console": "^4.3"
+        "symfony/console": "^4.3",
+        "ext-json": "*"
     },
     "require-dev": {
         "phpunit/phpunit": ">=4.8 < 6.0",
         "squizlabs/php_codesniffer": "^3.5",
         "phpmd/phpmd": "^2.7",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-yaml": "*"
     },
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/",
             "Lib\\": "lib",
-            "App\\": "src/App"
+            "App\\": "src/App",
+            "Framework\\": "src/Framework"
         }
     },
     "config": {
@@ -42,6 +45,7 @@
     },
     "scripts": {
         "start": "php -S localhost:8080 -t public/ -ddisplay_errors=1",
-        "test": "phpunit -v"
+        "test": "phpunit -v",
+        "testDebug": "phpunit -vvv --debug"
     }
 }

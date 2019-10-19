@@ -1,27 +1,45 @@
-# Slim Framework 3 Skeleton Application
+# Petcare Rest API
+A Rest API to manage your pet care notebook in php.
 
-Use this skeleton application to quickly setup and start working on a new Slim Framework 3 application. This application uses the latest Slim 3 with the PHP-View template renderer. It also uses the Monolog logger.
+Made with [Slim Framework](https://www.slimframework.com),
+Slim is a PHP micro framework that helps you quickly write simple yet powerful web applications and APIs. 
 
-This skeleton application was built for Composer. This makes setting up a new Slim Framework application quick and easy.
+## Requirements
+This app uses [SQLite](https://sqlite.org/index.html), install PHP SQLite extension.  
+Install [Composer](https://getcomposer.org).
 
-## Install the Application
+## Installation
 
-Run this command from the directory in which you want to install your new Slim Framework application.
+Clone the repository
+```
+git clone https://github.com/sldevand/petcare.git
+```
+Install vendors
+```
+composer install
+```
 
-    php composer.phar create-project slim/slim-skeleton [my-app-name]
+Make bin/console executable
+```
+sudo chmod +x bin/console
+```
 
-Replace `[my-app-name]` with the desired directory name for your new application. You'll want to:
+Installation of the database and modules
+```
+bin/console setup:install
+```
+Start the app with php server on localhost:8080
+```
+composer start
+```
 
-* Point your virtual host document root to your new application's `public/` directory.
-* Ensure `logs/` is web writeable.
+## Tests
+Launch tests with Composer and PhpUnit
+```
+composer test
+```
+With more verbosity (debug mode)
+```
+composer testDebug
+```
 
-To run the application in development, you can run these commands 
-
-	cd [my-app-name]
-	php composer.phar start
-
-Run this command in the application directory to run the test suite
-
-	php composer.phar test
-
-That's it! Now go build something cool.

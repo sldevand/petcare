@@ -18,12 +18,10 @@ Install vendors
 ```
 composer install
 ```
-
 Make bin/console executable
 ```
 sudo chmod +x bin/console
 ```
-
 Installation of the database and modules
 ```
 bin/console setup:install
@@ -43,3 +41,5 @@ With more verbosity (debug mode)
 composer testDebug
 ```
 
+## License
+[MIT License](LICENSE.md)

@@ -7,10 +7,10 @@ use Framework\Api\EntityInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Class AbstractEntity
- * @package App\Model\Entity
+ * Class DefaultEntity
+ * @package Framework\Model\Entity
  */
-abstract class AbstractEntity implements EntityInterface
+class DefaultEntity implements EntityInterface
 {
     /** @var int $id */
     protected $id;
@@ -56,7 +56,7 @@ abstract class AbstractEntity implements EntityInterface
         $class = get_class($this);
         if (empty($parsedFile['fields'])) {
             throw new Exception(
-                "$class::getFieldsFromFile --> no config has been set in schema.yaml file !"
+                "$class::getFieldsFromFile --> no config has been set in $this- file !"
             );
         }
 
@@ -71,6 +71,7 @@ abstract class AbstractEntity implements EntityInterface
     public function __get($name)
     {
         $this->propertyExist($name);
+
         return $this->$name;
     }
 
@@ -104,6 +105,24 @@ abstract class AbstractEntity implements EntityInterface
 
     /**
      * @return array
+     * @throws Exception
+     */
+    public function jsonSerialize()
+    {
+        $properties = get_class_vars(get_class($this));
+        $serialized = [];
+        foreach ($properties as $property => $value) {
+            if ($property === 'configFile' || $property === 'fields') {
+                continue;
+            }
+            $serialized[$property] = $this->__get($property);
+        }
+
+        return $serialized;
+    }
+
+    /**
+     * @return array
      */
     public function getFields()
     {
@@ -118,16 +137,11 @@ abstract class AbstractEntity implements EntityInterface
         return $this->id;
     }
 
-    public function jsonSerialize()
-    {
-        return [];
-    }
-
     /**
      * @param int $id
-     * @return AbstractEntity
+     * @return DefaultEntity
      */
-    public function setId(int $id): AbstractEntity
+    public function setId(int $id): DefaultEntity
     {
         $this->id = $id;
 

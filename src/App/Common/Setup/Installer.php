@@ -53,21 +53,30 @@ class Installer implements InstallerInterface
         $moduleDirs = Yaml::parseFile(APP_ETC_DIR . '/config.yaml')['modules'];
         foreach ($moduleDirs as $moduleName => $value) {
             if ($value['enabled']) {
-                $schema = Yaml::parseFile(MODULES_DIR . "/$moduleName/etc/schema.yaml");
                 $this->output->writeln("Installing $moduleName Module...");
-                $this->installModule($schema);
+                $this->installModule($moduleName);
                 $this->output->writeln("Module $moduleName installed");
             }
         }
     }
 
-    /**
-     * @param array $schema
-     */
-    protected function installModule($schema)
+    protected function installModule($moduleName)
     {
-        $table = $schema['table'];
-        $fields = $schema['fields'];
+        $pattern = MODULES_DIR . "/$moduleName/etc/entities/*.yaml";
+        $entityFiles = glob($pattern);
+        foreach ($entityFiles as $entityFile) {
+            $entity = Yaml::parseFile($entityFile);
+            $this->installEntity($entity);
+        }
+    }
+
+    /**
+     * @param array $entity
+     */
+    protected function installEntity($entity)
+    {
+        $table = $entity['table'];
+        $fields = $entity['fields'];
 
         $fieldsPart = '';
 
@@ -83,7 +92,6 @@ class Installer implements InstallerInterface
 
             $fieldsPart .= ',' . PHP_EOL . '    ';
         }
-
         $pk = $table . '_PK';
 
         $sql = <<<SQL
@@ -95,9 +103,6 @@ CREATE TABLE IF NOT EXISTS $table
 );
 SQL;
 
-        var_dump($sql);
         $this->pdo->exec($sql);
-
-
     }
 }

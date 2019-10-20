@@ -1,0 +1,29 @@
+table:
+    petImage
+fields:
+    name:
+        column: name
+        type: text
+    dob:
+        column: dob
+        type: text
+    specy:
+        column: specy
+        type: text
+        constraints:
+            nullable: false
+    imageId:
+        column: imageId
+        type: integer
+        fk:
+            name: image_id_fk_image_id
+            reference: id
+            table: pet
+    createdAt:
+        column: createdAt
+        type: text
+        constraints:
+            nullable: false
+    updatedAt:
+        column: updatedAt
+        type: text

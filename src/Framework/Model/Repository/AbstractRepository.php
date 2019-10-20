@@ -5,7 +5,7 @@ namespace Framework\Model\Repository;
 use Exception;
 use Framework\Api\EntityInterface;
 use Framework\Api\ValidatorInterface;
-use Framework\Model\Entity\AbstractEntity;
+use Framework\Model\Entity\DefaultEntity;
 use PDO;
 
 /**
@@ -37,7 +37,7 @@ abstract class AbstractRepository
     }
 
     /**
-     * @param AbstractEntity $entity
+     * @param DefaultEntity $entity
      * @return bool
      * @throws Exception
      */
@@ -57,7 +57,7 @@ abstract class AbstractRepository
     }
 
     /**
-     * @param AbstractEntity $entity
+     * @param DefaultEntity $entity
      * @return bool
      * @throws Exception
      */
@@ -77,7 +77,7 @@ abstract class AbstractRepository
     }
 
     /**
-     * @param AbstractEntity $entity
+     * @param DefaultEntity $entity
      * @return bool|mixed
      * @throws Exception
      */
@@ -149,7 +149,7 @@ abstract class AbstractRepository
     }
 
     /**
-     * @param AbstractEntity $entity
+     * @param DefaultEntity $entity
      * @return string
      * @throws Exception
      */
@@ -181,7 +181,7 @@ SQL;
     }
 
     /**
-     * @param AbstractEntity $entity
+     * @param DefaultEntity $entity
      * @return string
      * @throws Exception
      */

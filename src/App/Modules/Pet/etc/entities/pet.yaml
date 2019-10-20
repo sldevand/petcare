@@ -18,7 +18,7 @@ fields:
         fk:
             name: image_id_fk_image_id
             reference: id
-            table: image
+            table: petImage
     createdAt:
         column: createdAt
         type: text

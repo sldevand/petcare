@@ -26,4 +26,20 @@ class PetEntityTest extends TestCase
         $fields = $entity->getFields();
         $this->assertNotEmpty($fields);
     }
+
+    /**
+     * @throws Exception
+     */
+    public function testJsonSerialize()
+    {
+        $now = (new DateTime())->format('Y-m-d H:i:s');
+        $attributes = [
+            'name' => 'elie', 'dob' => '13/10/2014', 'specy' => 'cat', 'imageId' => 1, "createdAt" => $now
+        ];
+        $entity = new PetEntity($attributes);
+        $json = json_encode($entity);
+        var_dump($json);
+
+//        $this->assertNotEmpty($fields);
+    }
 }

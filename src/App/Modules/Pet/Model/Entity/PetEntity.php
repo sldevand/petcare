@@ -2,13 +2,14 @@
 
 namespace App\Modules\Pet\Model\Entity;
 
-use Framework\Model\Entity\AbstractEntity;
+use Exception;
+use Framework\Model\Entity\DefaultEntity;
 
 /**
  * Class PetEntity
  * @package App\Model\Entity
  */
-class PetEntity extends AbstractEntity
+class PetEntity extends DefaultEntity
 {
     /** @var string */
     protected $name;
@@ -22,31 +23,23 @@ class PetEntity extends AbstractEntity
     /** @var int */
     protected $imageId;
 
+    /** @var Image */
+    protected $image;
+
     /** @var string */
     protected $createdAt;
 
     /** @var string */
     protected $updatedAt;
 
+    /**
+     * PetEntity constructor.
+     * @param array $attributes
+     * @throws Exception
+     */
     public function __construct($attributes = [])
     {
-        $this->configFile = __DIR__ . '/../../etc/schema.yaml';
+        $this->configFile = __DIR__ . '/../../etc/entities/pet.yaml';
         parent::__construct($attributes);
-    }
-
-    /**
-     * @return array
-     */
-    public function jsonSerialize(): array
-    {
-        return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'dob' => $this->dob,
-            'specy' => $this->specy,
-            'imageId' => $this->imageId,
-            'createdAt' => $this->createdAt,
-            'updatedAt' => $this->updatedAt
-        ];
     }
 }

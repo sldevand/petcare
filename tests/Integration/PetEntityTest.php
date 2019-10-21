@@ -25,6 +25,7 @@ class PetEntityTest extends TestCase
         $entity = new PetEntity($attributes);
         $fields = $entity->getFields();
         $this->assertNotEmpty($fields);
+        $this->assertTrue(is_array($fields));
     }
 
     /**
@@ -37,9 +38,11 @@ class PetEntityTest extends TestCase
             'name' => 'elie', 'dob' => '13/10/2014', 'specy' => 'cat', 'imageId' => 1, "createdAt" => $now
         ];
         $entity = new PetEntity($attributes);
-        $json = json_encode($entity);
-        var_dump($json);
-
-//        $this->assertNotEmpty($fields);
+        $encodedJson = json_encode($entity);
+        $jsonStr = <<<JSON
+{"name":"elie","dob":"13\/10\/2014","specy":"cat","imageId":1,"image":null,"createdAt":"$now","updatedAt":null,"id":null}
+JSON;
+        $this->assertNotEmpty($encodedJson, "Json entity is empty");
+        $this->assertEquals($encodedJson, $jsonStr, "Json entity is not well encoded");
     }
 }

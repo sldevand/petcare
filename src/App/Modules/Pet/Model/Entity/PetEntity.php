@@ -23,7 +23,7 @@ class PetEntity extends DefaultEntity
     /** @var int */
     protected $imageId;
 
-    /** @var Image */
+    /** @var PetImageEntity */
     protected $image;
 
     /** @var string */

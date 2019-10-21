@@ -4,6 +4,9 @@ fields:
     name:
         column: name
         type: text
+        constraints:
+            nullable: false
+
     dob:
         column: dob
         type: text
@@ -15,10 +18,11 @@ fields:
     imageId:
         column: imageId
         type: integer
-        fk:
-            name: image_id_fk_image_id
-            reference: id
-            table: petImage
+        constraints:
+            fk:
+                name: image_id_fk_image_id
+                reference: id
+                table: petImage
     createdAt:
         column: createdAt
         type: text

@@ -3,11 +3,11 @@
 namespace App\Common\Command;
 
 use App\Common\Setup\Installer;
+use Exception;
 use Framework\Resource\PDOFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class SetupInstall
@@ -28,6 +28,7 @@ class SetupInstall extends Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
+     * @throws Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

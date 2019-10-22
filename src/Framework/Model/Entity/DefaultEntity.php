@@ -3,7 +3,7 @@
 namespace Framework\Model\Entity;
 
 use Exception;
-use Framework\Api\EntityInterface;
+use Framework\Api\Entity\EntityInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -26,7 +26,7 @@ class DefaultEntity implements EntityInterface
      * @param array $attributes
      * @throws Exception
      */
-    public function __construct($attributes = [])
+    public function __construct(array $attributes = [])
     {
         if (!empty($attributes)) {
             $this->hydrate($attributes);
@@ -38,7 +38,7 @@ class DefaultEntity implements EntityInterface
      * @param array $attributes
      * @throws Exception
      */
-    public function hydrate($attributes)
+    public function hydrate(array $attributes)
     {
         foreach ($attributes as $attribute => $value) {
             $this->__set($attribute, $value);
@@ -49,7 +49,7 @@ class DefaultEntity implements EntityInterface
      * @return array
      * @throws Exception
      */
-    protected function getFieldsFromFile()
+    protected function getFieldsFromFile(): array
     {
         $parsedFile = Yaml::parseFile($this->configFile);
 
@@ -68,9 +68,9 @@ class DefaultEntity implements EntityInterface
      * @return mixed
      * @throws Exception
      */
-    public function __get($name)
+    public function __get(string $name)
     {
-        $this->propertyExist($name);
+        $this->hasProperty($name);
 
         return $this->$name;
     }
@@ -78,12 +78,12 @@ class DefaultEntity implements EntityInterface
     /**
      * @param string $name
      * @param mixed $value
-     * @return $this
+     * @return EntityInterface
      * @throws Exception
      */
-    public function __set($name, $value)
+    public function __set(string $name, $value): EntityInterface
     {
-        $this->propertyExist($name);
+        $this->hasProperty($name);
         $this->$name = $value;
 
         return $this;
@@ -91,9 +91,10 @@ class DefaultEntity implements EntityInterface
 
     /**
      * @param string $name
+     * @return bool
      * @throws Exception
      */
-    protected function propertyExist($name)
+    public function hasProperty(string $name): bool
     {
         $class = get_class($this);
         if (!property_exists($class, $name)) {
@@ -101,13 +102,15 @@ class DefaultEntity implements EntityInterface
                 "$class::propertyExist --> The property $name does not exist!"
             );
         }
+
+        return true;
     }
 
     /**
      * @return array
      * @throws Exception
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $properties = get_class_vars(get_class($this));
         $serialized = [];
@@ -124,7 +127,7 @@ class DefaultEntity implements EntityInterface
     /**
      * @return array
      */
-    public function getFields()
+    public function getFields(): array
     {
         return $this->fields;
     }
@@ -132,16 +135,16 @@ class DefaultEntity implements EntityInterface
     /**
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
      * @param int $id
-     * @return DefaultEntity
+     * @return EntityInterface
      */
-    public function setId(int $id): DefaultEntity
+    public function setId(int $id): EntityInterface
     {
         $this->id = $id;
 

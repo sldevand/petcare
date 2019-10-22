@@ -10,11 +10,11 @@ use Psr\Container\ContainerInterface;
  */
 abstract class AbstractContainerInjector
 {
-    /** @var ContainerInterface $container */
+    /** @var ContainerInterface */
     protected $container;
 
     /**
-     * PetController constructor.
+     * AbstractContainerInjector constructor.
      * @param ContainerInterface $container
      */
     public function __construct(ContainerInterface $container)

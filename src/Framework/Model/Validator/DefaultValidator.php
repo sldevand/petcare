@@ -3,8 +3,8 @@
 namespace Framework\Model\Validator;
 
 use Exception;
-use Framework\Api\EntityInterface;
-use Framework\Api\ValidatorInterface;
+use Framework\Api\Entity\EntityInterface;
+use Framework\Api\Validator\ValidatorInterface;
 use Symfony\Component\Yaml\Exception\ParseException;
 
 /**
@@ -18,11 +18,11 @@ class DefaultValidator implements ValidatorInterface
 
     /**
      * @param EntityInterface $entity
-     * @return bool|void.
+     * @return bool.
      * @throws ParseException
      * @throws Exception
      */
-    public function validate($entity)
+    public function validate(EntityInterface $entity): bool
     {
         $this->entity = $entity;
         $fields = $entity->getFields();
@@ -43,7 +43,7 @@ class DefaultValidator implements ValidatorInterface
      * @return bool
      * @throws Exception
      */
-    public function checkNullableField($constraints, $propertyName)
+    public function checkNullableField(array $constraints, string $propertyName): bool
     {
         foreach ($constraints as $constraintKey => $constraintValue) {
             if (
@@ -62,7 +62,7 @@ class DefaultValidator implements ValidatorInterface
      * @param string $reason
      * @throws Exception
      */
-    protected function throwException($reason)
+    protected function throwException(string $reason)
     {
         $class = get_class($this);
         $entityClass = get_class($this->entity);

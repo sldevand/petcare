@@ -19,7 +19,7 @@ class PetImageEntity extends DefaultEntity
      * @param array $attributes
      * @throws Exception
      */
-    public function __construct($attributes = [])
+    public function __construct(array $attributes = [])
     {
         $this->configFile = __DIR__ . '/../../etc/entities/petImage.yaml';
         parent::__construct($attributes);

@@ -3,15 +3,17 @@
 namespace Framework\Model\Repository;
 
 use Exception;
-use Framework\Api\EntityInterface;
-use Framework\Api\ValidatorInterface;
-use Framework\Model\Entity\DefaultEntity;
+use Framework\Api\Entity\EntityInterface;
+use Framework\Api\Repository\RepositoryInterface;
+use Framework\Api\Validator\ValidatorInterface;
+use Framework\Exception\RepositoryException;
 use PDO;
 
 /**
- * Class AbstractRepository
+ * Class DefaultRepository
+ * @package Framework\Model\Repository
  */
-abstract class AbstractRepository
+abstract class DefaultRepository implements RepositoryInterface
 {
     /** @var PDO */
     protected $db;
@@ -26,7 +28,7 @@ abstract class AbstractRepository
     protected $validator;
 
     /**
-     * AbstractRepository constructor.
+     * DefaultRepository constructor.
      * @param PDO $db
      * @param ValidatorInterface $validator
      */
@@ -37,11 +39,11 @@ abstract class AbstractRepository
     }
 
     /**
-     * @param DefaultEntity $entity
+     * @param EntityInterface $entity
      * @return bool
      * @throws Exception
      */
-    public function create($entity)
+    public function create(EntityInterface $entity): bool
     {
         $this->validator->validate($entity);
         $sql = $this->prepareInsertSql($entity);
@@ -57,11 +59,11 @@ abstract class AbstractRepository
     }
 
     /**
-     * @param DefaultEntity $entity
+     * @param EntityInterface $entity
      * @return bool
      * @throws Exception
      */
-    public function update($entity)
+    public function update(EntityInterface $entity): bool
     {
         $this->validator->validate($entity);
         $sql = $this->prepareUpdateSql($entity);
@@ -77,11 +79,11 @@ abstract class AbstractRepository
     }
 
     /**
-     * @param DefaultEntity $entity
-     * @return bool|mixed
+     * @param EntityInterface $entity
+     * @return bool
      * @throws Exception
      */
-    public function save($entity)
+    public function save(EntityInterface $entity): bool
     {
         if (!$entity->getId()) {
             return $this->create($entity);
@@ -92,43 +94,29 @@ abstract class AbstractRepository
 
     /**
      * @param int $id
-     * @return mixed
+     * @return EntityInterface
+     * @throws RepositoryException
      */
-    public function findOne($id)
+    public function findOne(int $id): EntityInterface
     {
         $sql = "SELECT * FROM $this->table WHERE id=:id";
         $st = $this->db->prepare($sql);
         $st->bindValue(":id", $id);
-
-
         $st->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $this->entityClass);
         $st->execute();
 
+        if (!$result = $st->fetch()) {
+            $class = get_class($this);
+            throw new RepositoryException("$class::findOne --> cannot fetch: PDO error");
+        }
 
-        return $st->fetch();
-    }
-
-    /**
-     * @param string $name
-     * @return mixed
-     */
-    public function findOneByName($name)
-    {
-        $sql = 'SELECT * FROM ' . $this->table . ' WHERE name=:name';
-        $st = $this->db->prepare($sql);
-        $st->bindValue(":name", $name);
-        $st->execute();
-
-
-        $st->setFetchMode(PDO::FETCH_CLASS, $this->entityClass, ['attributes' => []]);
-
-        return $st->fetch($this->entityClass);
+        return $result;
     }
 
     /**
      * @return array
      */
-    public function fetchAll()
+    public function fetchAll(): array
     {
         $sql = 'SELECT * FROM ' . $this->table;
 
@@ -136,10 +124,10 @@ abstract class AbstractRepository
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @return bool
      */
-    public function deleteOne($id)
+    public function deleteOne(int $id): bool
     {
         $sql = 'DELETE FROM ' . $this->table . ' WHERE id=:id';
         $st = $this->db->prepare($sql);
@@ -149,11 +137,11 @@ abstract class AbstractRepository
     }
 
     /**
-     * @param DefaultEntity $entity
+     * @param EntityInterface $entity
      * @return string
      * @throws Exception
      */
-    protected function prepareInsertSql($entity)
+    protected function prepareInsertSql(EntityInterface $entity): string
     {
         $fieldsPart = '';
         $valuesPart = '';
@@ -181,11 +169,11 @@ SQL;
     }
 
     /**
-     * @param DefaultEntity $entity
+     * @param EntityInterface $entity
      * @return string
      * @throws Exception
      */
-    protected function prepareUpdateSql($entity)
+    protected function prepareUpdateSql(EntityInterface $entity): string
     {
         $fieldsPart = '';
         $fields = $entity->getFields();

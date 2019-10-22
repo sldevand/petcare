@@ -3,18 +3,18 @@
 namespace App\Modules\Pet\Model\Repository;
 
 use App\Modules\Pet\Model\Entity\PetImageEntity;
-use Framework\Api\ValidatorInterface;
-use Framework\Model\Repository\AbstractRepository;
+use Framework\Api\Validator\ValidatorInterface;
+use Framework\Model\Repository\DefaultRepository;
 use PDO;
 
 /**
  * Class PetImageRepository
  * @package App\Modules\Pet\Model\Repository
  */
-class PetImageRepository extends AbstractRepository
+class PetImageRepository extends DefaultRepository
 {
     /**
-     * PetRepository constructor.
+     * PetImageRepository constructor.
      * @param PDO $db
      * @param ValidatorInterface $validator
      */

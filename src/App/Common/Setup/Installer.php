@@ -3,7 +3,7 @@
 namespace App\Common\Setup;
 
 use Exception;
-use Framework\Api\InstallerInterface;
+use Framework\Api\Installer\InstallerInterface;
 use PDO;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
@@ -14,26 +14,25 @@ use Symfony\Component\Yaml\Yaml;
  */
 class Installer implements InstallerInterface
 {
-
     const SQLITE_VALID_CASCADE_KEYWORDS = ['delete', 'update'];
     const SQLITE_VALID_DATATYPES = ['numeric', 'text', 'real', 'text', 'blob'];
 
-    /** @var PDO $pdo */
+    /** @var PDO */
     protected $pdo;
 
-    /** @var string $sqlFile */
+    /** @var string */
     protected $sqlFile;
 
     /** @var OutputInterface */
     protected $output;
 
     /**
-     * InstallDatabase constructor.
+     * Installer constructor.
      * @param PDO $pdo
      * @param string $sqlFile
      * @param OutputInterface $output
      */
-    public function __construct(PDO $pdo, $sqlFile, OutputInterface $output)
+    public function __construct(PDO $pdo, string $sqlFile, OutputInterface $output)
     {
         $this->pdo = $pdo;
         $this->sqlFile = $sqlFile;
@@ -41,7 +40,7 @@ class Installer implements InstallerInterface
     }
 
     /**
-     * @return void
+     * @throws Exception
      */
     public function execute()
     {
@@ -53,18 +52,26 @@ class Installer implements InstallerInterface
         $this->installModules();
     }
 
+    /**
+     * @throws Exception
+     */
     protected function installModules()
     {
         $moduleDirs = Yaml::parseFile(APP_ETC_DIR . '/config.yaml')['modules'];
         foreach ($moduleDirs as $moduleName => $value) {
-            if ($value['enabled']) {
-                $this->output->writeln("Installing $moduleName Module...");
-                $this->installModule($moduleName);
-                $this->output->writeln("Module $moduleName installed");
+            if (!$value['enabled']) {
+                continue;
             }
+            $this->output->writeln("Installing $moduleName Module...");
+            $this->installModule($moduleName);
+            $this->output->writeln("Module $moduleName installed");
         }
     }
 
+    /**
+     * @param string $moduleName
+     * @throws Exception
+     */
     protected function installModule($moduleName)
     {
         $pattern = MODULES_DIR . "/$moduleName/etc/entities/*.yaml";
@@ -79,7 +86,7 @@ class Installer implements InstallerInterface
      * @param array $entity
      * @throws Exception
      */
-    protected function installEntity($entity)
+    protected function installEntity(array $entity)
     {
         $table = $entity['table'];
         $fields = $entity['fields'];
@@ -120,10 +127,10 @@ SQL;
 
     /**
      * @param string $constraintKey
-     * @param string $constraintValue
+     * @param array | string $constraintValue
      * @return string
      */
-    protected function addNullableConstraint($constraintKey, $constraintValue)
+    protected function addNullableConstraint(string $constraintKey, $constraintValue): string
     {
         if ($constraintKey !== 'nullable' || $constraintValue === true) {
             return '';
@@ -135,11 +142,11 @@ SQL;
     /**
      * @param string $column
      * @param string $constraintKey
-     * @param string $constraintValue
+     * @param array | string $constraintValue
      * @return string
      * @throws Exception
      */
-    protected function addForeignKey($column, $constraintKey, $constraintValue)
+    protected function addForeignKey(string $column, string $constraintKey, $constraintValue): string
     {
         if ($constraintKey !== 'fk' || !is_array($constraintValue)) {
             return '';
@@ -156,11 +163,11 @@ FK;
     }
 
     /**
-     * @param $constraintValue
+     * @param array $constraintValue
      * @return string
      * @throws Exception
      */
-    protected function addCascadePart($constraintValue)
+    protected function addCascadePart(array $constraintValue): string
     {
         if (empty($constraintValue['cascade'])) {
             return '';

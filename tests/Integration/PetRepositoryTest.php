@@ -6,6 +6,7 @@ use App\Modules\Pet\Model\Entity\PetEntity;
 use App\Modules\Pet\Model\Repository\PetRepository;
 use DateTime;
 use Exception;
+use Framework\Exception\RepositoryException;
 use Framework\Model\Validator\DefaultValidator;
 use PDO;
 use PHPUnit\Framework\TestCase;
@@ -69,7 +70,6 @@ class PetRepositoryTest extends TestCase
      */
     public function testUpdate()
     {
-
         $petBefore = self::$petRepository->findOne(1);
         $now = (new DateTime())->format('Y-m-d H:i:s');
         $attributes = [
@@ -85,8 +85,13 @@ class PetRepositoryTest extends TestCase
     public function testDeleteOne()
     {
         $result = self::$petRepository->deleteOne(1);
-        $this->assertTrue($result === true, 'couldn\'t delete this entity');
-        $petAfter = self::$petRepository->findOne(1);
+        $this->assertTrue($result === true, 'could not delete this entity');
+
+        try {
+            $petAfter = self::$petRepository->findOne(1);
+        } catch (RepositoryException $e) {
+            $petAfter = false;
+        }
         $this->assertTrue($petAfter === false);
     }
 

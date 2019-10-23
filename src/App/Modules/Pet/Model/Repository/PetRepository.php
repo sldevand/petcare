@@ -18,8 +18,10 @@ class PetRepository extends DefaultRepository
      * @param PDO $db
      * @param ValidatorInterface $validator
      */
-    public function __construct(PDO $db, ValidatorInterface $validator)
-    {
+    public function __construct(
+        PDO $db,
+        ValidatorInterface $validator
+    ) {
         $this->table = "pet";
         $this->entityClass = PetEntity::class;
         parent::__construct($db, $validator);

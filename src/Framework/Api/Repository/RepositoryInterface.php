@@ -13,13 +13,6 @@ use PDO;
 interface RepositoryInterface
 {
     /**
-     * RepositoryInterface constructor.
-     * @param PDO $db
-     * @param ValidatorInterface $validator
-     */
-    public function __construct(PDO $db, ValidatorInterface $validator);
-
-    /**
      * @param EntityInterface $entity
      * @return bool
      */

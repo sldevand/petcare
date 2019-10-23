@@ -45,4 +45,30 @@ JSON;
         $this->assertNotEmpty($encodedJson, "Json entity is empty");
         $this->assertEquals($encodedJson, $jsonStr, "Json entity is not well encoded");
     }
+
+    /**
+     * @throws Exception
+     */
+    public function testHydrate()
+    {
+        $now = (new DateTime())->format('Y-m-d H:i:s');
+        $attributes = [
+            'id' => 8,
+            'name' => 'elie',
+            'dob' => '13/10/2014',
+            'specy' => 'cat',
+            'imageId' => 1,
+            'createdAt' => $now,
+            'updatedAt' => $now
+        ];
+        $entity = new PetEntity($attributes);
+        self::assertTrue($entity->getId() === 8);
+        self::assertTrue($entity->__get('id') === 8);
+        self::assertTrue($entity->__get('name') === 'elie');
+        self::assertTrue($entity->__get('dob') === '13/10/2014');
+        self::assertTrue($entity->__get('specy') === 'cat');
+        self::assertTrue($entity->__get('imageId') === 1);
+        self::assertTrue($entity->__get('createdAt') === $now);
+        self::assertTrue($entity->__get('updatedAt') === $now);
+    }
 }

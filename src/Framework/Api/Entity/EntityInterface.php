@@ -16,9 +16,9 @@ interface EntityInterface extends JsonSerializable
     public function getFields(): array;
 
     /**
-     * @return int
+     * @return int | null
      */
-    public function getId(): int;
+    public function getId(): ?int;
 
     /**
      * @param int $id

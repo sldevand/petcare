@@ -38,9 +38,9 @@ class PetRepositoryTest extends TestCase
      */
     public function setUp()
     {
-        $now = (new DateTime())->format('Y-m-d H:i:s');
+
         $attributes = [
-            'name' => 'elie', 'dob' => '13/10/2014', 'specy' => 'cat', 'imageId' => 1, "createdAt" => $now
+            'name' => 'elie', 'dob' => '13/10/2014', 'specy' => 'cat', 'imageId' => 1
         ];
         $entity = new PetEntity($attributes);
 
@@ -52,9 +52,8 @@ class PetRepositoryTest extends TestCase
      */
     public function testCreate()
     {
-        $now = (new DateTime())->format('Y-m-d H:i:s');
         $attributes = [
-            'name' => 'waf', 'dob' => '13/10/2014', 'specy' => 'dog', 'imageId' => 3, "createdAt" => $now
+            'name' => 'waf', 'dob' => '13/10/2014', 'specy' => 'dog', 'imageId' => 3
         ];
 
         $entity = new PetEntity($attributes);
@@ -72,9 +71,8 @@ class PetRepositoryTest extends TestCase
     public function testUpdate()
     {
         $petBefore = self::$petRepository->findOne(1);
-        $now = (new DateTime())->format('Y-m-d H:i:s');
         $attributes = [
-            'id' => 1, 'name' => 'wouf', 'dob' => '13/10/2014', 'specy' => 'dog', "createdAt" => $now
+            'id' => 1, 'name' => 'wouf', 'dob' => '13/10/2014', 'specy' => 'dog'
         ];
         $entity = new PetEntity($attributes);
         self::$petRepository->update($entity);

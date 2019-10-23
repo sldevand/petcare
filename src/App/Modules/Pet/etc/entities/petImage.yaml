@@ -4,7 +4,6 @@ fields:
         column: id
         type: integer
         constraints:
-            nullable: false
             fk:
                 reference: imageId
                 table: pet

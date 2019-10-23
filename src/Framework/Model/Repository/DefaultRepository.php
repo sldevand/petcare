@@ -70,8 +70,8 @@ abstract class DefaultRepository implements RepositoryInterface
         $st = $this->db->prepare($sql);
         $st->bindValue(':id', $entity->getId());
         foreach ($entity->getFields() as $property => $field) {
-            if (!empty($entity->__get($property))) {
-                $st->bindValue($property, $entity->__get($property));
+            if (!empty($entity->__get($property)) && $property !== 'id') {
+                $st->bindValue(':' . $property, $entity->__get($property));
             }
         }
 
@@ -147,10 +147,13 @@ abstract class DefaultRepository implements RepositoryInterface
         $valuesPart = '';
         $fields = $entity->getFields();
 
-        $iter = 1;
+        $iter = 2;
         foreach ($fields as $property => $field) {
-            $value = $entity->__get($property);
             $iter++;
+            if ($property === 'id') {
+                continue;
+            }
+            $value = $entity->__get($property);
             if (is_null($value)) {
                 continue;
             }
@@ -178,10 +181,14 @@ SQL;
         $fieldsPart = '';
         $fields = $entity->getFields();
 
-        $iter = 1;
+        $iter = 3;
         foreach ($fields as $property => $field) {
-            $value = $entity->__get($property);
             $iter++;
+            if ($property === 'id') {
+                continue;
+            }
+
+            $value = $entity->__get($property);
             if (is_null($value)) {
                 continue;
             }

@@ -27,7 +27,7 @@ class Builder implements BuilderInterface
         $fieldsPart = '';
         $foreignKeysPart = '';
         foreach ($fields as $property => $field) {
-            if ($field['column'] !== 'id' && $property !== 'id') {
+            if (!empty($field['column']) && $field['column'] !== 'id' && $property !== 'id') {
                 $fieldsPart .= $field['column'] . " " . $field['type'];
             }
 

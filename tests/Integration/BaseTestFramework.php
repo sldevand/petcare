@@ -20,7 +20,7 @@ class BaseTestFramework
      */
     public static function generateApp(): App
     {
-        require __DIR__ . '/../../src/bootstrap.php';
+        require_once __DIR__ . '/../../src/bootstrap.php';
         $settings = require __DIR__ . '/../../src/settings.php';
         $app = new App($settings);
         $container = $app->getContainer();

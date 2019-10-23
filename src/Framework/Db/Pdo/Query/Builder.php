@@ -17,7 +17,7 @@ class Builder implements BuilderInterface
     /**
      * @param array $entityConfig
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     public function createTable(array $entityConfig): string
     {

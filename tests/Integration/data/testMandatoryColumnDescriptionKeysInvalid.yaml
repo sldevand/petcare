@@ -1,0 +1,16 @@
+table: test
+fields:
+    id:
+        column: id
+        typed: integer
+        constaints:
+            fk:
+                reference: testId
+                table: test1
+                cascade:
+                    - delete
+    testProperty:
+        colomn: testProperty
+        type: text
+        constraints:
+            nullable: false

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration;
+namespace Tests\Integration\Pet\Repository;
 
 use App\Modules\Pet\Model\Entity\PetEntity;
 use App\Modules\Pet\Model\Repository\PetRepository;
@@ -10,10 +10,11 @@ use Framework\Exception\RepositoryException;
 use Framework\Model\Validator\DefaultValidator;
 use PDO;
 use PHPUnit\Framework\TestCase;
+use Tests\Integration\BaseTestFramework;
 
 /**
- * Class PetRepositoryTestCase
- * @package Tests\Integration
+ * Class PetRepositoryTest
+ * @package Tests\Integration\Pet
  */
 class PetRepositoryTest extends TestCase
 {

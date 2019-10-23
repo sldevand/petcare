@@ -18,7 +18,7 @@ class BaseTestFramework
     /**
      * @return App
      */
-    public static function generateApp()
+    public static function generateApp(): App
     {
         require __DIR__ . '/../../src/bootstrap.php';
         $settings = require __DIR__ . '/../../src/settings.php';

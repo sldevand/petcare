@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration;
+namespace Tests\Integration\Pet\Entity;
 
 use App\Modules\Pet\Model\Entity\PetEntity;
 use DateTime;

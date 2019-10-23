@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration;
+namespace Tests\Integration\Pet\Entity;
 
 use App\Modules\Pet\Model\Entity\PetImageEntity;
 use Exception;
@@ -14,7 +14,7 @@ class PetImageEntityTest extends TestCase
      */
     public function testValidatePetImageEntity()
     {
-        $catFile = __DIR__ . '/data/cat.jpeg';
+        $catFile = __DIR__ . '/../data/cat.jpeg';
         $contents = file_get_contents($catFile);
 
         $base64Image = base64_encode($contents);

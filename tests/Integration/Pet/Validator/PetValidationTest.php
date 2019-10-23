@@ -1,12 +1,17 @@
 <?php
 
-namespace Tests\Integration;
+namespace Tests\Integration\Pet\Validator;
 
 use App\Modules\Pet\Model\Entity\PetEntity;
+use DateTime;
 use Exception;
 use Framework\Model\Validator\DefaultValidator;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class PetValidationTest
+ * @package Tests\Integration\Pet
+ */
 class PetValidationTest extends TestCase
 {
     /**
@@ -14,7 +19,7 @@ class PetValidationTest extends TestCase
      */
     public function testValidatePetEntity()
     {
-        $now = (new \DateTime())->format('Y-m-d H:i:s');
+        $now = (new DateTime())->format('Y-m-d H:i:s');
         $attributes = [
             'name' => 'elie', 'dob' => '13/10/2014', 'specy' => 'cat', 'imageId' => 1, "createdAt" => $now
         ];

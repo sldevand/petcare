@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration;
+namespace Tests\Integration\Pet;
 
 use App\Modules\Pet\Model\Entity\PetImageEntity;
 use Exception;

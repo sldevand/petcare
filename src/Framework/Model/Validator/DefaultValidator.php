@@ -46,10 +46,11 @@ class DefaultValidator implements ValidatorInterface
     public function checkNullableField(array $constraints, string $propertyName): bool
     {
         foreach ($constraints as $constraintKey => $constraintValue) {
+            $propertyMethod = $this->entity->getPropertyMethod($propertyName);
             if (
                 $constraintKey === 'nullable'
                 && $constraintValue === false
-                && $this->entity->__get($propertyName) === null
+                && $this->entity->$propertyMethod() === null
             ) {
                 $this->throwException("$propertyName is not nullable");
             }

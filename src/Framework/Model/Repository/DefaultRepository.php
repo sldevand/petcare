@@ -7,13 +7,14 @@ use Framework\Api\Entity\EntityInterface;
 use Framework\Api\Repository\RepositoryInterface;
 use Framework\Api\Validator\ValidatorInterface;
 use Framework\Exception\RepositoryException;
+use Framework\MagicObject;
 use PDO;
 
 /**
  * Class DefaultRepository
  * @package Framework\Model\Repository
  */
-abstract class DefaultRepository implements RepositoryInterface
+class DefaultRepository extends MagicObject implements RepositoryInterface
 {
     /** @var PDO */
     protected $db;
@@ -50,8 +51,9 @@ abstract class DefaultRepository implements RepositoryInterface
         $st = $this->db->prepare($sql);
 
         foreach ($entity->getFields() as $property => $field) {
-            if (!empty($entity->__get($property))) {
-                $st->bindValue($property, $entity->__get($property));
+            $getPropertyMethod = $this->getPropertyMethod($property);
+            if (!empty($entity->$getPropertyMethod)) {
+                $st->bindValue($property, $entity->$getPropertyMethod);
             }
         }
 
@@ -70,8 +72,9 @@ abstract class DefaultRepository implements RepositoryInterface
         $st = $this->db->prepare($sql);
         $st->bindValue(':id', $entity->getId());
         foreach ($entity->getFields() as $property => $field) {
-            if (!empty($entity->__get($property)) && $property !== 'id') {
-                $st->bindValue(':' . $property, $entity->__get($property));
+            $getPropertyMethod = $this->getPropertyMethod($property);
+            if (!empty($entity->$getPropertyMethod) && $property !== 'id') {
+                $st->bindValue(':' . $property, $entity->$getPropertyMethod);
             }
         }
 
@@ -153,6 +156,7 @@ abstract class DefaultRepository implements RepositoryInterface
             if ($property === 'id') {
                 continue;
             }
+
             $value = $entity->__get($property);
             if (is_null($value)) {
                 continue;

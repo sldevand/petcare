@@ -4,13 +4,14 @@ namespace Framework\Model\Entity;
 
 use Exception;
 use Framework\Api\Entity\EntityInterface;
+use Framework\MagicObject;
 use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class DefaultEntity
  * @package Framework\Model\Entity
  */
-class DefaultEntity implements EntityInterface
+class DefaultEntity extends MagicObject implements EntityInterface
 {
     /** @var int $id */
     protected $id;
@@ -23,25 +24,26 @@ class DefaultEntity implements EntityInterface
 
     /**
      * AbstractEntity constructor.
-     * @param array $attributes
+     * @param array $properties
      * @throws Exception
      */
-    public function __construct(array $attributes = [])
+    public function __construct(array $properties = [])
     {
-        if (!empty($attributes)) {
-            $this->hydrate($attributes);
+        if (!empty($properties)) {
+            $this->hydrate($properties);
         }
         $this->fields = $this->getFieldsFromFile();
     }
 
     /**
-     * @param array $attributes
+     * @param array $properties
      * @throws Exception
      */
-    public function hydrate(array $attributes)
+    public function hydrate(array $properties)
     {
-        foreach ($attributes as $attribute => $value) {
-            $this->__set($attribute, $value);
+        foreach ($properties as $property => $value) {
+            $setMethod = $this->setPropertyMethod($property);
+            $this->$setMethod($value);
         }
     }
 
@@ -64,49 +66,6 @@ class DefaultEntity implements EntityInterface
     }
 
     /**
-     * @param string $name
-     * @return mixed
-     * @throws Exception
-     */
-    public function __get(string $name)
-    {
-        $this->hasProperty($name);
-
-        return $this->$name;
-    }
-
-    /**
-     * @param string $name
-     * @param mixed $value
-     * @return EntityInterface
-     * @throws Exception
-     */
-    public function __set(string $name, $value): EntityInterface
-    {
-        $this->hasProperty($name);
-        $this->$name = $value;
-
-        return $this;
-    }
-
-    /**
-     * @param string $name
-     * @return bool
-     * @throws Exception
-     */
-    public function hasProperty(string $name): bool
-    {
-        $class = get_class($this);
-        if (!property_exists($class, $name)) {
-            throw new Exception(
-                "$class::propertyExist --> The property $name does not exist!"
-            );
-        }
-
-        return true;
-    }
-
-    /**
      * @return array
      * @throws Exception
      */
@@ -118,7 +77,8 @@ class DefaultEntity implements EntityInterface
             if ($property === 'configFile' || $property === 'fields') {
                 continue;
             }
-            $serialized[$property] = $this->__get($property);
+            $getMethod = $this->getPropertyMethod($property);
+            $serialized[$property] = $this->$getMethod;
         }
 
         return $serialized;

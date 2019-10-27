@@ -13,6 +13,7 @@ class Builder implements BuilderInterface
 {
     const SQLITE_VALID_CASCADE_KEYWORDS = ['delete', 'update'];
     const SQLITE_VALID_DATATYPES = ['numeric', 'text', 'real', 'text', 'blob'];
+    const SQL_CONSTRAINTS = ['NOT NULL', 'UNIQUE', 'PRIMARY KEY', 'FOREIGN KEY', 'CHECK', 'DEFAULT', 'INDEX'];
 
     /**
      * @param array $entityConfig

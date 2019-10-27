@@ -39,8 +39,7 @@ class Installer implements InstallerInterface
         string $sqlFile,
         OutputInterface $output,
         Builder $builder
-    )
-    {
+    ) {
         $this->pdo = $pdo;
         $this->sqlFile = $sqlFile;
         $this->output = $output;

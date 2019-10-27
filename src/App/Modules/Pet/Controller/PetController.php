@@ -20,7 +20,7 @@ class PetController extends AbstractContainerInjector
      * @param array $args
      * @return Response
      */
-    public function all(Request $request, Response $response, $args = [])
+    public function all(Request $request, Response $response, $args = []): Response
     {
         $data = $this->container->get('petRepository')->fetchAll();
 

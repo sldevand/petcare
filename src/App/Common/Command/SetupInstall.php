@@ -4,6 +4,7 @@ namespace App\Common\Command;
 
 use App\Common\Setup\Installer;
 use Exception;
+use Framework\Db\Pdo\Query\Builder;
 use Framework\Resource\PDOFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -38,10 +39,12 @@ class SetupInstall extends Command
         $prodSettings = $settings['settings']['pdo']['prod'];
 
         $sqliteConnection = PDOFactory::getSqliteConnexion($prodSettings['db-file']);
+        $builder = new Builder();
         $installer = new Installer(
             $sqliteConnection,
             $prodSettings['install-file'],
-            $output
+            $output,
+            $builder
         );
         $output->writeln('Installing database schema and modules');
         $installer->execute();

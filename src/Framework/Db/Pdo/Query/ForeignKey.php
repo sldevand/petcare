@@ -35,6 +35,7 @@ class ForeignKey extends Constraint
     public function setColumn(string $column): ForeignKey
     {
         $this->column = $column;
+
         return $this;
     }
 
@@ -53,6 +54,7 @@ class ForeignKey extends Constraint
     public function setParentTable(string $parentTable): ForeignKey
     {
         $this->parentTable = $parentTable;
+
         return $this;
     }
 
@@ -71,6 +73,7 @@ class ForeignKey extends Constraint
     public function setParentColumnName(string $parentColumnName): ForeignKey
     {
         $this->parentColumnName = $parentColumnName;
+
         return $this;
     }
 
@@ -89,6 +92,39 @@ class ForeignKey extends Constraint
     public function setReferenceOptions(array $referenceOptions): ForeignKey
     {
         $this->referenceOptions = $referenceOptions;
+
         return $this;
+    }
+
+    /**
+     * @param ReferenceOption $referenceOption
+     * @return ForeignKey
+     */
+    public function addReferenceOption(ReferenceOption $referenceOption): ForeignKey
+    {
+        $this->referenceOptions[] = $referenceOption;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function toSql(): string
+    {
+        $referenceOptionsPart = '';
+
+        $referenceOptionsArr = [];
+        if (!empty($this->referenceOptions)) {
+            foreach ($this->referenceOptions as $referenceOption) {
+                $referenceOptionsArr[] = $referenceOption->toSql();
+            }
+
+            $referenceOptionsPart = implode(' ', $referenceOptionsArr);
+        }
+
+        return <<<SQL
+FOREIGN KEY($this->column) REFERENCES $this->parentTable($this->parentColumnName) $referenceOptionsPart
+SQL;
     }
 }

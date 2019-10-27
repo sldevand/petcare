@@ -85,8 +85,7 @@ class Installer implements InstallerInterface
         $pattern = MODULES_DIR . "/$moduleName/etc/entities/*.yaml";
         $entityFiles = glob($pattern);
         foreach ($entityFiles as $entityFile) {
-            $entity = Yaml::parseFile($entityFile);
-            $sql = $this->builder->createTable($entity);
+            $sql = $this->builder->createTable($entityFile);
             $this->pdo->exec($sql);
         }
     }

@@ -30,6 +30,8 @@ class YamlEntityValidator
         $this->yaml = Yaml::parseFile($file);
     }
 
+
+
     /**
      * @return bool
      * @throws YamlEntityNotValidException
@@ -102,5 +104,13 @@ class YamlEntityValidator
     public function getErrors(): array
     {
         return $this->errors;
+    }
+
+    /**
+     * @return array
+     */
+    public function getYaml(): array
+    {
+        return $this->yaml;
     }
 }

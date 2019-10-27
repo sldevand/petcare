@@ -25,7 +25,16 @@ class Constraint extends Hydratable
      */
     public function setName(string $name): Constraint
     {
-        $this->name = $name;
+        $this->name = strtoupper($name);
+
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function toSql(): string
+    {
+        return $this->name;
     }
 }

@@ -12,6 +12,9 @@ class Field extends Hydratable
     protected $name;
 
     /** @var string */
+    protected $column;
+
+    /** @var string */
     protected $type;
 
     /** @var string */
@@ -46,6 +49,26 @@ class Field extends Hydratable
     public function setName(string $name): Field
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getColumn(): string
+    {
+        return $this->column;
+    }
+
+    /**
+     * @param string $column
+     * @return Field
+     */
+    public function setColumn(string $column): Field
+    {
+        $this->column = $column;
+
         return $this;
     }
 
@@ -63,7 +86,8 @@ class Field extends Hydratable
      */
     public function setType(string $type): Field
     {
-        $this->type = $type;
+        $this->type = strtoupper($type);
+
         return $this;
     }
 
@@ -101,5 +125,29 @@ class Field extends Hydratable
     {
         $this->constraints = $constraints;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function toSql(): string
+    {
+        $size = '';
+        if (!empty($this->size)) {
+            $size = "($this->size)";
+        }
+        $constraintsPart = '';
+
+        if (!empty($this->constraints)) {
+            $constraintNames = [];
+            foreach ($this->constraints as $constraint) {
+                $constraintNames[] = $constraint->getName();
+            }
+            $constraintsPart = implode(' ', $constraintNames);
+        }
+
+        return <<<SQL
+$this->column $this->type$size $constraintsPart
+SQL;
     }
 }

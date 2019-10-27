@@ -9,13 +9,13 @@ namespace Framework\Db\Pdo\Query;
 class Table extends Hydratable
 {
     /** @var string */
-    protected $name;
+    protected $name = '';
 
     /** @var Field[] */
-    protected $fields;
+    protected $fields = [];
 
     /** @var Constraint[] */
-    protected $constraints;
+    protected $constraints = [];
 
     /**
      * @param Field $field
@@ -54,6 +54,7 @@ class Table extends Hydratable
     public function setName(string $name): Table
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -72,6 +73,7 @@ class Table extends Hydratable
     public function setFields(array $fields): Table
     {
         $this->fields = $fields;
+
         return $this;
     }
 
@@ -90,6 +92,41 @@ class Table extends Hydratable
     public function setConstraints(array $constraints): Table
     {
         $this->constraints = $constraints;
+
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function toSql(): string
+    {
+        $fields = [];
+        foreach ($this->getFields() as $field) {
+            $fields[] = $field->toSql();
+        }
+
+        $fieldsPart = implode(',', $fields);
+
+        $pk = $this->name . '_PK';
+
+        $constraintsPart = '';
+        $constraintPartArr = [];
+        if (!empty($this->getConstraints())) {
+            foreach ($this->getConstraints() as $constraint) {
+                $constraintPartArr[] = $constraint->toSql();
+            }
+            $constraintsPart = implode(',' . PHP_EOL . '    ', $constraintPartArr);
+        }
+
+        return <<<SQL
+CREATE TABLE IF NOT EXISTS $this->name
+(
+    id INTEGER NOT NULL,
+    $fieldsPart,
+    CONSTRAINT $pk PRIMARY KEY (id),
+    $constraintsPart
+);
+SQL;
     }
 }

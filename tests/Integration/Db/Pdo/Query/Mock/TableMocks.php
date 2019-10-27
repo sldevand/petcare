@@ -15,6 +15,7 @@ class TableMocks
     {
         return [
             'name' => 'id',
+            'column' => 'id',
             'type' => 'integer',
             'size' => '11'
         ];
@@ -29,11 +30,13 @@ class TableMocks
             $this->getFieldData(),
             [
                 'name' => 'name',
+                'column' => 'name',
                 'type' => 'varchar',
                 'size' => '256'
             ],
             [
                 'name' => 'specy',
+                'column' => 'specy',
                 'type' => 'varchar',
                 'size' => '256'
             ]
@@ -44,6 +47,31 @@ class TableMocks
      * @return array
      */
     public function getConstraintData(): array
+    {
+        return [
+            'name' => 'NOT NULL'
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getConstraintsDatas(): array
+    {
+        return [
+            [
+                'name' => 'NOT NULL'
+            ],
+            [
+                'name' => 'UNIQUE'
+            ]
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getEntityConfig(): array
     {
         return [
             'name' => 'NOT NULL'

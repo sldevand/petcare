@@ -28,7 +28,8 @@ class ReferenceOption extends Hydratable
      */
     public function setOn(string $on): ReferenceOption
     {
-        $this->on = $on;
+        $this->on = strtoupper($on);
+
         return $this;
     }
 
@@ -46,7 +47,15 @@ class ReferenceOption extends Hydratable
      */
     public function setAction(string $action): ReferenceOption
     {
-        $this->action = $action;
+        $this->action = strtoupper($action);
+
         return $this;
+    }
+
+    public function toSql()
+    {
+        return <<<SQL
+ON $this->on $this->action
+SQL;
     }
 }

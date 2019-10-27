@@ -3,6 +3,7 @@
 namespace Tests\Integration\Db\Pdo\Query;
 
 use Exception;
+use Framework\Db\Pdo\Query\Constraint;
 use Framework\Db\Pdo\Query\Field;
 
 /**
@@ -21,11 +22,32 @@ class FieldTest extends BaseQueryTest
         $expectedField = new Field();
         $expectedField
             ->setName($fieldData['name'])
+            ->setColumn($fieldData['column'])
             ->setType($fieldData['type'])
             ->setSize($fieldData['size']);
 
         $field = new Field($fieldData);
 
         $this->assertEquals($field, $expectedField);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testToString()
+    {
+        $fieldData = self::$mocks->getFieldData();
+        $field = new Field($fieldData);
+
+        foreach (self::$mocks->getConstraintsDatas() as $constraintsData) {
+            $field->addConstraint(new Constraint($constraintsData));
+        }
+
+        $sql = $field->toSql();
+        $expectedSql = <<<SQL
+id INTEGER(11) NOT NULL UNIQUE
+SQL;
+
+        $this->assertEquals(strtolower($sql), strtolower($expectedSql));
     }
 }

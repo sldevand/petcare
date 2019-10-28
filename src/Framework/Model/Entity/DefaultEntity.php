@@ -78,7 +78,7 @@ class DefaultEntity extends MagicObject implements EntityInterface
                 continue;
             }
             $getMethod = $this->getPropertyMethod($property);
-            $serialized[$property] = $this->$getMethod;
+            $serialized[$property] = $this->$getMethod();
         }
 
         return $serialized;

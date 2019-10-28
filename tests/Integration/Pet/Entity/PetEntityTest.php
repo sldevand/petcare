@@ -63,12 +63,12 @@ JSON;
         ];
         $entity = new PetEntity($attributes);
         self::assertTrue($entity->getId() === 8);
-        self::assertTrue($entity->__get('id') === 8);
-        self::assertTrue($entity->__get('name') === 'elie');
-        self::assertTrue($entity->__get('dob') === '13/10/2014');
-        self::assertTrue($entity->__get('specy') === 'cat');
-        self::assertTrue($entity->__get('imageId') === 1);
-        self::assertTrue($entity->__get('createdAt') === $now);
-        self::assertTrue($entity->__get('updatedAt') === $now);
+        self::assertTrue($entity->getId() === 8);
+        self::assertTrue($entity->getName() === 'elie');
+        self::assertTrue($entity->getDob() === '13/10/2014');
+        self::assertTrue($entity->getSpecy() === 'cat');
+        self::assertTrue($entity->getImageId() === 1);
+        self::assertTrue($entity->getCreatedAt() === $now);
+        self::assertTrue($entity->getUpdatedAt() === $now);
     }
 }

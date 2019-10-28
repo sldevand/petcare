@@ -39,8 +39,7 @@ class Installer implements InstallerInterface
         string $sqlFile,
         OutputInterface $output,
         Builder $builder
-    )
-    {
+    ) {
         $this->pdo = $pdo;
         $this->sqlFile = $sqlFile;
         $this->output = $output;
@@ -85,8 +84,7 @@ class Installer implements InstallerInterface
         $pattern = MODULES_DIR . "/$moduleName/etc/entities/*.yaml";
         $entityFiles = glob($pattern);
         foreach ($entityFiles as $entityFile) {
-            $entity = Yaml::parseFile($entityFile);
-            $sql = $this->builder->createTable($entity);
+            $sql = $this->builder->createTable($entityFile);
             $this->pdo->exec($sql);
         }
     }

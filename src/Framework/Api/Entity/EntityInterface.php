@@ -25,4 +25,10 @@ interface EntityInterface extends JsonSerializable
      * @return EntityInterface
      */
     public function setId(int $id): EntityInterface;
+
+    /**
+     * @param string $property
+     * @return string
+     */
+    public function getPropertyMethod(string $property): string;
 }

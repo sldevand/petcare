@@ -4,7 +4,7 @@ use App\Common\Setup\Installer;
 use App\Modules\Pet\Controller\PetController;
 use App\Modules\Pet\Model\Repository\PetImageRepository;
 use App\Modules\Pet\Model\Repository\PetRepository;
-use Framework\Db\Pdo\Builder;
+use Framework\Db\Pdo\Query\Builder;
 use Framework\Model\Validator\DefaultValidator;
 use Framework\Resource\PDOFactory;
 use Psr\Container\ContainerInterface;

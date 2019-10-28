@@ -14,14 +14,14 @@ class MagicObject
      * @param string $methodName
      * @param array $args
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function __call($methodName, $args)
     {
         if (!preg_match('~^(set|get)([A-Z].*)$~', $methodName, $matches)) {
             throw new Exception('Invalid method call :' . $methodName);
         }
-        $property = strtolower($matches[2]);
+        $property = lcfirst($matches[2]);
         $this->hasProperty($property);
 
         if ($matches[1] === 'set') {

@@ -52,8 +52,8 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
 
         foreach ($entity->getFields() as $property => $field) {
             $getPropertyMethod = $this->getPropertyMethod($property);
-            if (!empty($entity->$getPropertyMethod)) {
-                $st->bindValue($property, $entity->$getPropertyMethod);
+            if (!empty($entity->$getPropertyMethod())) {
+                $st->bindValue($property, $entity->$getPropertyMethod());
             }
         }
 
@@ -73,8 +73,8 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
         $st->bindValue(':id', $entity->getId());
         foreach ($entity->getFields() as $property => $field) {
             $getPropertyMethod = $this->getPropertyMethod($property);
-            if (!empty($entity->$getPropertyMethod) && $property !== 'id') {
-                $st->bindValue(':' . $property, $entity->$getPropertyMethod);
+            if (!empty($entity->$getPropertyMethod()) && $property !== 'id') {
+                $st->bindValue(':' . $property, $entity->$getPropertyMethod());
             }
         }
 
@@ -157,7 +157,8 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
                 continue;
             }
 
-            $value = $entity->__get($property);
+            $propertyMethod = $entity->getPropertyMethod($property);
+            $value = $entity->$propertyMethod();
             if (is_null($value)) {
                 continue;
             }
@@ -192,7 +193,8 @@ SQL;
                 continue;
             }
 
-            $value = $entity->__get($property);
+            $propertyMethod = $entity->getPropertyMethod($property);
+            $value = $entity->$propertyMethod();
             if (is_null($value)) {
                 continue;
             }

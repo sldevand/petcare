@@ -96,35 +96,47 @@ class Table extends Hydratable
         return $this;
     }
 
+
     /**
      * @return string
      */
-    public function toSql(): string
+    protected function getFieldsSql(): string
     {
         $fields = [];
         foreach ($this->getFields() as $field) {
             $fields[] = $field->toSql();
         }
+        return implode(',', $fields);
+    }
 
-        $fieldsPart = implode(',', $fields);
-
+    /**
+     * @return string
+     */
+    protected function getConstraintsSql(): string
+    {
         $pk = $this->name . '_PK';
-
-        $constraintsPart = '';
-        $constraintPartArr = [];
+        $constraintPartArr = ["CONSTRAINT $pk PRIMARY KEY (id)"];
         if (!empty($this->getConstraints())) {
             foreach ($this->getConstraints() as $constraint) {
                 $constraintPartArr[] = $constraint->toSql();
             }
-            $constraintsPart = implode(',' . PHP_EOL . '    ', $constraintPartArr);
         }
+        return implode(',' . PHP_EOL . '    ', $constraintPartArr);
+    }
+
+    /**
+     * @return string
+     */
+    public function toSql(): string
+    {
+        $fieldsSql = $this->getFieldsSql();
+        $constraintsPart = $this->getConstraintsSql();
 
         return <<<SQL
 CREATE TABLE IF NOT EXISTS $this->name
 (
     id INTEGER NOT NULL,
-    $fieldsPart,
-    CONSTRAINT $pk PRIMARY KEY (id),
+    $fieldsSql,
     $constraintsPart
 );
 SQL;

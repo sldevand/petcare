@@ -1,4 +1,4 @@
 module:
-    name: Pet
+    name: User
     version: 1.0.0
     enabled: true

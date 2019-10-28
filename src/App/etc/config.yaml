@@ -1,3 +1,5 @@
 modules:
     Pet:
         enabled : true
+    User:
+        enabled: true

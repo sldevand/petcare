@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\Integration\Db\Pdo\Query;
+namespace Tests\Integration\Framework\Db\Pdo\Query;
 
 use PHPUnit\Framework\TestCase;
-use Tests\Integration\Db\Pdo\Query\Mock\TableMocks;
+use Tests\Integration\Framework\Db\Pdo\Query\Mock\TableMocks;
 
 abstract class BaseQueryTest extends TestCase
 {

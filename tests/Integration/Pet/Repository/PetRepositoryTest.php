@@ -4,13 +4,12 @@ namespace Tests\Integration\Pet\Repository;
 
 use App\Modules\Pet\Model\Entity\PetEntity;
 use App\Modules\Pet\Model\Repository\PetRepository;
-use DateTime;
 use Exception;
 use Framework\Exception\RepositoryException;
 use Framework\Model\Validator\DefaultValidator;
 use PDO;
 use PHPUnit\Framework\TestCase;
-use Tests\Integration\BaseTestFramework;
+use Tests\Integration\Framework\BaseTestFramework;
 
 /**
  * Class PetRepositoryTest

@@ -8,6 +8,12 @@ use Framework\Model\Entity\DefaultEntity;
 /**
  * Class PetEntity
  * @package App\Model\Entity
+ * @method getName
+ * @method getDob
+ * @method getSpecy
+ * @method getImageId
+ * @method getCreatedAt
+ * @method getUpdatedAt
  */
 class PetEntity extends DefaultEntity
 {

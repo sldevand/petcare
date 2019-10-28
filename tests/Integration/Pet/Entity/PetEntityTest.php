@@ -63,7 +63,6 @@ JSON;
         ];
         $entity = new PetEntity($attributes);
         self::assertTrue($entity->getId() === 8);
-        self::assertTrue($entity->getId() === 8);
         self::assertTrue($entity->getName() === 'elie');
         self::assertTrue($entity->getDob() === '13/10/2014');
         self::assertTrue($entity->getSpecy() === 'cat');

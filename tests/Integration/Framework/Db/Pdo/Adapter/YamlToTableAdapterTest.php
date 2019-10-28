@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration\Db\Pdo\Adapter;
+namespace Tests\Integration\Framework\Db\Pdo\Adapter;
 
 use Exception;
 use Framework\Db\Pdo\Adapter\YamlToTableAdapter;

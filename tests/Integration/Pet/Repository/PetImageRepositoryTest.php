@@ -10,7 +10,7 @@ use Framework\Exception\RepositoryException;
 use Framework\Model\Validator\DefaultValidator;
 use PDO;
 use PHPUnit\Framework\TestCase;
-use Tests\Integration\BaseTestFramework;
+use Tests\Integration\Framework\BaseTestFramework;
 
 /**
  * Class PetImageRepositoryTest

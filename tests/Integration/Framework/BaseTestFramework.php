@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration;
+namespace Tests\Integration\Framework;
 
 use App\Common\Setup\Installer;
 use Framework\Db\Pdo\Query\Builder;
@@ -20,8 +20,8 @@ class BaseTestFramework
      */
     public static function generateApp(): App
     {
-        require_once __DIR__ . '/../../src/bootstrap.php';
-        $settings = require __DIR__ . '/../../src/settings.php';
+        require_once __DIR__ . '/../../../src/bootstrap.php';
+        $settings = require __DIR__ . '/../../../src/settings.php';
         $app = new App($settings);
         $container = $app->getContainer();
 

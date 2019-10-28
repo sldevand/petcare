@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration\Db\Pdo\Query;
+namespace Tests\Integration\Framework\Db\Pdo\Query;
 
 use Exception;
 use Framework\Db\Pdo\Query\Constraint;

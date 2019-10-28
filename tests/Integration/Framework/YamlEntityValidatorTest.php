@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration;
+namespace Tests\Integration\Framework;
 
 use Framework\Exception\YamlEntityNotValidException;
 use Framework\Model\Validator\YamlEntityValidator;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration\Db\Pdo\Query\Mock;
+namespace Tests\Integration\Framework\Db\Pdo\Query\Mock;
 
 /**
  * Class TableMocks

@@ -14,6 +14,7 @@ use Framework\Model\Entity\DefaultEntity;
  * @method getImageId
  * @method getCreatedAt
  * @method getUpdatedAt
+ * @method getImage
  */
 class PetEntity extends DefaultEntity
 {

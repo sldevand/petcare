@@ -50,10 +50,12 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
         $sql = $this->prepareInsertSql($entity);
         $st = $this->db->prepare($sql);
 
+
         foreach ($entity->getFields() as $property => $field) {
             $getPropertyMethod = $this->getPropertyMethod($property);
             if (!empty($entity->$getPropertyMethod())) {
                 $st->bindValue($property, $entity->$getPropertyMethod());
+                var_dump($property,$entity->$getPropertyMethod());
             }
         }
 

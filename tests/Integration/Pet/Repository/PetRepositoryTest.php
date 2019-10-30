@@ -6,16 +6,14 @@ use App\Modules\Pet\Model\Entity\PetEntity;
 use App\Modules\Pet\Model\Repository\PetRepository;
 use Exception;
 use Framework\Exception\RepositoryException;
-use Framework\Model\Validator\DefaultValidator;
 use PDO;
-use PHPUnit\Framework\TestCase;
 use Tests\Integration\Framework\BaseTestFramework;
 
 /**
  * Class PetRepositoryTest
  * @package Tests\Integration\Pet
  */
-class PetRepositoryTest extends TestCase
+class PetRepositoryTest extends PetRepoProvider
 {
     /** @var PetRepository */
     protected static $petRepository;
@@ -29,7 +27,7 @@ class PetRepositoryTest extends TestCase
         $container = $app->getContainer();
         self::$db = $container->get('pdoTest');
         $container->get('installerTest')->execute();
-        self::$petRepository = new PetRepository(self::$db, new DefaultValidator());
+        self::$petRepository = $container->get('petRepository');
     }
 
     /**

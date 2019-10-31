@@ -70,10 +70,10 @@ class UserRepositoryTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return PetEntity[]
      * @throws Exception
      */
-    public function getPets()
+    public function getPets(): array
     {
         $now = (new DateTime())->format('Y-m-d H:i:s');
 
@@ -94,5 +94,11 @@ class UserRepositoryTest extends TestCase
             $dogEntity,
             $catEntity
         ];
+    }
+
+    protected function tearDown()
+    {
+        self::$db->exec("PRAGMA foreign_keys=ON");
+        self::$db->exec('DELETE FROM user;');
     }
 }

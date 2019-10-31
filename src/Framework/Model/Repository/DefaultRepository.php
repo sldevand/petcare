@@ -9,6 +9,7 @@ use Framework\Api\Validator\ValidatorInterface;
 use Framework\Exception\RepositoryException;
 use Framework\MagicObject;
 use PDO;
+use PDOStatement;
 
 /**
  * Class DefaultRepository
@@ -41,15 +42,14 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
 
     /**
      * @param EntityInterface $entity
-     * @return bool
+     * @return EntityInterface
      * @throws Exception
      */
-    public function create(EntityInterface $entity): bool
+    public function create(EntityInterface $entity): EntityInterface
     {
         $this->validator->validate($entity);
         $sql = $this->prepareInsertSql($entity);
-        $st = $this->db->prepare($sql);
-
+        $st = $this->prepare($sql);
 
         foreach ($entity->getFields() as $property => $field) {
             $getPropertyMethod = $this->getPropertyMethod($property);
@@ -57,20 +57,24 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
                 $st->bindValue($property, $entity->$getPropertyMethod());
             }
         }
+        $st->execute();
+        $st->closeCursor();
 
-        return $st->execute();
+        $id = $this->getLastInserted($this->table);
+
+        return $this->findOne($id);
     }
 
     /**
      * @param EntityInterface $entity
-     * @return bool
+     * @return EntityInterface
      * @throws Exception
      */
-    public function update(EntityInterface $entity): bool
+    public function update(EntityInterface $entity): EntityInterface
     {
         $this->validator->validate($entity);
         $sql = $this->prepareUpdateSql($entity);
-        $st = $this->db->prepare($sql);
+        $st = $this->prepare($sql);
         $st->bindValue(':id', $entity->getId());
         foreach ($entity->getFields() as $property => $field) {
             $getPropertyMethod = $this->getPropertyMethod($property);
@@ -79,17 +83,20 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
             }
         }
 
-        return $st->execute();
+        $st->execute();
+        $st->closeCursor();
+
+        return $this->findOne($entity->getId());
     }
 
     /**
      * @param EntityInterface $entity
-     * @return bool
+     * @return EntityInterface
      * @throws Exception
      */
-    public function save(EntityInterface $entity): bool
+    public function save(EntityInterface $entity): EntityInterface
     {
-        if (!$entity->getId()) {
+        if (empty($entity->getId())) {
             return $this->create($entity);
         }
 
@@ -100,11 +107,12 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
      * @param int $id
      * @return EntityInterface
      * @throws RepositoryException
+     * @throws Exception
      */
     public function findOne(int $id): EntityInterface
     {
         $sql = "SELECT * FROM $this->table WHERE id=:id";
-        $st = $this->db->prepare($sql);
+        $st = $this->prepare($sql);
         $st->bindValue(":id", $id);
         $st->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $this->entityClass);
         $st->execute();
@@ -138,6 +146,51 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
         $st->bindValue(":id", $id);
 
         return $st->execute();
+    }
+
+    /**
+     * @param string $table
+     * @return mixed
+     * @throws Exception
+     */
+    public function getLastInserted($table)
+    {
+        $sql = 'SELECT seq FROM sqlite_sequence WHERE name="' . $table . '"';
+        $q = $this->query($sql);
+        $q->execute();
+        $res = $q->fetchColumn();
+
+        return $res;
+    }
+
+    /**
+     * @param string $sql
+     * @return PDOStatement
+     * @throws Exception
+     */
+    public function prepare($sql)
+    {
+        $query = $this->db->prepare($sql);
+        if (!$query) {
+            throw new Exception(implode(" ", $this->db->errorInfo()));
+        }
+
+        return $query;
+    }
+
+    /**
+     * @param string $sql
+     * @return PDOStatement
+     * @throws Exception
+     */
+    public function query($sql)
+    {
+        $query = $this->db->query($sql);
+        if (!$query) {
+            throw new Exception(implode(" ", $this->db->errorInfo()));
+        }
+
+        return $query;
     }
 
     /**

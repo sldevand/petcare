@@ -14,21 +14,21 @@ interface RepositoryInterface
 {
     /**
      * @param EntityInterface $entity
-     * @return bool
+     * @return EntityInterface
      */
-    public function create(EntityInterface $entity): bool;
+    public function create(EntityInterface $entity): EntityInterface;
 
     /**
      * @param EntityInterface $entity
-     * @return bool
+     * @return EntityInterface
      */
-    public function update(EntityInterface $entity): bool;
+    public function update(EntityInterface $entity): EntityInterface;
 
     /**
      * @param EntityInterface $entity
-     * @return bool
+     * @return EntityInterface
      */
-    public function save(EntityInterface $entity): bool;
+    public function save(EntityInterface $entity): EntityInterface;
 
     /**
      * @param int $id

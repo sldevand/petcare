@@ -114,8 +114,7 @@ class Table extends Hydratable
      */
     protected function getConstraintsSql(): string
     {
-        $pk = $this->name . '_PK';
-        $constraintPartArr = ["CONSTRAINT $pk PRIMARY KEY (id)"];
+        $constraintPartArr = [];
         if (!empty($this->getConstraints())) {
             foreach ($this->getConstraints() as $constraint) {
                 $constraintPartArr[] = $constraint->toSql();
@@ -131,13 +130,20 @@ class Table extends Hydratable
     {
         $fieldsSql = $this->getFieldsSql();
         $constraintsPart = $this->getConstraintsSql();
+        $endPart = $fieldsSql;
+        if (!empty($constraintsPart)) {
+            $endPart .= <<<SQL
+,
+    $constraintsPart
+SQL;
+        }
+
 
         return <<<SQL
 CREATE TABLE IF NOT EXISTS $this->name
 (
-    id INTEGER NOT NULL,
-    $fieldsSql,
-    $constraintsPart
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    $endPart
 );
 SQL;
     }

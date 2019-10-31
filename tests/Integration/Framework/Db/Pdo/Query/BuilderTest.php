@@ -23,9 +23,8 @@ class BuilderTest extends BaseQueryTest
         $expectedSql = <<<SQL
 CREATE TABLE IF NOT EXISTS test
 (
-    id INTEGER NOT NULL,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     testProperty TEXT NOT NULL,
-    CONSTRAINT test_PK PRIMARY KEY (id),
     FOREIGN KEY(id) REFERENCES test1(testId) ON DELETE CASCADE
 );
 SQL;

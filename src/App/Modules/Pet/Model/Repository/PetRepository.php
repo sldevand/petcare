@@ -3,6 +3,8 @@
 namespace App\Modules\Pet\Model\Repository;
 
 use App\Modules\Pet\Model\Entity\PetEntity;
+use Exception;
+use Framework\Api\Entity\EntityInterface;
 use Framework\Api\Validator\ValidatorInterface;
 use Framework\Model\Repository\DefaultRepository;
 use PDO;
@@ -13,17 +15,18 @@ use PDO;
  */
 class PetRepository extends DefaultRepository
 {
-    /** @var \App\Modules\Pet\Model\Repository\PetImageRepository */
+    /** @var PetImageRepository */
     protected $petImageRepository;
 
     /**
      * PetRepository constructor.
      * @param PDO $db
      * @param ValidatorInterface $validator
-     * @param \App\Modules\Pet\Model\Repository\PetImageRepository $petImageRepository
+     * @param PetImageRepository $petImageRepository
      */
     public function __construct(
-        PDO $db, ValidatorInterface $validator,
+        PDO $db,
+        ValidatorInterface $validator,
         PetImageRepository $petImageRepository
     ) {
         $this->table = "pet";
@@ -32,17 +35,8 @@ class PetRepository extends DefaultRepository
         parent::__construct($db, $validator);
     }
 
-    /**
-     * @param \App\Modules\Pet\Model\Entity\PetEntity $entity
-     * @return bool
-     * @throws \Exception
-     */
-    public function save($entity): bool
+    public function save(EntityInterface $entity): EntityInterface
     {
-        if ($imageEntity = $entity->getImage()) {
-            $this->petImageRepository->save($imageEntity);
-        }
-
         return parent::save($entity);
     }
 }

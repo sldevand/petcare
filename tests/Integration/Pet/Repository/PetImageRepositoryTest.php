@@ -26,7 +26,7 @@ class PetImageRepositoryTest extends TestCase
     protected static $db;
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public static function setUpBeforeClass()
     {
@@ -41,27 +41,13 @@ class PetImageRepositoryTest extends TestCase
     /**
      * @throws Exception
      */
-    public function setUp()
-    {
-        $entity = self::$petImages['cat'];
-
-        self::$petImageRepository->create($entity);
-    }
-
-    /**
-     * @throws Exception
-     */
     public function testCreate()
     {
-        $entity = self::$petImages['cat'];
-        $result = self::$petImageRepository->create($entity);
+        $expected = clone self::$petImages['cat'];
+        $result = self::$petImageRepository->create($expected);
+        $expected->setId(1);
 
-        $this->assertTrue($result === true, 'Can\'t create entity');
-
-        $pet = self::$petImageRepository->findOne(2);
-        $entity->setId(2);
-
-        $this->assertEquals($entity, $pet, 'THe two entities are not equal');
+        $this->assertEquals($expected, $result, 'Can\'t create entity');
     }
 
     /**
@@ -69,24 +55,48 @@ class PetImageRepositoryTest extends TestCase
      */
     public function testUpdate()
     {
-        $petBefore = self::$petImageRepository->findOne(1);
+        $beforeEntity = clone self::$petImages['cat'];
+        $beforePetImage = self::$petImageRepository->create($beforeEntity);
 
-        $newEntity = self::$petImages['dog'];
-        $newEntity->setId(1);
-        self::$petImageRepository->update($newEntity);
+        $newEntity = clone self::$petImages['dog'];
+        $newEntity->setId($beforePetImage->getId());
+        $newPetImage = self::$petImageRepository->update($newEntity);
 
-        $pet = self::$petImageRepository->findOne(1);
-
-        $this->assertNotEquals($petBefore, $pet, 'The two entities are equal');
+        $this->assertNotEquals($beforePetImage, $newPetImage, 'The two entities are equal');
     }
 
+    /**
+     * @throws Exception
+     */
+    public function testSave()
+    {
+        $beforePetImage = clone self::$petImages['cat'];
+        $afterPetImage = self::$petImageRepository->save($beforePetImage);
+        $beforePetImage->setId(3);
+
+        $this->assertEquals($beforePetImage, $afterPetImage, 'Can\'t save PetImage');
+
+        $newEntity = clone self::$petImages['dog'];
+        $newEntity->setId($beforePetImage->getId());
+        $updatedPetImage = self::$petImageRepository->save($newEntity);
+
+        $this->assertNotEquals($beforePetImage, $updatedPetImage, 'The two PetImage entities are equal');
+    }
+
+    /**
+     * @throws Exception
+     */
     public function testDeleteOne()
     {
-        $result = self::$petImageRepository->deleteOne(1);
+        $beforeEntity = clone self::$petImages['cat'];
+        $beforePetImage = self::$petImageRepository->create($beforeEntity);
+        $id = $beforePetImage->getId();
+
+        $result = self::$petImageRepository->deleteOne($id);
         $this->assertTrue($result === true, 'could not delete this entity');
 
         try {
-            $petAfter = self::$petImageRepository->findOne(1);
+            $petAfter = self::$petImageRepository->findOne($id);
         } catch (RepositoryException $e) {
             $petAfter = false;
         }

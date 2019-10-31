@@ -9,6 +9,7 @@ use Framework\Exception\RepositoryException;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use Tests\Integration\Framework\BaseTestFramework;
+use Tests\Integration\Pet\Provider\PetImageEntityProvider;
 
 /**
  * Class PetRepositoryTest
@@ -77,7 +78,7 @@ class PetRepositoryTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testSave()
+    public function testSaveWithoutPetImageEntity()
     {
         $attributes = [
             'name' => 'waf', 'dob' => '13/10/2014', 'specy' => 'dog'
@@ -95,6 +96,38 @@ class PetRepositoryTest extends TestCase
 
         $newEntity = new PetEntity($attributesToUpdate);
         $updatedEntity = self::$petRepository->save($newEntity);
+
+        $this->assertEquals($newEntity, $updatedEntity, 'The two Pet entities are not equal');
+        $this->assertNotEquals($afterEntity, $updatedEntity, 'The two Pet entities are equal');
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testSaveWithPetImageEntity()
+    {
+        $dogImageEntity = PetImageEntityProvider::getPetImages()['dog'];
+
+        $dogAttributes = [
+            'name' => 'waf', 'dob' => '13/10/2014', 'specy' => 'dog', 'image' => $dogImageEntity
+        ];
+
+        $beforeEntity = new PetEntity($dogAttributes);
+        $afterEntity = self::$petRepository->save($beforeEntity);
+        $beforeEntity->setId($afterEntity->getId());
+        $beforeEntity->setImage($afterEntity->getImage());
+
+        $this->assertEquals($beforeEntity, $afterEntity, 'Can\'t save PetEntity');
+
+        $catImageEntity = PetImageEntityProvider::getPetImages()['cat'];
+
+        $attributesToUpdate = [
+            'id' => $afterEntity->getId(), 'name' => 'elie', 'dob' => '15/10/2014', 'specy' => 'cat', 'image' => $catImageEntity
+        ];
+
+        $newEntity = new PetEntity($attributesToUpdate);
+        $updatedEntity = self::$petRepository->save($newEntity);
+        $updatedEntity->setImage($newEntity->getImage());
 
         $this->assertEquals($newEntity, $updatedEntity, 'The two Pet entities are not equal');
         $this->assertNotEquals($afterEntity, $updatedEntity, 'The two Pet entities are equal');

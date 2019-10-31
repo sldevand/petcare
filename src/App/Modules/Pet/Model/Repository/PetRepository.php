@@ -35,8 +35,21 @@ class PetRepository extends DefaultRepository
         parent::__construct($db, $validator);
     }
 
+    /**
+     * @param EntityInterface $entity
+     * @return EntityInterface
+     * @throws Exception
+     */
     public function save(EntityInterface $entity): EntityInterface
     {
-        return parent::save($entity);
+        $petEntity = parent::save($entity);
+
+        if (!empty($image = $entity->getImage())) {
+            $image->setPetId($petEntity->getId());
+            $petImageEntity = $this->petImageRepository->save($image);
+            $petEntity->setImage($petImageEntity);
+        }
+
+        return $petEntity;
     }
 }

@@ -1,13 +1,13 @@
 table:
     user
 fields:
-    firstname:
-        column: firstname
+    firstName:
+        column: firstName
         type: text
         constraints:
             nullable: false
-    lastname:
-        column: lastname
+    lastName:
+        column: lastName
         type: text
         constraints:
             nullable: false
@@ -21,9 +21,6 @@ fields:
         type: text
         constraints:
             nullable: false
-    dob:
-        column: dob
-        type: text
     createdAt:
         column: createdAt
         type: text

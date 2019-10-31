@@ -5,6 +5,8 @@ namespace Tests\Integration\Framework;
 use App\Common\Setup\Installer;
 use App\Modules\Pet\Model\Repository\PetImageRepository;
 use App\Modules\Pet\Model\Repository\PetRepository;
+use App\Modules\User\Model\Repository\UserPetRepository;
+use App\Modules\User\Model\Repository\UserRepository;
 use Framework\Db\Pdo\Query\Builder;
 use Framework\Model\Validator\DefaultValidator;
 use Framework\Resource\PDOFactory;
@@ -54,6 +56,16 @@ class BaseTestFramework
         $container['petRepository'] = function (ContainerInterface $container) {
             $pdo = $container->get('pdoTest');
             return new PetRepository($pdo, $container->get('defaultValidator'), $container->get('petImageRepository'));
+        };
+
+        $container['userPetRepository'] = function (ContainerInterface $container) {
+            $pdo = $container->get('pdoTest');
+            return new UserPetRepository($pdo, $container->get('defaultValidator'));
+        };
+
+        $container['userRepository'] = function (ContainerInterface $container) {
+            $pdo = $container->get('pdoTest');
+            return new UserRepository($pdo, $container->get('defaultValidator'), $container->get('userPetRepository'));
         };
 
         $container['installerTest'] = function (ContainerInterface $container) {

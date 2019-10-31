@@ -53,9 +53,8 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
 
         foreach ($entity->getFields() as $property => $field) {
             $getPropertyMethod = $this->getPropertyMethod($property);
-            if (!empty($entity->$getPropertyMethod())) {
+            if (!empty($entity->$getPropertyMethod()) && $property !== 'id') {
                 $st->bindValue($property, $entity->$getPropertyMethod());
-                var_dump($property,$entity->$getPropertyMethod());
             }
         }
 
@@ -75,7 +74,7 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
         $st->bindValue(':id', $entity->getId());
         foreach ($entity->getFields() as $property => $field) {
             $getPropertyMethod = $this->getPropertyMethod($property);
-            if (!empty($entity->$getPropertyMethod()) && $property !== 'id') {
+            if (!empty($entity->$getPropertyMethod())) {
                 $st->bindValue(':' . $property, $entity->$getPropertyMethod());
             }
         }
@@ -148,33 +147,13 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
      */
     protected function prepareInsertSql(EntityInterface $entity): string
     {
-        $fieldsPart = '';
-        $valuesPart = '';
-        $fields = $entity->getFields();
+        $columns = $columns = $this->prepareColumns($entity);
 
-        $iter = 2;
-        foreach ($fields as $property => $field) {
-            $iter++;
-            if ($property === 'id') {
-                continue;
-            }
-
-            $propertyMethod = $entity->getPropertyMethod($property);
-            $value = $entity->$propertyMethod();
-            if (is_null($value)) {
-                continue;
-            }
-
-            $fieldsPart .= $field['column'];
-            $valuesPart .= ':' . $property;
-            if ($iter < count($fields)) {
-                $fieldsPart .= ',';
-                $valuesPart .= ',';
-            }
-        }
+        $columnsSql = implode(',', array_keys($columns));
+        $valuesSql = implode(',', $columns);
 
         return <<<SQL
-INSERT INTO $this->table ($fieldsPart) VALUES ($valuesPart);
+INSERT INTO $this->table ($columnsSql) VALUES ($valuesSql);
 SQL;
     }
 
@@ -185,12 +164,28 @@ SQL;
      */
     protected function prepareUpdateSql(EntityInterface $entity): string
     {
-        $fieldsPart = '';
-        $fields = $entity->getFields();
+        $columns = $this->prepareColumns($entity);
 
-        $iter = 3;
-        foreach ($fields as $property => $field) {
-            $iter++;
+        $columnsArr = [];
+        foreach ($columns as $key => $value) {
+            $columnsArr[] = $key . ' = ' . $value;
+        }
+
+        $columnsSql = implode(',', $columnsArr);
+
+        return <<<SQL
+UPDATE $this->table SET $columnsSql WHERE id = :id;
+SQL;
+    }
+
+    /**
+     * @param EntityInterface $entity
+     * @return array
+     */
+    protected function prepareColumns(EntityInterface $entity): array
+    {
+        $columns = [];
+        foreach ($entity->getFields() as $property => $field) {
             if ($property === 'id') {
                 continue;
             }
@@ -201,15 +196,9 @@ SQL;
                 continue;
             }
 
-            $fieldsPart .= $field['column'] . ' = :' . $property;
-
-            if ($iter < count($fields)) {
-                $fieldsPart .= ',';
-            }
+            $columns[$field['column']] = ':' . $property;
         }
 
-        return <<<SQL
-UPDATE $this->table SET $fieldsPart WHERE id = :id;
-SQL;
+        return $columns;
     }
 }

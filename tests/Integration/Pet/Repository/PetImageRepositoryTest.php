@@ -2,18 +2,19 @@
 
 namespace Tests\Integration\Pet\Repository;
 
-use App\Modules\Pet\Model\Entity\PetImageEntity;
 use App\Modules\Pet\Model\Repository\PetImageRepository;
 use Exception;
 use Framework\Exception\RepositoryException;
 use PDO;
+use PHPUnit\Framework\TestCase;
 use Tests\Integration\Framework\BaseTestFramework;
+use Tests\Integration\Pet\Provider\PetImageEntityProvider;
 
 /**
  * Class PetImageRepositoryTest
  * @package Tests\Integration\Pet\Repository
  */
-class PetImageRepositoryTest extends PetRepoProvider
+class PetImageRepositoryTest extends TestCase
 {
     /** @var PetImageRepository */
     protected static $petImageRepository;
@@ -34,7 +35,7 @@ class PetImageRepositoryTest extends PetRepoProvider
         self::$db = $container->get('pdoTest');
         $container->get('installerTest')->execute();
         self::$petImageRepository = $container->get('petImageRepository');
-        self::$petImages = self::getPetImages();
+        self::$petImages = PetImageEntityProvider::getPetImages();
     }
 
     /**

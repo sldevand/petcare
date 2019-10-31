@@ -30,7 +30,9 @@ class BaseTestFramework
 
         $container['pdoTest'] = function (ContainerInterface $container) {
             $settings = $container->get('settings')['pdo']['test'];
-            unlink($settings['db-file']);
+            if (file_exists($settings['db-file'])) {
+                unlink($settings['db-file']);
+            }
             return PDOFactory::getSqliteConnexion($settings['db-file']);
         };
         $container['installerTest'] = function (ContainerInterface $container) {

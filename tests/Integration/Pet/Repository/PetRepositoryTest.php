@@ -7,13 +7,14 @@ use App\Modules\Pet\Model\Repository\PetRepository;
 use Exception;
 use Framework\Exception\RepositoryException;
 use PDO;
+use PHPUnit\Framework\TestCase;
 use Tests\Integration\Framework\BaseTestFramework;
 
 /**
  * Class PetRepositoryTest
  * @package Tests\Integration\Pet
  */
-class PetRepositoryTest extends PetRepoProvider
+class PetRepositoryTest extends TestCase
 {
     /** @var PetRepository */
     protected static $petRepository;
@@ -37,7 +38,7 @@ class PetRepositoryTest extends PetRepoProvider
     {
 
         $attributes = [
-            'name' => 'elie', 'dob' => '13/10/2014', 'specy' => 'cat', 'imageId' => 1
+            'name' => 'elie', 'dob' => '13/10/2014', 'specy' => 'cat'
         ];
         $entity = new PetEntity($attributes);
 
@@ -50,7 +51,7 @@ class PetRepositoryTest extends PetRepoProvider
     public function testCreate()
     {
         $attributes = [
-            'name' => 'waf', 'dob' => '13/10/2014', 'specy' => 'dog', 'imageId' => 3
+            'name' => 'waf', 'dob' => '13/10/2014', 'specy' => 'dog'
         ];
 
         $entity = new PetEntity($attributes);

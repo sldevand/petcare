@@ -27,17 +27,14 @@ class PetEntity extends DefaultEntity
     /** @var string */
     protected $specy;
 
-    /** @var int */
-    protected $imageId;
-
-    /** @var PetImageEntity */
-    protected $image;
-
     /** @var string */
     protected $createdAt;
 
     /** @var string */
     protected $updatedAt;
+
+    /** @var PetImageEntity */
+    protected $image;
 
     /**
      * PetEntity constructor.

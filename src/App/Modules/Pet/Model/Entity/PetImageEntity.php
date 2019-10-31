@@ -12,6 +12,9 @@ use Framework\Model\Entity\DefaultEntity;
 class PetImageEntity extends DefaultEntity
 {
     /** @var string */
+    protected $petId;
+
+    /** @var string */
     protected $image;
 
     /**

@@ -21,7 +21,7 @@ class PetValidationTest extends TestCase
     {
         $now = (new DateTime())->format('Y-m-d H:i:s');
         $attributes = [
-            'name' => 'elie', 'dob' => '13/10/2014', 'specy' => 'cat', 'imageId' => 1, "createdAt" => $now
+            'name' => 'elie', 'dob' => '13/10/2014', 'specy' => 'cat', "createdAt" => $now
         ];
         $entity = new PetEntity($attributes);
 

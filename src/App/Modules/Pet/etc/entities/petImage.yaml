@@ -1,11 +1,11 @@
 table: petImage
 fields:
-    id:
-        column: id
+    petId:
+        column: petId
         type: integer
         constraints:
             fk:
-                reference: imageId
+                reference: id
                 table: pet
                 cascade:
                     - delete

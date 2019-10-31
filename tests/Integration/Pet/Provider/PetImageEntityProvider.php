@@ -1,20 +1,21 @@
 <?php
 
-namespace Tests\Integration\Pet\Repository;
+namespace Tests\Integration\Pet\Provider;
 
 use App\Modules\Pet\Model\Entity\PetImageEntity;
+use Exception;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class PetRepoProvider
- * @package Tests\Integration\Pet\Repository
+ * Class PetImageEntityProvider
+ * @package Tests\Integration\Pet\Provider
  */
-class PetRepoProvider extends TestCase
+class PetImageEntityProvider extends TestCase
 {
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    protected static function getPetImages()
+    public static function getPetImages()
     {
         $files = glob(__DIR__ . "/../data/*");
         $petImages = [];

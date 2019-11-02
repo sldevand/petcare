@@ -9,6 +9,7 @@ fields:
                 table: pet
                 cascade:
                     - delete
+            nullable: false
     image:
         column: image
         type: blob

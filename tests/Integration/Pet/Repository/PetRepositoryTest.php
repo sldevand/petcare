@@ -32,6 +32,12 @@ class PetRepositoryTest extends TestCase
         self::$petRepository = $container->get('petRepository');
     }
 
+    public function setUp()
+    {
+        self::$db->exec("PRAGMA foreign_keys=ON");
+        self::$db->exec('DELETE FROM pet;');
+    }
+
     /**
      * @throws Exception
      */
@@ -178,6 +184,36 @@ class PetRepositoryTest extends TestCase
         $entityWithImageFetched = self::$petRepository->fetchImage($afterEntity);
 
         $this->assertEquals($entityWithImageSaved, $entityWithImageFetched, 'Can\'t save PetEntity');
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testFetchAll()
+    {
+        $images = PetImageEntityProvider::getPetImages();
+
+        $dogAttributes = [
+            'name' => 'waf', 'dob' => '13/10/2014', 'specy' => 'dog'
+        ];
+        $dogEntity = new PetEntity($dogAttributes);
+
+        $catAttributes = [
+            'name' => 'elie', 'dob' => '13/10/2014', 'specy' => 'cat', 'image' => $images['cat']
+        ];
+        $catEntity = new PetEntity($catAttributes);
+
+        $savedDogEntity = self::$petRepository->save($dogEntity);
+        $savedCatEntity = self::$petRepository->save($catEntity);
+
+        $expected = [
+            $savedDogEntity,
+            $savedCatEntity
+        ];
+
+        $actual = self::$petRepository->fetchAll();
+
+        $this->assertEquals($expected, $actual);
     }
 
     protected function tearDown()

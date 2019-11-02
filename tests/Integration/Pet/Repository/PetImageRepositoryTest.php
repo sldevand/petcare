@@ -45,7 +45,7 @@ class PetImageRepositoryTest extends TestCase
     {
         $expected = clone self::$petImages['cat'];
         $result = self::$petImageRepository->create($expected);
-        $expected->setId(1);
+        $expected->setId($result->getId());
 
         $this->assertEquals($expected, $result, 'Can\'t create entity');
     }
@@ -72,7 +72,7 @@ class PetImageRepositoryTest extends TestCase
     {
         $beforePetImage = clone self::$petImages['cat'];
         $afterPetImage = self::$petImageRepository->save($beforePetImage);
-        $beforePetImage->setId(3);
+        $beforePetImage->setId($afterPetImage->getId());
 
         $this->assertEquals($beforePetImage, $afterPetImage, 'Can\'t save PetImage');
 
@@ -81,6 +81,26 @@ class PetImageRepositoryTest extends TestCase
         $updatedPetImage = self::$petImageRepository->save($newEntity);
 
         $this->assertNotEquals($beforePetImage, $updatedPetImage, 'The two PetImage entities are equal');
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testFetchAll()
+    {
+        $dogImage = clone self::$petImages['dog'];
+        $dogEntity = self::$petImageRepository->save($dogImage);
+
+        $catImage = clone self::$petImages['cat'];
+        $catEntity = self::$petImageRepository->save($catImage);
+
+        $expected = [
+            $dogEntity,
+            $catEntity
+        ];
+
+        $actual = self::$petImageRepository->fetchAll();
+        $this->assertEquals($expected, $actual);
     }
 
     /**

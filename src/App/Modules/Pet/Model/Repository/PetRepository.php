@@ -34,7 +34,8 @@ class PetRepository extends DefaultRepository
         ValidatorInterface $validator,
         PetImageRepository $petImageRepository,
         PetCareRepository $petCareRepository
-    ) {
+    )
+    {
         $this->table = "pet";
         $this->entityClass = PetEntity::class;
         $this->petImageRepository = $petImageRepository;
@@ -70,12 +71,15 @@ class PetRepository extends DefaultRepository
     /**
      * @param EntityInterface $entity
      * @return EntityInterface
-     * @throws RepositoryException
      */
     public function fetchImage(EntityInterface $entity): EntityInterface
     {
-        $image = $this->petImageRepository->findOneBy('petId', $entity->getId());
-        $entity->setImage($image);
+        try {
+            $image = $this->petImageRepository->findOneBy('petId', $entity->getId());
+            $entity->setImage($image);
+        } catch (RepositoryException $e) {
+            //Intentionally empty statement
+        }
 
         return $entity;
     }
@@ -83,7 +87,6 @@ class PetRepository extends DefaultRepository
     /**
      * @param EntityInterface $entity
      * @return EntityInterface
-     * @throws RepositoryException
      */
     public function fetchCares(EntityInterface $entity): EntityInterface
     {
@@ -91,5 +94,20 @@ class PetRepository extends DefaultRepository
         $entity->setImage($image);
 
         return $entity;
+    }
+
+    /**
+     * @return EntityInterface[]
+     * @throws Exception
+     */
+    public function fetchAll(): array
+    {
+        $pets = parent::fetchAll();
+
+        foreach ($pets as $key => $pet) {
+            $pets[$key] = $this->fetchImage($pet);
+        }
+
+        return $pets;
     }
 }

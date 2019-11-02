@@ -19,10 +19,10 @@ class PetImageEntityProvider extends TestCase
     {
         $files = glob(__DIR__ . "/../data/*");
         $petImages = [];
-        foreach ($files as $file) {
+        foreach ($files as $key => $file) {
             $name = explode('.', basename($file))[0];
             $encodedImage = base64_encode(file_get_contents($file));
-            $petImages[$name] = new PetImageEntity(['image' => $encodedImage]);
+            $petImages[$name] = new PetImageEntity(['image' => $encodedImage, 'petId' => $key + 1]);
         }
 
         return $petImages;

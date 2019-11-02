@@ -137,13 +137,35 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
     }
 
     /**
-     * @return array
+     * @return EntityInterface[]
+     * @throws Exception
      */
     public function fetchAll(): array
     {
-        $sql = 'SELECT * FROM ' . $this->table;
+        $sql = "SELECT * FROM $this->table";
+        $st = $this->prepare($sql);
+        $st->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $this->entityClass);
+        $st->execute();
 
-        return $this->db->query($sql, PDO::FETCH_ASSOC)->fetchAll();
+        return $st->fetchAll();
+    }
+
+    /**
+     * @param string $field
+     * @param int $value
+     * @return EntityInterface[]
+     * @throws Exception
+     */
+    public function fetchAllByField(string $field, int $value): array
+    {
+        $sql = "SELECT * FROM $this->table WHERE $field=:$field";
+
+        $st = $this->prepare($sql);
+        $st->bindValue(":$field", $value);
+        $st->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $this->entityClass);
+        $st->execute();
+
+        return $st->fetchAll();
     }
 
     /**

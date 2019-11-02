@@ -62,7 +62,7 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
 
         $id = $this->getLastInserted($this->table);
 
-        return $this->findOne($id);
+        return $this->fetchOne($id);
     }
 
     /**
@@ -86,7 +86,7 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
         $st->execute();
         $st->closeCursor();
 
-        return $this->findOne($entity->getId());
+        return $this->fetchOne($entity->getId());
     }
 
     /**
@@ -109,9 +109,9 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
      * @throws RepositoryException
      * @throws Exception
      */
-    public function findOne(int $id): EntityInterface
+    public function fetchOne(int $id): EntityInterface
     {
-        return $this->findOneBy('id', $id);
+        return $this->fetchOneBy('id', $id);
     }
 
     /**
@@ -120,7 +120,7 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
      * @return EntityInterface
      * @throws RepositoryException
      */
-    public function findOneBy(string $field, int $value): EntityInterface
+    public function fetchOneBy(string $field, int $value): EntityInterface
     {
         $sql = "SELECT * FROM $this->table WHERE $field=:$field";
         $st = $this->prepare($sql);
@@ -130,7 +130,7 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
 
         if (!$result = $st->fetch()) {
             $class = get_class($this);
-            throw new RepositoryException("$class::findOneBy($field, $value) --> cannot fetch: PDO error");
+            throw new RepositoryException("$class::fetchOneBy($field, $value) --> cannot fetch: PDO error");
         }
 
         return $result;

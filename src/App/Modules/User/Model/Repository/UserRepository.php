@@ -2,6 +2,8 @@
 
 namespace App\Modules\User\Model\Repository;
 
+use App\Modules\Pet\Model\Entity\PetEntity;
+use App\Modules\Pet\Model\Repository\PetRepository;
 use App\Modules\User\Model\Entity\UserEntity;
 use App\Modules\User\Model\Entity\UserPetEntity;
 use Exception;
@@ -19,16 +21,21 @@ class UserRepository extends DefaultRepository
     /** @var UserPetRepository */
     protected $userPetRepository;
 
+    /** @var PetRepository */
+    protected $petRepository;
+
     public function __construct(
         PDO $db,
         ValidatorInterface $validator,
-        UserPetRepository $userPetRepository
+        UserPetRepository $userPetRepository,
+        PetRepository $petRepository
     )
     {
         parent::__construct($db, $validator);
         $this->table = "user";
         $this->entityClass = UserEntity::class;
         $this->userPetRepository = $userPetRepository;
+        $this->petRepository = $petRepository;
     }
 
     /**
@@ -39,20 +46,48 @@ class UserRepository extends DefaultRepository
     public function save(EntityInterface $entity): EntityInterface
     {
         $user = parent::save($entity);
-        $userId = $user->getId();
 
         if (!empty($pets = $entity->getPets())) {
-            $user->setPets($pets);
-            foreach ($pets as $pet) {
-                $userPetEntity = new UserPetEntity();
-                $userPetEntity
-                    ->setUserId($userId)
-                    ->setPetId($pet->getId());
-
-                $this->userPetRepository->create($userPetEntity);
-            }
+            return $this->savePets($user, $pets);
         }
 
         return $user;
+    }
+
+    /**
+     * @param UserEntity $user
+     * @param PetEntity[] $pets
+     * @return UserEntity
+     * @throws Exception
+     */
+    public function savePets(UserEntity $user, array $pets): UserEntity
+    {
+        foreach ($pets as $pet) {
+            $pet = $this->petRepository->save($pet);
+            $user->addPet($pet);
+            $userPetEntity = new UserPetEntity();
+            $userPetEntity
+                ->setUserId($user->getId())
+                ->setPetId($pet->getId());
+
+            $this->userPetRepository->create($userPetEntity);
+        }
+
+        return $user;
+    }
+
+    public function fetchAll(): array
+    {
+        $users = parent::fetchAll();
+
+        foreach ($users as $userKey => $user) {
+            $userPets = $this->userPetRepository->fetchAllByUserId($user->getId());
+            foreach ($userPets as $userPetKey => $userPet) {
+                $pet = $this->petRepository->fetchOne($userPet->getPetId());
+                $users[$userKey]->addPet($pet);
+            }
+        }
+
+        return $users;
     }
 }

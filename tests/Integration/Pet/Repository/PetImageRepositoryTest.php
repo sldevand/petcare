@@ -116,7 +116,7 @@ class PetImageRepositoryTest extends TestCase
         $this->assertTrue($result === true, 'could not delete this entity');
 
         try {
-            $petAfter = self::$petImageRepository->findOne($id);
+            $petAfter = self::$petImageRepository->fetchOne($id);
         } catch (RepositoryException $e) {
             $petAfter = false;
         }

@@ -52,9 +52,9 @@ class PetController extends AbstractContainerInjector
      * @param array $args
      * @return Response
      */
-    public function findOneByName(Request $request, Response $response, array $args = []): Response
+    public function fetchOneByName(Request $request, Response $response, array $args = []): Response
     {
-        $data = $this->container->get('petRepository')->findOneByName($args['name']);
+        $data = $this->container->get('petRepository')->fetchOneByName($args['name']);
 
         return $response->withJson($data, 200);
     }

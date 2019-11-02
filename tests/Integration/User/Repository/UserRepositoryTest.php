@@ -2,7 +2,6 @@
 
 namespace Tests\Integration\User\Repository;
 
-use App\Modules\Pet\Model\Entity\PetEntity;
 use App\Modules\Pet\Model\Repository\PetRepository;
 use App\Modules\User\Model\Entity\UserEntity;
 use App\Modules\User\Model\Repository\UserRepository;
@@ -11,7 +10,8 @@ use Exception;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use Tests\Integration\Framework\BaseTestFramework;
-use Tests\Integration\Pet\Provider\PetImageEntityProvider;
+use Tests\Integration\Pet\Provider\PetEntityProvider;
+use Tests\Integration\User\Provider\UserEntityProvider;
 
 /**
  * Class UserRepositoryTest
@@ -47,7 +47,7 @@ class UserRepositoryTest extends TestCase
     public function testSave()
     {
         $pets = [];
-        foreach ($this->getPets() as $pet) {
+        foreach (PetEntityProvider::getPets() as $pet) {
             $pets[] = self::$petRepository->save($pet);
         }
 
@@ -69,31 +69,29 @@ class UserRepositoryTest extends TestCase
         $this->assertEquals($user, $savedUser);
     }
 
+    public function testFetchOne()
+    {
+        $pets = [];
+        foreach (PetEntityProvider::getPets() as $pet) {
+            $pets[] = self::$petRepository->save($pet);
+        }
+    }
+
     /**
-     * @return PetEntity[]
      * @throws Exception
      */
-    public function getPets(): array
+    public function testFetchAll()
     {
-        $now = (new DateTime())->format('Y-m-d H:i:s');
+        $users = UserEntityProvider::getUsers();
 
-        $dogImageEntity = PetImageEntityProvider::getPetImages()['dog'];
-        $dogAttributes = [
-            'name' => 'waf', 'dob' => '13/10/2014', 'specy' => 'dog', 'createdAt' => $now, 'image' => $dogImageEntity
-        ];
-        $dogEntity = new PetEntity($dogAttributes);
+        $expected = [];
+        foreach ($users as $user) {
+            $expected[] = self::$userRepository->save($user);
+        }
 
-        $now = (new DateTime())->format('Y-m-d H:i:s');
-        $catImageEntity = PetImageEntityProvider::getPetImages()['cat'];
-        $attributesToUpdate = [
-            'name' => 'elie', 'dob' => '15/10/2014', 'specy' => 'cat', 'createdAt' => $now, 'image' => $catImageEntity
-        ];
-        $catEntity = new PetEntity($attributesToUpdate);
+        $actual = self::$userRepository->fetchAll();
 
-        return [
-            $dogEntity,
-            $catEntity
-        ];
+        $this->assertEquals($expected, $actual);
     }
 
     protected function tearDown()

@@ -75,7 +75,7 @@ class PetRepository extends DefaultRepository
     public function fetchImage(EntityInterface $entity): EntityInterface
     {
         try {
-            $image = $this->petImageRepository->findOneBy('petId', $entity->getId());
+            $image = $this->petImageRepository->fetchOneBy('petId', $entity->getId());
             $entity->setImage($image);
         } catch (RepositoryException $e) {
             //Intentionally empty statement
@@ -109,5 +109,17 @@ class PetRepository extends DefaultRepository
         }
 
         return $pets;
+    }
+
+    /**
+     * @param int $id
+     * @return EntityInterface
+     * @throws RepositoryException
+     */
+    public function fetchOne(int $id): EntityInterface
+    {
+        $pet = parent::fetchOne($id);
+
+        return $this->fetchImage($pet);
     }
 }

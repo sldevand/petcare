@@ -34,7 +34,7 @@ interface RepositoryInterface
      * @param int $id
      * @return EntityInterface
      */
-    public function findOne(int $id): EntityInterface;
+    public function fetchOne(int $id): EntityInterface;
 
     /**
      * @return array

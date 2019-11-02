@@ -4,6 +4,7 @@ namespace App\Modules\User\Model\Entity;
 
 use App\Modules\Pet\Model\Entity\PetEntity;
 use Exception;
+use Framework\Api\Entity\EntityInterface;
 use Framework\Model\Entity\DefaultEntity;
 
 /**
@@ -44,9 +45,13 @@ class UserEntity extends DefaultEntity
         parent::__construct($attributes);
     }
 
-    public function addPet(PetEntity $pet): UserEntity
+    /**
+     * @param EntityInterface $pet
+     * @return UserEntity
+     */
+    public function addPet(EntityInterface $pet): UserEntity
     {
-        $this->pets[$pet->getId()] = $pet;
+        $this->pets[] = $pet;
 
         return $this;
     }

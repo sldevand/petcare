@@ -13,7 +13,7 @@ $app->group('/api', function () {
     $this->group('/pets', function () {
         $this->get('', 'petController:all');
         $this->post('/new', 'petController:create');
-        $this->get('/{name}', 'petController:findOneByName');
+        $this->get('/{name}', 'petController:fetchOneByName');
     });
 });
 

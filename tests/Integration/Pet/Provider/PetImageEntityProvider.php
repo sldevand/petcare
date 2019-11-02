@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
  * Class PetImageEntityProvider
  * @package Tests\Integration\Pet\Provider
  */
-class PetImageEntityProvider extends TestCase
+class PetImageEntityProvider
 {
     /**
      * @throws Exception

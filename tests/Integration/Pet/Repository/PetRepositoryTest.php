@@ -157,6 +157,29 @@ class PetRepositoryTest extends TestCase
         $this->assertTrue($petAfter === false);
     }
 
+    /**
+     * @throws Exception
+     */
+    public function testFetchImage()
+    {
+        //Save PetEntity without image
+        $dogAttributes = [
+            'name' => 'waf', 'dob' => '13/10/2014', 'specy' => 'dog'
+        ];
+
+        $beforeEntity = new PetEntity($dogAttributes);
+        $afterEntity = self::$petRepository->save($beforeEntity);
+        $beforeEntity->setId($afterEntity->getId());
+
+        //Save new PetImage and attach it to PetEntity
+        $dogImageEntity = PetImageEntityProvider::getPetImages()['dog'];
+        $afterEntity->setImage($dogImageEntity);
+        $entityWithImageSaved = self::$petRepository->save($afterEntity);
+        $entityWithImageFetched = self::$petRepository->fetchImage($afterEntity);
+
+        $this->assertEquals($entityWithImageSaved, $entityWithImageFetched, 'Can\'t save PetEntity');
+    }
+
     protected function tearDown()
     {
         self::$db->exec("PRAGMA foreign_keys=ON");

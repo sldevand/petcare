@@ -3,6 +3,7 @@
 use App\Common\Setup\Installer;
 use App\Modules\Care\Model\Repository\CareRepository;
 use App\Modules\Pet\Controller\PetController;
+use App\Modules\Pet\Model\Repository\PetCareRepository;
 use App\Modules\Pet\Model\Repository\PetImageRepository;
 use App\Modules\Pet\Model\Repository\PetRepository;
 use App\Modules\User\Model\Repository\UserPetRepository;
@@ -71,12 +72,25 @@ $container['defaultValidator'] = function (ContainerInterface $c) {
 };
 
 // repositories
+$container['careRepository'] = function (ContainerInterface $c) {
+    return new CareRepository($c->get('pdo'), $c->get('defaultValidator'));
+};
+
 $container['petImageRepository'] = function (ContainerInterface $c) {
     return new PetImageRepository($c->get('pdo'), $c->get('defaultValidator'));
 };
 
+$container['petCareRepository'] = function (ContainerInterface $c) {
+    return new PetCareRepository($c->get('pdo'), $c->get('defaultValidator'));
+};
+
 $container['petRepository'] = function (ContainerInterface $c) {
-    return new PetRepository($c->get('pdo'), $c->get('defaultValidator'), $c->get('petImageRepository'));
+    return new PetRepository(
+        $c->get('pdo'),
+        $c->get('defaultValidator'),
+        $c->get('petImageRepository'),
+        $c->get('petCareRepository')
+    );
 };
 
 $container['userPetRepository'] = function (ContainerInterface $c) {
@@ -85,8 +99,4 @@ $container['userPetRepository'] = function (ContainerInterface $c) {
 
 $container['userRepository'] = function (ContainerInterface $c) {
     return new UserRepository($c->get('pdo'), $c->get('defaultValidator'), $c->get('userPetRepository'));
-};
-
-$container['careRepository'] = function (ContainerInterface $c) {
-    return new CareRepository($c->get('pdo'), $c->get('defaultValidator'));
 };

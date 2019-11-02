@@ -51,6 +51,7 @@ class PetCareRepositoryTest extends TestCase
 
     protected function tearDown()
     {
+        self::$db->exec("PRAGMA foreign_keys=ON");
         self::$db->exec("DELETE FROM petCare;");
     }
 }

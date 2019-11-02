@@ -111,15 +111,26 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
      */
     public function findOne(int $id): EntityInterface
     {
-        $sql = "SELECT * FROM $this->table WHERE id=:id";
+        return $this->findOneBy('id', $id);
+    }
+
+    /**
+     * @param string $field
+     * @param int $value
+     * @return EntityInterface
+     * @throws RepositoryException
+     */
+    public function findOneBy(string $field, int $value): EntityInterface
+    {
+        $sql = "SELECT * FROM $this->table WHERE $field=:$field";
         $st = $this->prepare($sql);
-        $st->bindValue(":id", $id);
+        $st->bindValue(":$field", $value);
         $st->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $this->entityClass);
         $st->execute();
 
         if (!$result = $st->fetch()) {
             $class = get_class($this);
-            throw new RepositoryException("$class::findOne --> cannot fetch: PDO error");
+            throw new RepositoryException("$class::findOneBy($field, $value) --> cannot fetch: PDO error");
         }
 
         return $result;

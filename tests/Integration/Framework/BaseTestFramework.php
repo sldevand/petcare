@@ -56,7 +56,12 @@ class BaseTestFramework
         };
 
         $container['petRepository'] = function (ContainerInterface $container) {
-            return new PetRepository($container->get('pdoTest'), $container->get('defaultValidator'), $container->get('petImageRepository'));
+            return new PetRepository(
+                $container->get('pdoTest'),
+                $container->get('defaultValidator'),
+                $container->get('petImageRepository'),
+                $container->get('petCareRepository')
+            );
         };
 
         $container['userPetRepository'] = function (ContainerInterface $container) {

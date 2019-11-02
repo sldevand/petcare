@@ -1,0 +1,17 @@
+table:
+    care
+fields:
+    title:
+        column: title
+        type: text
+        constraints:
+            nullable: false
+    content:
+        column: content
+        type: text
+    createdAt:
+        column: createdAt
+        type: text
+    updatedAt:
+        column: updatedAt
+        type: text

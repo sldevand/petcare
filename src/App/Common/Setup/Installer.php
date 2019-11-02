@@ -66,7 +66,7 @@ class Installer implements InstallerInterface
     {
         $moduleDirs = Yaml::parseFile(APP_ETC_DIR . '/config.yaml')['modules'];
         foreach ($moduleDirs as $moduleName => $value) {
-            if (!$value['enabled']) {
+            if ($value['enabled'] === false) {
                 continue;
             }
             $this->output->writeln("Installing $moduleName Module...");

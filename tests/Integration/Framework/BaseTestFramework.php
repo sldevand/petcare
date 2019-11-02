@@ -3,6 +3,7 @@
 namespace Tests\Integration\Framework;
 
 use App\Common\Setup\Installer;
+use App\Modules\Care\Model\Repository\CareRepository;
 use App\Modules\Pet\Model\Repository\PetImageRepository;
 use App\Modules\Pet\Model\Repository\PetRepository;
 use App\Modules\User\Model\Repository\UserPetRepository;
@@ -37,6 +38,7 @@ class BaseTestFramework
             }
             return PDOFactory::getSqliteConnexion($settings['db-file']);
         };
+
         $container['installerTest'] = function (ContainerInterface $container) {
             $settings = $container->get('settings')['pdo']['test'];
             $output = new ConsoleOutput();
@@ -49,30 +51,23 @@ class BaseTestFramework
         };
 
         $container['petImageRepository'] = function (ContainerInterface $container) {
-            $pdo = $container->get('pdoTest');
-            return new PetImageRepository($pdo, $container->get('defaultValidator'));
+            return new PetImageRepository($container->get('pdoTest'), $container->get('defaultValidator'));
         };
 
         $container['petRepository'] = function (ContainerInterface $container) {
-            $pdo = $container->get('pdoTest');
-            return new PetRepository($pdo, $container->get('defaultValidator'), $container->get('petImageRepository'));
+            return new PetRepository($container->get('pdoTest'), $container->get('defaultValidator'), $container->get('petImageRepository'));
         };
 
         $container['userPetRepository'] = function (ContainerInterface $container) {
-            $pdo = $container->get('pdoTest');
-            return new UserPetRepository($pdo, $container->get('defaultValidator'));
+            return new UserPetRepository($container->get('pdoTest'), $container->get('defaultValidator'));
         };
 
         $container['userRepository'] = function (ContainerInterface $container) {
-            $pdo = $container->get('pdoTest');
-            return new UserRepository($pdo, $container->get('defaultValidator'), $container->get('userPetRepository'));
+            return new UserRepository($container->get('pdoTest'), $container->get('defaultValidator'), $container->get('userPetRepository'));
         };
 
-        $container['installerTest'] = function (ContainerInterface $container) {
-            $settings = $container->get('settings')['pdo']['test'];
-            $output = new ConsoleOutput();
-            $queryBuilder = new Builder();
-            return new Installer($container->get('pdoTest'), $settings['install-file'], $output, $queryBuilder);
+        $container['careRepository'] = function (ContainerInterface $container) {
+            return new CareRepository($container->get('pdoTest'), $container->get('defaultValidator'));
         };
 
         return $app;

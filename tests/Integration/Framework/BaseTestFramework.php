@@ -4,6 +4,7 @@ namespace Tests\Integration\Framework;
 
 use App\Common\Setup\Installer;
 use App\Modules\Care\Model\Repository\CareRepository;
+use App\Modules\Pet\Model\Repository\PetCareRepository;
 use App\Modules\Pet\Model\Repository\PetImageRepository;
 use App\Modules\Pet\Model\Repository\PetRepository;
 use App\Modules\User\Model\Repository\UserPetRepository;
@@ -64,6 +65,10 @@ class BaseTestFramework
 
         $container['userRepository'] = function (ContainerInterface $container) {
             return new UserRepository($container->get('pdoTest'), $container->get('defaultValidator'), $container->get('userPetRepository'));
+        };
+
+        $container['petCareRepository'] = function (ContainerInterface $container) {
+            return new PetCareRepository($container->get('pdoTest'), $container->get('defaultValidator'));
         };
 
         $container['careRepository'] = function (ContainerInterface $container) {

@@ -3,7 +3,7 @@
 namespace Tests\Integration\Setup;
 
 use PHPUnit\Framework\TestCase;
-use Slim\App;
+use Tests\Integration\Framework\BaseTestFramework;
 
 /**
  * Class InstallerTest
@@ -13,13 +13,9 @@ class InstallerTest extends TestCase
 {
     public function testExecute()
     {
-        require_once __DIR__ . '/../../../src/bootstrap.php';
-        require_once VENDOR_DIR . '/autoload.php';
-        $settings = require SRC_DIR . '/settings.php';
-        $app = new App($settings);
-        require_once SRC_DIR . '/dependencies.php';
-
-        $installer = $app->getContainer()->get('installer');
+        $app = BaseTestFramework::generateApp();
+        $installer = $app->getContainer()->get('installerTest');
+        $installer->execute();
         $installer->execute();
     }
 }

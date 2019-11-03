@@ -1,15 +1,15 @@
 <?php
 
-namespace Framework\Modules\Module\Model\Entity;
+namespace Framework\Modules\Installed\Model\Entity;
 
 use Exception;
 use Framework\Model\Entity\DefaultEntity;
 
 /**
- * Class ModuleEntity
- * @package Framework\Modules\Module\Model\Entity
+ * Class InstalledEntity
+ * @package Framework\Modules\Installed\Model\Entity
  */
-class ModuleEntity extends DefaultEntity
+class InstalledEntity extends DefaultEntity
 {
     /** @var string */
     protected $name;
@@ -18,13 +18,13 @@ class ModuleEntity extends DefaultEntity
     protected $version;
 
     /**
-     * PetEntity constructor.
+     * InstalledEntity constructor.
      * @param array $attributes
      * @throws Exception
      */
     public function __construct(array $attributes = [])
     {
-        $this->configFile = __DIR__ . '/../../etc/entities/module.yaml';
+        $this->configFile = __DIR__ . '/../../etc/entities/installed.yaml';
         parent::__construct($attributes);
     }
 }

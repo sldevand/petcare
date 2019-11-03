@@ -11,7 +11,7 @@ use App\Modules\User\Model\Repository\UserPetRepository;
 use App\Modules\User\Model\Repository\UserRepository;
 use Framework\Db\Pdo\Query\Builder;
 use Framework\Model\Validator\DefaultValidator;
-use Framework\Modules\Module\Model\Repository\ModuleRepository;
+use Framework\Modules\Installed\Model\Repository\InstalledRepository;
 use Framework\Resource\PDOFactory;
 use Psr\Container\ContainerInterface;
 use Slim\App;
@@ -45,8 +45,8 @@ class BaseTestFramework
             return new DefaultValidator();
         };
 
-        $container['moduleRepository'] = function (ContainerInterface $c) {
-            return new ModuleRepository(
+        $container['installedRepository'] = function (ContainerInterface $c) {
+            return new InstalledRepository(
                 $c->get('pdoTest'),
                 $c->get('defaultValidator')
             );
@@ -57,10 +57,10 @@ class BaseTestFramework
             $queryBuilder = new Builder();
             return new Installer(
                 $container->get('pdoTest'),
-                $settings['install-file'],
+                $settings['db-file'],
                 $output,
                 $queryBuilder,
-                $container->get('moduleRepository')
+                $container->get('installedRepository')
             );
         };
 

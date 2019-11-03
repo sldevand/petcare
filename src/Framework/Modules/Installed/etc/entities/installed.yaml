@@ -1,4 +1,4 @@
-table: module
+table: installed
 fields:
     name:
         column: name

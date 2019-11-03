@@ -3,8 +3,6 @@
 namespace Framework\Api\Repository;
 
 use Framework\Api\Entity\EntityInterface;
-use Framework\Api\Validator\ValidatorInterface;
-use PDO;
 
 /**
  * Interface RepositoryInterface

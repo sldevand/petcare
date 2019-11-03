@@ -2,10 +2,7 @@
 
 namespace App\Common\Command;
 
-use App\Common\Setup\Installer;
 use Exception;
-use Framework\Db\Pdo\Query\Builder;
-use Framework\Resource\PDOFactory;
 use Slim\App;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

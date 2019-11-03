@@ -1,9 +1,9 @@
 <?php
 
+use App\Modules\Pet\Model\Repository\PetRepository;
 use Firebase\JWT\JWT;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use App\Modules\Pet\Model\Repository\PetRepository;
 
 $container = $app->getContainer();
 

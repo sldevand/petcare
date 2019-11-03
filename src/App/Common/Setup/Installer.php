@@ -5,8 +5,8 @@ namespace App\Common\Setup;
 use Exception;
 use Framework\Api\Installer\InstallerInterface;
 use Framework\Db\Pdo\Query\Builder;
-use Framework\Modules\Module\Model\Entity\ModuleEntity;
-use Framework\Modules\Module\Model\Repository\ModuleRepository;
+use Framework\Modules\Installed\Model\Entity\InstalledEntity;
+use Framework\Modules\Installed\Model\Repository\InstalledRepository;
 use PDO;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
@@ -29,8 +29,8 @@ class Installer implements InstallerInterface
     /** @var Builder */
     protected $builder;
 
-    /** @var ModuleRepository */
-    protected $moduleRepository;
+    /** @var InstalledRepository */
+    protected $installedRepository;
 
     /**
      * Installer constructor.
@@ -38,20 +38,20 @@ class Installer implements InstallerInterface
      * @param string $sqlFile
      * @param OutputInterface $output
      * @param Builder $builder
-     * @param ModuleRepository $moduleRepository
+     * @param InstalledRepository $installedRepository
      */
     public function __construct(
         PDO $pdo,
         string $sqlFile,
         OutputInterface $output,
         Builder $builder,
-        ModuleRepository $moduleRepository
+        InstalledRepository $installedRepository
     ) {
         $this->pdo = $pdo;
         $this->sqlFile = $sqlFile;
         $this->output = $output;
         $this->builder = $builder;
-        $this->moduleRepository = $moduleRepository;
+        $this->installedRepository = $installedRepository;
     }
 
     /**
@@ -59,64 +59,57 @@ class Installer implements InstallerInterface
      */
     public function execute()
     {
-        $this->installModules(FRAMEWORK_DIR, true);
+        $this->writeInfo("---Start Installation---");
+        $this->writeInfo("-Framework Modules installation");
+        $this->installModules(FRAMEWORK_DIR);
+        $this->writeInfo("-App Modules installation");
         $this->installModules(APP_DIR);
+        $this->writeInfo("---End of installation---");
     }
 
     /**
      * @param string $scopeDir
-     * @param bool $fromFramework
      * @throws Exception
      */
-    protected function installModules(string $scopeDir, bool $fromFramework = false)
+    protected function installModules(string $scopeDir)
     {
         $configFile = $scopeDir . '/etc/config.yaml';
 
-        $installedModuleNames = [];
-        if (!$fromFramework) {
-            $installedModuleNames = $this->getInstalledModuleNames();
+        try {
+            $installedModules = $this->installedRepository->fetchAll();
+        } catch (Exception $exception) {
+            $installedModules = [];
         }
 
         $moduleDirs = Yaml::parseFile($configFile)['modules'];
+
         foreach ($moduleDirs as $moduleName => $value) {
             if ($value['enabled'] === false) {
+                $this->writeComment("$moduleName Module is disabled!");
                 continue;
             }
 
-            if (!$fromFramework && in_array($moduleName, $installedModuleNames)) {
-                $this->output->writeln("$moduleName Module is already installed !");
+            if ($installedModule = $this->isModuleAlreadyInstalled($moduleName, $installedModules)) {
+                $name = $installedModule->getName();
+                $version = $installedModule->getVersion();
+                $this->writeComment("$name Module is already installed with version $version!");
                 continue;
             }
 
-            $moduleConfig = $this->getModuleConfig($scopeDir, $moduleName);
-
-
-            $this->output->writeln("Installing $moduleName Module...");
             $this->installModule($scopeDir, $moduleName);
-            $this->moduleRepository->save(
-                new ModuleEntity(
-                    [
-                        'name' => $moduleConfig['name'],
-                        'version' => $moduleConfig['version']
-                    ]
-                )
-            );
-            $this->output->writeln("Module $moduleName installed");
+            $this->saveModuleVersion($scopeDir, $moduleName);
         }
     }
 
-    /**
-     * @return array
-     * @throws Exception
-     */
-    public function getInstalledModuleNames()
+    protected function isModuleAlreadyInstalled($moduleName, $installedModules)
     {
-        $installedModuleNames = [];
-        foreach ($this->moduleRepository->fetchAll() as $module) {
-            $installedModuleNames[] = $module->getName();
+        foreach ($installedModules as $installedModule) {
+            if ($moduleName === $installedModule->getName()) {
+                return $installedModule;
+            }
         }
 
-        return $installedModuleNames;
+        return false;
     }
 
     /**
@@ -136,12 +129,44 @@ class Installer implements InstallerInterface
      */
     protected function installModule(string $scopeDir, string $moduleName)
     {
+        $this->writeInfo("Installing $moduleName Module...");
         $pattern = $scopeDir . "/Modules/$moduleName/etc/entities/*.yaml";
-
         $entityFiles = glob($pattern);
         foreach ($entityFiles as $entityFile) {
             $sql = $this->builder->createTable($entityFile);
             $this->pdo->exec($sql);
         }
+    }
+
+    /**
+     * @param $scopeDir
+     * @param $moduleName
+     * @throws Exception
+     */
+    protected function saveModuleVersion($scopeDir, $moduleName)
+    {
+        $moduleConfig = $this->getModuleConfig($scopeDir, $moduleName);
+        $version = $moduleConfig['version'];
+        $name = $moduleConfig['name'];
+        $this->installedRepository->save(
+            new InstalledEntity(
+                [
+                    'name' => $name,
+                    'version' => $version
+                ]
+            )
+        );
+
+        $this->writeInfo("Module $name installed with version $version");
+    }
+
+    protected function writeInfo($str)
+    {
+        $this->output->writeln("<info>$str</info>");
+    }
+
+    protected function writeComment($str)
+    {
+        $this->output->writeln("<comment>$str</comment>");
     }
 }

@@ -3,7 +3,6 @@
 namespace Framework\Exception;
 
 use Exception;
-use Throwable;
 
 /**
  * Class YamlEntityNotValidException

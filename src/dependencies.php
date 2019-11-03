@@ -10,7 +10,7 @@ use App\Modules\User\Model\Repository\UserPetRepository;
 use App\Modules\User\Model\Repository\UserRepository;
 use Framework\Db\Pdo\Query\Builder;
 use Framework\Model\Validator\DefaultValidator;
-use Framework\Modules\Module\Model\Repository\ModuleRepository;
+use Framework\Modules\Installed\Model\Repository\InstalledRepository;
 use Framework\Resource\PDOFactory;
 use Psr\Container\ContainerInterface;
 use Slim\Views\PhpRenderer;
@@ -57,8 +57,8 @@ $container['defaultValidator'] = function (ContainerInterface $c) {
     return new DefaultValidator();
 };
 
-$container['moduleRepository'] = function (ContainerInterface $c) {
-    return new ModuleRepository(
+$container['installedRepository'] = function (ContainerInterface $c) {
+    return new InstalledRepository(
         $c->get('pdo'),
         $c->get('defaultValidator')
     );
@@ -68,12 +68,13 @@ $container['moduleRepository'] = function (ContainerInterface $c) {
 $container['installer'] = function (ContainerInterface $c) {
     return new Installer(
         $c->get('pdo'),
-        $c->get('settings')['pdo']['prod']['install-file'],
+        $c->get('settings')['pdo']['prod']['db-file'],
         $c->get('consoleOutput'),
         $c->get('queryBuilder'),
-        $c->get('moduleRepository')
+        $c->get('installedRepository')
     );
 };
+
 
 // controllers
 $container['petController'] = function (ContainerInterface $c) {

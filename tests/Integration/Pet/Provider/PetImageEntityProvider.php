@@ -4,7 +4,6 @@ namespace Tests\Integration\Pet\Provider;
 
 use App\Modules\Pet\Model\Entity\PetImageEntity;
 use Exception;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Class PetImageEntityProvider

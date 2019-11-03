@@ -19,12 +19,10 @@ return [
         // PDO settings
         'pdo' => [
             'prod' => [
-                'db-file' => __DIR__ . '/../var/db/petcare.db',
-                'install-file' => __DIR__ . '/../sql/setup-1.0.0.sql'
+                'db-file' => __DIR__ . '/../var/db/petcare.db'
             ],
             'test' => [
-                'db-file' => __DIR__ . '/../var/db/petcare-test.db',
-                'install-file' => __DIR__ . '/../sql/setup-1.0.0.sql'
+                'db-file' => __DIR__ . '/../var/db/petcare-test.db'
             ]
         ]
     ],

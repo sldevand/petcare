@@ -34,8 +34,7 @@ class PetRepository extends DefaultRepository
         ValidatorInterface $validator,
         PetImageRepository $petImageRepository,
         PetCareRepository $petCareRepository
-    )
-    {
+    ) {
         $this->table = "pet";
         $this->entityClass = PetEntity::class;
         $this->petImageRepository = $petImageRepository;

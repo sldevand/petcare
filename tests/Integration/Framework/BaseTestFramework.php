@@ -11,6 +11,7 @@ use App\Modules\User\Model\Repository\UserPetRepository;
 use App\Modules\User\Model\Repository\UserRepository;
 use Framework\Db\Pdo\Query\Builder;
 use Framework\Model\Validator\DefaultValidator;
+use Framework\Modules\Module\Model\Repository\ModuleRepository;
 use Framework\Resource\PDOFactory;
 use Psr\Container\ContainerInterface;
 use Slim\App;
@@ -40,15 +41,27 @@ class BaseTestFramework
             return PDOFactory::getSqliteConnexion($settings['db-file']);
         };
 
+        $container['defaultValidator'] = function (ContainerInterface $container) {
+            return new DefaultValidator();
+        };
+
+        $container['moduleRepository'] = function (ContainerInterface $c) {
+            return new ModuleRepository(
+                $c->get('pdoTest'),
+                $c->get('defaultValidator')
+            );
+        };
         $container['installerTest'] = function (ContainerInterface $container) {
             $settings = $container->get('settings')['pdo']['test'];
             $output = new ConsoleOutput();
             $queryBuilder = new Builder();
-            return new Installer($container->get('pdoTest'), $settings['install-file'], $output, $queryBuilder);
-        };
-
-        $container['defaultValidator'] = function (ContainerInterface $container) {
-            return new DefaultValidator();
+            return new Installer(
+                $container->get('pdoTest'),
+                $settings['install-file'],
+                $output,
+                $queryBuilder,
+                $container->get('moduleRepository')
+            );
         };
 
         $container['petImageRepository'] = function (ContainerInterface $container) {

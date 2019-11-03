@@ -29,7 +29,8 @@ class UserRepository extends DefaultRepository
         ValidatorInterface $validator,
         UserPetRepository $userPetRepository,
         PetRepository $petRepository
-    ) {
+    )
+    {
         parent::__construct($db, $validator);
         $this->table = "user";
         $this->entityClass = UserEntity::class;
@@ -38,15 +39,16 @@ class UserRepository extends DefaultRepository
     }
 
     /**
-     * @param EntityInterface $entity
+     * @param EntityInterface $userEntity
      * @return EntityInterface
      * @throws Exception
      */
-    public function save(EntityInterface $entity): EntityInterface
+    public function save(EntityInterface $userEntity): EntityInterface
     {
-        $user = parent::save($entity);
+        /** @var UserEntity $user */
+        $user = parent::save($userEntity);
 
-        if (!empty($pets = $entity->getPets())) {
+        if (!empty($pets = $userEntity->getPets())) {
             return $this->savePets($user, $pets);
         }
 

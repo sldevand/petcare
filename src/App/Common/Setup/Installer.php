@@ -51,37 +51,37 @@ class Installer implements InstallerInterface
      */
     public function execute()
     {
-        $req = file_get_contents($this->sqlFile);
-        $req = str_replace("\n", "", $req);
-        $req = str_replace("\r", "", $req);
-
-        $this->pdo->exec($req);
-        $this->installModules();
+        $this->installModules(FRAMEWORK_DIR);
+        $this->installModules(APP_DIR);
     }
 
     /**
+     * @param string $scopeDir
      * @throws Exception
      */
-    protected function installModules()
+    protected function installModules(string $scopeDir)
     {
-        $moduleDirs = Yaml::parseFile(APP_ETC_DIR . '/config.yaml')['modules'];
+        $configFile = $scopeDir . '/etc/config.yaml';
+
+        $moduleDirs = Yaml::parseFile($configFile)['modules'];
         foreach ($moduleDirs as $moduleName => $value) {
             if ($value['enabled'] === false) {
                 continue;
             }
             $this->output->writeln("Installing $moduleName Module...");
-            $this->installModule($moduleName);
+            $this->installModule($scopeDir, $moduleName);
             $this->output->writeln("Module $moduleName installed");
         }
     }
 
     /**
+     * @param string $scopeDir
      * @param string $moduleName
      * @throws Exception
      */
-    protected function installModule($moduleName)
+    protected function installModule(string $scopeDir, string $moduleName)
     {
-        $pattern = MODULES_DIR . "/$moduleName/etc/entities/*.yaml";
+        $pattern = $scopeDir . "/Modules/$moduleName/etc/entities/*.yaml";
         $entityFiles = glob($pattern);
         foreach ($entityFiles as $entityFile) {
             $sql = $this->builder->createTable($entityFile);

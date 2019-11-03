@@ -8,6 +8,10 @@ use Framework\Model\Entity\DefaultEntity;
 /**
  * Class UserPetEntity
  * @package App\Modules\User\Model\Entity
+ * @method getUserId()
+ * @method getPetId()
+ * @method setUserId($userId)
+ * @method setPetId($petId)
  */
 class UserPetEntity extends DefaultEntity
 {

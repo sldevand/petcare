@@ -1,0 +1,14 @@
+table: test
+fields:
+    id:
+        column: id
+        type: integer
+        constraints:
+            fk:
+                refrence: testId
+                table: test1
+    testProperty:
+        column: testProperty
+        type: text
+        constraints:
+            nullable: false

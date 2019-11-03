@@ -44,7 +44,41 @@ class YamlEntityValidatorTest extends TestCase
         $valid = $validator->validate();
         $errors = $validator->getErrors();
 
-        self::assertNotEmpty($errors, "There are no errors in this invalid file : $file");
+        print_r($errors);
+
         self::assertFalse($valid === true, "Validator has validated an this invalid file : $file");
+        self::assertNotEmpty($errors, "There are no errors in this invalid file : $file");
+    }
+
+    /**
+     * @throws YamlEntityNotValidException
+     */
+    public function testOptionalConstraintsKeysInvalid()
+    {
+        $file = __DIR__ . '/data/testOptionalConstraintKeysInvalid.yaml';
+        $validator = new YamlEntityValidator($file);
+        $valid = $validator->validate();
+        $errors = $validator->getErrors();
+
+        print_r($errors);
+
+        self::assertFalse($valid === true, "Validator has validated an this invalid file : $file");
+        self::assertNotEmpty($errors, "There are no errors in this invalid file : $file");
+    }
+
+    /**
+     * @throws YamlEntityNotValidException
+     */
+    public function testMandatoryFkKeysInvalid()
+    {
+        $file = __DIR__ . '/data/testMandatoryFkKeysInvalid.yaml';
+        $validator = new YamlEntityValidator($file);
+        $valid = $validator->validate();
+        $errors = $validator->getErrors();
+
+        print_r($errors);
+
+        self::assertFalse($valid === true, "Validator has validated an this invalid file : $file");
+        self::assertNotEmpty($errors, "There are no errors in this invalid file : $file");
     }
 }

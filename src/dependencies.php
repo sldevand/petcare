@@ -16,7 +16,6 @@ $container['petController'] = function (ContainerInterface $c) {
     return new PetController($c);
 };
 
-
 // repositories
 $container['careRepository'] = function (ContainerInterface $c) {
     return new CareRepository($c->get('pdo'), $c->get('defaultValidator'));

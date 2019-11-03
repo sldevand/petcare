@@ -20,17 +20,17 @@
         "slim/slim": "^3.1",
         "slim/php-view": "^2.0",
         "monolog/monolog": "^1.17",
-        "ext-pdo": "*",
         "tuupola/slim-jwt-auth": "^2.4",
-        "symfony/console": "^4.3",
-        "ext-json": "*"
+        "symfony/console": "^4.3"
     },
     "require-dev": {
         "phpunit/phpunit": ">=4.8 < 6.0",
         "squizlabs/php_codesniffer": "^3.5",
         "phpmd/phpmd": "^2.7",
+        "guzzlehttp/guzzle": "^6.4",
         "ext-json": "*",
-        "ext-yaml": "*"
+        "ext-yaml": "*",
+        "ext-pdo": "*"
     },
     "autoload-dev": {
         "psr-4": {

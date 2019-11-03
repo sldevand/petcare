@@ -18,7 +18,7 @@ class PetImageEntityTest extends TestCase
         $contents = file_get_contents($catFile);
 
         $base64Image = base64_encode($contents);
-        $attributes = ['id' => 1,'petId' => 1, 'image' => $base64Image];
+        $attributes = ['id' => 1, 'petId' => 1, 'image' => $base64Image];
         $entity = new PetImageEntity($attributes);
 
         $validator = new DefaultValidator();

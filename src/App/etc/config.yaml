@@ -1,6 +1,6 @@
 modules:
     Pet:
-        enabled : true
+        enabled: true
     User:
         enabled: true
     Care:

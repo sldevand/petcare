@@ -4,10 +4,10 @@ namespace Tests\Integration\Framework\Db\Pdo\Adapter;
 
 use Exception;
 use Framework\Db\Pdo\Adapter\YamlToTableAdapter;
-use Framework\Db\Pdo\Query\Constraint;
+use Framework\Db\Pdo\Query\Constraint\Constraint;
+use Framework\Db\Pdo\Query\Constraint\ForeignKey\ForeignKey;
+use Framework\Db\Pdo\Query\Constraint\ForeignKey\ReferenceOption;
 use Framework\Db\Pdo\Query\Field;
-use Framework\Db\Pdo\Query\ForeignKey;
-use Framework\Db\Pdo\Query\ReferenceOption;
 use PHPUnit\Framework\TestCase;
 
 /**

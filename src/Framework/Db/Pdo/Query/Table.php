@@ -2,6 +2,8 @@
 
 namespace Framework\Db\Pdo\Query;
 
+use Framework\Db\Pdo\Query\Constraint\Constraint;
+
 /**
  * Class Table
  * @package Framework\Db\Pdo\Query

@@ -1,10 +1,12 @@
 <?php
 
-namespace Framework\Db\Pdo\Query;
+namespace Framework\Db\Pdo\Query\Constraint\ForeignKey;
+
+use Framework\Db\Pdo\Query\Constraint\Constraint;
 
 /**
  * Class ForeignKey
- * @package Framework\Db\Pdo\Query
+ * @package Framework\Db\Pdo\Query\Constraint\ForeignKey
  */
 class ForeignKey extends Constraint
 {

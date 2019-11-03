@@ -32,6 +32,7 @@ class DefaultValidator implements ValidatorInterface
                 continue;
             }
             $this->checkNullableField($field['constraints'], $propertyName);
+            $this->checkUniqueField($field['constraints'], $propertyName);
         }
 
         return true;
@@ -53,6 +54,28 @@ class DefaultValidator implements ValidatorInterface
                 && $this->entity->$propertyMethod() === null
             ) {
                 $this->throwException("$propertyName is not nullable");
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param array $constraints
+     * @param string $propertyName
+     * @return bool
+     * @throws Exception
+     */
+    public function checkUniqueField(array $constraints, string $propertyName): bool
+    {
+        foreach ($constraints as $constraintKey => $constraintValue) {
+            $propertyMethod = $this->entity->getPropertyMethod($propertyName);
+            if (
+                $constraintKey === 'unique'
+                && $constraintValue === true
+                && $this->entity->$propertyMethod() === null
+            ) {
+                $this->throwException("$propertyName must be unique");
             }
         }
 

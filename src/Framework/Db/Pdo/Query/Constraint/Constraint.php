@@ -1,6 +1,8 @@
 <?php
 
-namespace Framework\Db\Pdo\Query;
+namespace Framework\Db\Pdo\Query\Constraint;
+
+use Framework\Db\Pdo\Query\Hydratable;
 
 /**
  * Class Constraint

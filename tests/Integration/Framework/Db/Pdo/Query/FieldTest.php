@@ -3,7 +3,7 @@
 namespace Tests\Integration\Framework\Db\Pdo\Query;
 
 use Exception;
-use Framework\Db\Pdo\Query\Constraint;
+use Framework\Db\Pdo\Query\Constraint\Constraint;
 use Framework\Db\Pdo\Query\Field;
 
 /**

@@ -29,8 +29,7 @@ class UserRepository extends DefaultRepository
         ValidatorInterface $validator,
         UserPetRepository $userPetRepository,
         PetRepository $petRepository
-    )
-    {
+    ) {
         parent::__construct($db, $validator);
         $this->table = "user";
         $this->entityClass = UserEntity::class;

@@ -6,6 +6,7 @@ fields:
         type: text
         constraints:
             nullable: false
+            unique: true
     content:
         column: content
         type: text

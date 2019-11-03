@@ -3,10 +3,11 @@
 namespace Framework\Db\Pdo\Adapter;
 
 use Exception;
-use Framework\Db\Pdo\Query\Constraint;
+use Framework\Db\Pdo\Query\Constraint\Constraint;
+use Framework\Db\Pdo\Query\Constraint\Unique;
 use Framework\Db\Pdo\Query\Field;
-use Framework\Db\Pdo\Query\ForeignKey;
-use Framework\Db\Pdo\Query\ReferenceOption;
+use Framework\Db\Pdo\Query\Constraint\ForeignKey\ForeignKey;
+use Framework\Db\Pdo\Query\Constraint\ForeignKey\ReferenceOption;
 use Framework\Model\Validator\YamlEntityValidator;
 
 /**
@@ -52,6 +53,11 @@ class YamlToTableAdapter
                         $field->addConstraint(new Constraint(['name' => 'NOT NULL']));
                     }
 
+                    if ($key === 'unique' && $constraint === true) {
+                        $uniqueColumns[] = $field->getColumn();
+                    }
+
+
                     if ($key !== 'fk') {
                         continue;
                     }
@@ -64,6 +70,10 @@ class YamlToTableAdapter
                 continue;
             }
             $fields[] = $field;
+        }
+
+        if (!empty($uniqueColumns)) {
+            $this->tableData['constraints'][] = new Unique(['columns' => $uniqueColumns]);
         }
 
         $this->tableData['fields'] = $fields;

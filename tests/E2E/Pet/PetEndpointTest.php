@@ -4,6 +4,7 @@ namespace Tests\E2E\Pet;
 
 use GuzzleHttp\Client;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Dotenv\Dotenv;
 
 /**
  * Class PetEndpointTest
@@ -15,11 +16,15 @@ class PetEndpointTest extends TestCase
 
     public function setUp()
     {
+        $dotenv = new Dotenv();
+        $dotenv->load(__DIR__ . '/../.env');
+        $host = getenv('TEST_HOST');
+
         $headers = [
             'Content-Type' => 'application/json'
         ];
         $authClient = new Client([
-            'base_uri' => 'http://petcare/auth/',
+            'base_uri' => "http://$host/auth/",
             'headers' => $headers
         ]);
         $authorization = $authClient->get('generate');
@@ -31,7 +36,7 @@ class PetEndpointTest extends TestCase
             'Authorization' => "Bearer $bearer",
         ];
         $this->http = new Client([
-            'base_uri' => 'http://petcare/',
+            'base_uri' => "http://$host/",
             'headers' => $headers
         ]);
     }
@@ -45,6 +50,27 @@ class PetEndpointTest extends TestCase
 
         self::assertEquals(200, $code);
         self::assertEquals([], $pets);
+    }
+
+    public function testCreate()
+    {
+        $body = json_encode([
+            'name' => 'elie', 'dob' => '15/10/2014', 'specy' => 'cat'
+        ]);
+
+        $options = [
+            'body' => $body
+        ];
+
+        $postResponse = $this->http->post('api/pets/new', $options);
+
+        $code = $postResponse->getStatusCode();
+        $pet = json_decode($postResponse->getBody()->getContents());
+
+        var_dump($code);
+        var_dump($pet);
+        self::assertEquals(201, $code);
+        self::assertEquals($body, $pet);
     }
 
     public function tearDown()

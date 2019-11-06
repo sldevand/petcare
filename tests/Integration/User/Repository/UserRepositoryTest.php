@@ -69,19 +69,13 @@ class UserRepositoryTest extends TestCase
         $this->assertEquals($user, $savedUser);
     }
 
-    public function testFetchOne()
-    {
-        $pets = [];
-        foreach (PetEntityProvider::getPets() as $pet) {
-            $pets[] = self::$petRepository->save($pet);
-        }
-    }
 
     /**
      * @throws Exception
      */
     public function testFetchAll()
     {
+        $this->tearDown();
         $users = UserEntityProvider::getUsers();
 
         $expected = [];
@@ -98,5 +92,6 @@ class UserRepositoryTest extends TestCase
     {
         self::$db->exec("PRAGMA foreign_keys=ON");
         self::$db->exec('DELETE FROM user;');
+        self::$db->exec('DELETE FROM pet;');
     }
 }

@@ -6,6 +6,7 @@ use App\Modules\Pet\Model\Entity\PetEntity;
 use Exception;
 use Framework\Api\Entity\EntityInterface;
 use Framework\Model\Entity\DefaultEntity;
+use Framework\Traits\Entity\EntityTimestampableTrait;
 
 /**
  * Class UserEntity
@@ -13,6 +14,8 @@ use Framework\Model\Entity\DefaultEntity;
  */
 class UserEntity extends DefaultEntity
 {
+    use EntityTimestampableTrait;
+
     /** @var string */
     protected $firstName;
 
@@ -24,12 +27,6 @@ class UserEntity extends DefaultEntity
 
     /** @var string */
     protected $password;
-
-    /** @var string */
-    protected $createdAt;
-
-    /** @var string */
-    protected $updatedAt;
 
     /** @var PetEntity[] */
     protected $pets;

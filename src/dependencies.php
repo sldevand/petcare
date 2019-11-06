@@ -13,7 +13,7 @@ require_once FRAMEWORK_DIR . '/dependencies.php';
 
 // controllers
 $container['petController'] = function (ContainerInterface $c) {
-    return new PetController($c);
+    return new PetController($c->get('petRepository'));
 };
 
 // repositories

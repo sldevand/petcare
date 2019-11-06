@@ -26,16 +26,14 @@ class UserEntityProvider
                 'lastName' => 'Doe',
                 'email' => 'john.doe@mail.com',
                 'password' => 'p@SSw0rd',
-                'createdAt' => $now,
-                'pets' => PetEntityProvider::getPets()
+                'pets' => [PetEntityProvider::getPets()[0]]
             ]),
             new UserEntity([
                 'firstName' => 'Foo',
                 'lastName' => 'Bar',
                 'email' => 'foo.bar@mail.com',
                 'password' => 'S3crEt',
-                'createdAt' => $now,
-                'pets' => PetEntityProvider::getPets()
+                'pets' => [PetEntityProvider::getPets()[1]]
             ])
         ];
     }

@@ -8,9 +8,11 @@ $container = $app->getContainer();
 
 $app->group('/api', function () {
     $this->group('/pets', function () {
-        $this->get('', 'petController:all');
-        $this->post('/new', 'petController:create');
-        $this->get('/{name}', 'petController:fetchOneByName');
+        $this->get('/{id}', 'petController:get');
+        $this->get('', 'petController:get');
+        $this->post('', 'petController:post');
+        $this->put('/{id}', 'petController:put');
+        $this->delete('/{id}', 'petController:delete');
     });
 });
 

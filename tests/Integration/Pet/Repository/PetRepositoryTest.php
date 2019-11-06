@@ -75,6 +75,7 @@ class PetRepositoryTest extends TestCase
 
         $newEntity = new PetEntity($attributesToUpdate);
         $updatedEntity = self::$petRepository->update($newEntity);
+        $newEntity->setCreatedAt($updatedEntity->getCreatedAt());
 
         $this->assertEquals($newEntity, $updatedEntity, 'The two Pet entities are not equal');
         $this->assertNotEquals($afterEntity, $updatedEntity, 'The two Pet entities are equal');
@@ -97,7 +98,11 @@ class PetRepositoryTest extends TestCase
         $this->assertEquals($beforeEntity, $afterEntity, 'Can\'t save PetEntity');
 
         $attributesToUpdate = [
-            'id' => $afterEntity->getId(), 'name' => 'rox', 'dob' => '22/11/2010', 'specy' => 'dog'
+            'id' => $afterEntity->getId(),
+            'name' => 'rox',
+            'dob' => '22/11/2010',
+            'specy' => 'dog',
+            'createdAt' => $afterEntity->getCreatedAt()
         ];
 
         $newEntity = new PetEntity($attributesToUpdate);
@@ -128,7 +133,12 @@ class PetRepositoryTest extends TestCase
         $catImageEntity = PetImageEntityProvider::getPetImages()['cat'];
 
         $attributesToUpdate = [
-            'id' => $afterEntity->getId(), 'name' => 'elie', 'dob' => '15/10/2014', 'specy' => 'cat', 'image' => $catImageEntity
+            'id' => $afterEntity->getId(),
+            'name' => 'elie',
+            'dob' => '15/10/2014',
+            'specy' => 'cat',
+            'image' => $catImageEntity,
+            'createdAt' => $afterEntity->getCreatedAt()
         ];
 
         $newEntity = new PetEntity($attributesToUpdate);

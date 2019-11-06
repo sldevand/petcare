@@ -17,9 +17,9 @@ trait EntityTimestampableTrait
     /**
      * @return string
      */
-    public function getCreatedAt(): string
+    public function getCreatedAt()
     {
-        return $this->createdAt ?? '';
+        return $this->createdAt;
     }
 
     /**
@@ -33,9 +33,9 @@ trait EntityTimestampableTrait
     /**
      * @return string
      */
-    public function getUpdatedAt(): string
+    public function getUpdatedAt()
     {
-        return $this->updatedAt ?? '';
+        return $this->updatedAt;
     }
 
     /**

@@ -6,6 +6,7 @@ fields:
         type: text
         constraints:
             nullable: false
+            unique: true
     dob:
         column: dob
         type: text

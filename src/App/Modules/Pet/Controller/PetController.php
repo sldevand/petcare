@@ -37,10 +37,12 @@ class PetController extends AbstractContainerInjector
     public function create(Request $request, Response $response, array $args = []): Response
     {
         $args = $request->getParams();
-        $entity = new PetEntity($args);
 
-        if (!$this->container->get('petRepository')->create($entity)) {
-            return $response->withJson(["message" => "entity not created"], 204);
+        try {
+            $entity = new PetEntity($args);
+            $this->container->get('petRepository')->create($entity);
+        } catch (Exception $exception) {
+            return $response->withJson(["errors" => $exception->getMessage()], 400);
         }
 
         return $response->withJson($entity, 201);

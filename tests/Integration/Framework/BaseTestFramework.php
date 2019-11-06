@@ -24,12 +24,17 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 class BaseTestFramework
 {
     /**
+     * @param array $settings
      * @return App
      */
-    public static function generateApp(): App
+    public static function generateApp($settings = []): App
     {
         require_once __DIR__ . '/../../../src/bootstrap.php';
-        $settings = require __DIR__ . '/../../../src/settings.php';
+
+        if (empty($settings)) {
+            $settings = require __DIR__ . '/../../../src/settings.php';
+        }
+
         $app = new App($settings);
         $container = $app->getContainer();
 

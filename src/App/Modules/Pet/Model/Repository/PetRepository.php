@@ -8,6 +8,7 @@ use Framework\Api\Entity\EntityInterface;
 use Framework\Api\Validator\ValidatorInterface;
 use Framework\Exception\RepositoryException;
 use Framework\Model\Repository\DefaultRepository;
+use Framework\Traits\Repository\RepositoryTimestampableTrait;
 use PDO;
 
 /**
@@ -16,6 +17,8 @@ use PDO;
  */
 class PetRepository extends DefaultRepository
 {
+    use RepositoryTimestampableTrait;
+
     /** @var PetImageRepository */
     protected $petImageRepository;
 

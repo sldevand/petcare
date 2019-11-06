@@ -5,6 +5,7 @@ namespace App\Modules\Pet\Model\Entity;
 use App\Modules\Care\Model\Entity\CareEntity;
 use Exception;
 use Framework\Model\Entity\DefaultEntity;
+use Framework\Traits\Entity\EntityTimestampableTrait;
 
 /**
  * Class PetEntity
@@ -14,12 +15,16 @@ use Framework\Model\Entity\DefaultEntity;
  * @method getSpecy
  * @method getImageId
  * @method getCreatedAt
+ * @method setCreatedAt($date)
  * @method getUpdatedAt
+ * @method setUpdatedAt($date)
  * @method getImage
  * @method setImage($image)
  */
 class PetEntity extends DefaultEntity
 {
+    use EntityTimestampableTrait;
+
     /** @var string */
     protected $name;
 
@@ -28,12 +33,6 @@ class PetEntity extends DefaultEntity
 
     /** @var string */
     protected $specy;
-
-    /** @var string */
-    protected $createdAt;
-
-    /** @var string */
-    protected $updatedAt;
 
     /** @var PetImageEntity */
     protected $image;

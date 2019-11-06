@@ -41,7 +41,7 @@ class PetEntityTest extends TestCase
         $entity = new PetEntity($attributes);
         $encodedJson = json_encode($entity);
         $jsonStr = <<<JSON
-{"name":"elie","dob":"13\/10\/2014","specy":"cat","createdAt":"$now","updatedAt":null,"image":null,"cares":[],"id":null}
+{"name":"elie","dob":"13\/10\/2014","specy":"cat","image":null,"cares":[],"id":null,"createdAt":"$now","updatedAt":""}
 JSON;
         $this->assertNotEmpty($encodedJson, "Json entity is empty");
         $this->assertEquals($jsonStr, $encodedJson, "Json entity is not well encoded");

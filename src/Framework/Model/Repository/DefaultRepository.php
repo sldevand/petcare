@@ -2,6 +2,7 @@
 
 namespace Framework\Model\Repository;
 
+use DateTime;
 use Exception;
 use Framework\Api\Entity\EntityInterface;
 use Framework\Api\Repository\RepositoryInterface;

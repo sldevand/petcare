@@ -12,6 +12,6 @@ fields:
             nullable: false
     image:
         column: image
-        type: blob
+        type: string
         constraints:
             nullable: false

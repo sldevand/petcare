@@ -6,6 +6,7 @@ use App\Modules\Pet\Model\Entity\PetImageEntity;
 use Exception;
 use Framework\Model\Validator\DefaultValidator;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Dotenv\Dotenv;
 
 class PetImageEntityTest extends TestCase
 {
@@ -14,11 +15,15 @@ class PetImageEntityTest extends TestCase
      */
     public function testValidatePetImageEntity()
     {
-        $catFile = __DIR__ . '/../data/cat.jpeg';
-        $contents = file_get_contents($catFile);
+        $dotEnv = new Dotenv();
+        $dotEnv->load(__DIR__.'/../../.env');
 
-        $base64Image = base64_encode($contents);
-        $attributes = ['id' => 1, 'petId' => 1, 'image' => $base64Image];
+        $host = getenv('HOST');
+        $catFile = __DIR__ . '/../data/cat.jpeg';
+        copy($catFile, IMAGES_DIR.'/'.basename($catFile));
+        $url = "http://$host/pets/1/image";
+
+        $attributes = ['id' => 1, 'petId' => 1, 'image' => $url];
         $entity = new PetImageEntity($attributes);
 
         $validator = new DefaultValidator();

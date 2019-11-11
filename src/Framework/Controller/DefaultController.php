@@ -1,6 +1,6 @@
 <?php
 
-namespace Framework\Model\Controller;
+namespace Framework\Controller;
 
 use Exception;
 use Framework\Api\Repository\RepositoryInterface;
@@ -9,7 +9,7 @@ use Slim\Http\Response;
 
 /**
  * Class DefaultController
- * @package Framework\Model\Controller
+ * @package Framework\Controller
  */
 class DefaultController
 {
@@ -18,8 +18,7 @@ class DefaultController
 
     public function __construct(
         RepositoryInterface $repository
-    )
-    {
+    ) {
         $this->repository = $repository;
     }
 

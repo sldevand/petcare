@@ -21,6 +21,11 @@ fields:
         type: text
         constraints:
             nullable: false
+    apiKey:
+        column: apiKey
+        type: text
+        constraints:
+            nullable: false
     createdAt:
         column: createdAt
         type: text

@@ -26,6 +26,7 @@ class UserEntityProvider
                 'lastName' => 'Doe',
                 'email' => 'john.doe@mail.com',
                 'password' => 'p@SSw0rd',
+                'apiKey' => 'json.web.token',
                 'pets' => [PetEntityProvider::getPets()[0]]
             ]),
             new UserEntity([
@@ -33,6 +34,7 @@ class UserEntityProvider
                 'lastName' => 'Bar',
                 'email' => 'foo.bar@mail.com',
                 'password' => 'S3crEt',
+                'apiKey' => 'json.web.token',
                 'pets' => [PetEntityProvider::getPets()[1]]
             ])
         ];

@@ -91,4 +91,14 @@ class UserRepository extends DefaultRepository
 
         return $users;
     }
+
+    /**
+     * @param string $apiKey
+     * @return \Framework\Api\Entity\EntityInterface
+     * @throws \Exception
+     */
+    public function fetchUserByApiKey($apiKey): EntityInterface
+    {
+        return $this->fetchOneBy('apiKey', $apiKey);
+    }
 }

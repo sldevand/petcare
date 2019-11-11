@@ -2,7 +2,7 @@
 
 namespace App\Modules\Pet\Controller;
 
-use Framework\Model\Controller\DefaultController;
+use Framework\Controller\DefaultController;
 
 /**
  * Class PetController

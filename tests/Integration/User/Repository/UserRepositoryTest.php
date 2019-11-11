@@ -58,6 +58,7 @@ class UserRepositoryTest extends TestCase
             'lastName' => 'Doe',
             'email' => 'foo@bar.com',
             'password' => 'p@SSw0rd',
+            'apiKey' => 'gsdgsdgsF.resfsfd.essdffsd',
             'createdAt' => $now,
             'pets' => $pets
         ];

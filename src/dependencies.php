@@ -11,11 +11,6 @@ use Psr\Container\ContainerInterface;
 
 require_once FRAMEWORK_DIR . '/dependencies.php';
 
-// controllers
-$container['petController'] = function (ContainerInterface $c) {
-    return new PetController($c->get('petRepository'));
-};
-
 // repositories
 $container['careRepository'] = function (ContainerInterface $c) {
     return new CareRepository($c->get('pdo'), $c->get('defaultValidator'));
@@ -49,4 +44,9 @@ $container['userRepository'] = function (ContainerInterface $c) {
         $c->get('userPetRepository'),
         $c->get('petRepository')
     );
+};
+
+// controllers
+$container['petController'] = function (ContainerInterface $c) {
+    return new PetController($c->get('userRepository'), $c->get('petRepository'));
 };

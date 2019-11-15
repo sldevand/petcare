@@ -117,11 +117,11 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
 
     /**
      * @param string $field
-     * @param int $value
+     * @param string $value
      * @return EntityInterface
      * @throws RepositoryException
      */
-    public function fetchOneBy(string $field, int $value): EntityInterface
+    public function fetchOneBy(string $field, string $value): EntityInterface
     {
         $sql = "SELECT * FROM $this->table WHERE $field=:$field";
         $st = $this->prepare($sql);

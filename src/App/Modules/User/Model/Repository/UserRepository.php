@@ -29,8 +29,7 @@ class UserRepository extends DefaultRepository
         ValidatorInterface $validator,
         UserPetRepository $userPetRepository,
         PetRepository $petRepository
-    )
-    {
+    ) {
         parent::__construct($db, $validator);
         $this->table = "user";
         $this->entityClass = UserEntity::class;
@@ -77,6 +76,11 @@ class UserRepository extends DefaultRepository
         return $user;
     }
 
+    /**
+     * @return array
+     * @throws \Framework\Exception\RepositoryException
+     * @throws \Exception
+     */
     public function fetchAll(): array
     {
         $users = parent::fetchAll();
@@ -90,6 +94,22 @@ class UserRepository extends DefaultRepository
         }
 
         return $users;
+    }
+
+    /**
+     * @param int $userId
+     * @return PetEntity[]
+     * @throws \Framework\Exception\RepositoryException
+     */
+    public function fetchPets(int $userId): array
+    {
+        $userPets = $this->userPetRepository->fetchAllByUserId($userId);
+        $pets = [];
+        foreach ($userPets as $userPetKey => $userPet) {
+            $pets[$userPet->getId()] = $this->petRepository->fetchOne($userPet->getPetId());
+        }
+
+        return $pets;
     }
 
     /**

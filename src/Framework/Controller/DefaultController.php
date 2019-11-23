@@ -3,7 +3,6 @@
 namespace Framework\Controller;
 
 use Exception;
-use Framework\Api\Repository\RepositoryInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -11,17 +10,8 @@ use Slim\Http\Response;
  * Class DefaultController
  * @package Framework\Controller
  */
-class DefaultController
+class DefaultController extends AbstractController
 {
-    /** @var RepositoryInterface */
-    protected $repository;
-
-    public function __construct(
-        RepositoryInterface $repository
-    ) {
-        $this->repository = $repository;
-    }
-
     /**
      * @param Request $request
      * @param Response $response

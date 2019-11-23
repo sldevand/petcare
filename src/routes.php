@@ -16,10 +16,7 @@ $app->group('/api', function () {
     });
 });
 
-$app->group('/auth', function () {
-    $this->get('/generate', function (Request $request, Response $response, array $args) {
-        $data = JWT::encode(['key' => 'test'], 'supersecretkeyyoushouldnotcommittogithub');
-
-        return $response->withJson($data, 200);
-    });
+$app->group('/user', function () {
+    $this->post('/login', 'userController:login');
+    $this->post('/subscribe', 'userController:subscribe');
 });

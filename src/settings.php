@@ -1,4 +1,10 @@
 <?php
+
+use Symfony\Component\Dotenv\Dotenv;
+
+$dotEnv = new Dotenv();
+$env = $dotEnv->load(__DIR__.'/.env');
+
 return [
     'settings' => [
         'displayErrorDetails' => true, // set to false in production
@@ -19,11 +25,16 @@ return [
         // PDO settings
         'pdo' => [
             'prod' => [
-                'db-file' => __DIR__ . '/../var/db/petcare.db'
+                'db-file' =>  $_ENV['PDO_PROD_FILE']
             ],
             'test' => [
-                'db-file' => __DIR__ . '/../var/db/petcare-test.db'
+                'db-file' => $_ENV['PDO_TEST_FILE']
             ]
+            ],
+
+        //JWT settings
+        'jwt' => [
+            'secret' =>  $_ENV['JWT_SECRET']
         ]
     ],
 ];

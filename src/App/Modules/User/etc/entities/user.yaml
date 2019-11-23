@@ -16,6 +16,7 @@ fields:
         type: text
         constraints:
             nullable: false
+            unique: true
     password:
         column: password
         type: text

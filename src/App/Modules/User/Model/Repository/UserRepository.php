@@ -2,15 +2,16 @@
 
 namespace App\Modules\User\Model\Repository;
 
-use App\Modules\Pet\Model\Entity\PetEntity;
-use App\Modules\Pet\Model\Repository\PetRepository;
-use App\Modules\User\Model\Entity\UserEntity;
-use App\Modules\User\Model\Entity\UserPetEntity;
+use PDO;
 use Exception;
 use Framework\Api\Entity\EntityInterface;
 use Framework\Api\Validator\ValidatorInterface;
 use Framework\Model\Repository\DefaultRepository;
-use PDO;
+use Framework\Traits\Repository\RepositoryTimestampableTrait;
+use App\Modules\Pet\Model\Entity\PetEntity;
+use App\Modules\Pet\Model\Repository\PetRepository;
+use App\Modules\User\Model\Entity\UserEntity;
+use App\Modules\User\Model\Entity\UserPetEntity;
 
 /**
  * Class UserRepository
@@ -18,6 +19,8 @@ use PDO;
  */
 class UserRepository extends DefaultRepository
 {
+    use RepositoryTimestampableTrait;
+
     /** @var UserPetRepository */
     protected $userPetRepository;
 

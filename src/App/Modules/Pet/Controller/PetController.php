@@ -26,8 +26,7 @@ class PetController extends DefaultController
     public function __construct(
         RepositoryInterface $repository,
         PetRepository $petRepository
-    )
-    {
+    ) {
         parent::__construct($repository);
         $this->petRepository = $petRepository;
     }
@@ -41,6 +40,8 @@ class PetController extends DefaultController
     public function get(Request $request, Response $response, $args = []): Response
     {
         $user = $this->repository->fetchUserByApiKey("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJrZXkiOiJ0ZXN0In0.ge8e6TXC-e7VM4VfrWytaW2YCpP8pIFLRvyj5ycTiF4");
+
+
 
         try {
             if (empty($args['name'])) {

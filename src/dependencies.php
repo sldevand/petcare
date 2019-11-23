@@ -2,6 +2,7 @@
 
 use App\Modules\Care\Model\Repository\CareRepository;
 use App\Modules\Pet\Controller\PetController;
+use App\Modules\User\Controller\UserController;
 use App\Modules\Pet\Model\Repository\PetCareRepository;
 use App\Modules\Pet\Model\Repository\PetImageRepository;
 use App\Modules\Pet\Model\Repository\PetRepository;
@@ -49,4 +50,8 @@ $container['userRepository'] = function (ContainerInterface $c) {
 // controllers
 $container['petController'] = function (ContainerInterface $c) {
     return new PetController($c->get('userRepository'), $c->get('petRepository'));
+};
+
+$container['userController'] = function (ContainerInterface $c) use ($settings) {
+    return new UserController($c->get('userRepository'), $settings);
 };

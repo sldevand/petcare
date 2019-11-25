@@ -3,7 +3,7 @@
 use Symfony\Component\Dotenv\Dotenv;
 
 $dotEnv = new Dotenv();
-$env = $dotEnv->load(__DIR__.'/.env');
+$dotEnv->load(__DIR__.'/.env');
 
 return [
     'settings' => [
@@ -30,7 +30,7 @@ return [
             'test' => [
                 'db-file' => $_ENV['PDO_TEST_FILE']
             ]
-            ],
+        ],
 
         //JWT settings
         'jwt' => [

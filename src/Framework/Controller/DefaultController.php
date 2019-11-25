@@ -2,7 +2,10 @@
 
 namespace Framework\Controller;
 
+use App\Modules\User\Model\Repository\UserRepository;
 use Exception;
+use Framework\Api\Entity\EntityInterface;
+use Framework\Api\Repository\RepositoryInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -12,6 +15,22 @@ use Slim\Http\Response;
  */
 class DefaultController extends AbstractController
 {
+    /** @var \App\Modules\User\Model\Repository\UserRepository */
+    protected $userRepository;
+
+    /**
+     * DefaultController constructor.
+     * @param \Framework\Api\Repository\RepositoryInterface $repository
+     * @param \App\Modules\User\Model\Repository\UserRepository $userRepository
+     */
+    public function __construct(
+        RepositoryInterface $repository,
+        UserRepository $userRepository
+    ) {
+        parent::__construct($repository);
+        $this->userRepository = $userRepository;
+    }
+
     /**
      * @param Request $request
      * @param Response $response
@@ -124,5 +143,37 @@ class DefaultController extends AbstractController
         }
 
         return $response->withJson($newEntity, 201);
+    }
+
+    /**
+     * @param \Slim\Http\Request $request
+     * @return string
+     * @throws \Exception
+     */
+    protected function getApiKey(Request $request): string
+    {
+        $authHeaderArr = $request->getHeader('Authorization');
+        if (empty($authHeaderArr) && count($authHeaderArr) !== 1) {
+            throw new Exception('No authorization header found');
+        }
+
+        $authorizationHeaderArr = explode(' ', $authHeaderArr[0]);
+
+        if (empty($authorizationHeaderArr) && count($authorizationHeaderArr) !== 2) {
+            throw new Exception('No authorization header found');
+        }
+
+        return $authorizationHeaderArr[1];
+    }
+
+    /**
+     * @param \Slim\Http\Request $request
+     * @return \Framework\Api\Entity\EntityInterface
+     * @throws \Exception
+     */
+    protected function getUserByApiKey(Request $request): EntityInterface
+    {
+        $apiKey = $this->getApiKey($request);
+        return $this->userRepository->fetchByApiKey($apiKey);
     }
 }

@@ -8,7 +8,7 @@ $container = $app->getContainer();
 
 $app->group('/api', function () {
     $this->group('/pets', function () {
-        $this->get('/{id}', 'petController:get');
+        $this->get('/{name}', 'petController:get');
         $this->get('', 'petController:get');
         $this->post('', 'petController:post');
         $this->put('/{id}', 'petController:put');

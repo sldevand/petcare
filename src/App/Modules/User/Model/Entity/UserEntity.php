@@ -51,8 +51,20 @@ class UserEntity extends DefaultEntity
      */
     public function addPet(EntityInterface $pet): UserEntity
     {
-        $this->pets[] = $pet;
+        $this->pets[$pet->getName()] = $pet;
 
         return $this;
+    }
+
+    /**
+     * @param string $name
+     * @return \App\Modules\Pet\Model\Entity\PetEntity
+     * @throws \Exception
+     */
+    public function getPet(string $name): PetEntity
+    {
+        if (empty($this->pets[$name])) {
+            throw new \Exception("Pet with name $name does not exists in User Entity");
+        }
     }
 }

@@ -31,7 +31,8 @@
         "guzzlehttp/guzzle": "^6.4",
         "ext-json": "*",
         "ext-yaml": "*",
-        "ext-pdo": "*"
+        "ext-pdo": "*",
+        "ext-http": "*"
     },
     "autoload-dev": {
         "psr-4": {

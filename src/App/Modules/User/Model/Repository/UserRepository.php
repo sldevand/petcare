@@ -120,7 +120,7 @@ class UserRepository extends DefaultRepository
      * @return \Framework\Api\Entity\EntityInterface
      * @throws \Exception
      */
-    public function fetchUserByApiKey($apiKey): EntityInterface
+    public function fetchByApiKey($apiKey): EntityInterface
     {
         return $this->fetchOneBy('apiKey', $apiKey);
     }

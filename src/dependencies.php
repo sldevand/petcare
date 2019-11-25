@@ -49,7 +49,7 @@ $container['userRepository'] = function (ContainerInterface $c) {
 
 // controllers
 $container['petController'] = function (ContainerInterface $c) {
-    return new PetController($c->get('userRepository'), $c->get('petRepository'));
+    return new PetController($c->get('petRepository'), $c->get('userRepository'));
 };
 
 $container['userController'] = function (ContainerInterface $c) use ($settings) {

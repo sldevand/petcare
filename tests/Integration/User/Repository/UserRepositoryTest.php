@@ -48,7 +48,7 @@ class UserRepositoryTest extends TestCase
     {
         $pets = [];
         foreach (PetEntityProvider::getPets() as $pet) {
-            $pets[] = self::$petRepository->save($pet);
+            $pets[$pet->getName()] = self::$petRepository->save($pet);
         }
 
         $now = (new DateTime())->format('Y-m-d H:i:s');

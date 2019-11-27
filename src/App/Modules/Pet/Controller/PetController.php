@@ -52,26 +52,23 @@ class PetController extends DefaultController
         try {
             $user = $this->getUserByApiKey($request);
 
-
             $entityParams = [
                 'name' => $request->getParam('name'),
                 'specy' => $request->getParam('specy'),
                 'dob' => $request->getParam('dob')
             ];
 
-            if (!empty($request->getParam('id'))) {
-                $entityParams['id'] = $request->getParam('id');
-            }
-
             $pet = new PetEntity($entityParams);
 
+            if (!empty($args['id'])) {
+
+                //TODO check if pet belongs to user
+                $pet->setId($args['id']);
+            }
+
+
             $user->addPet($pet);
-
             $user = $this->userRepository->save($user);
-
-
-            var_dump($user);
-            die;
             $newPet = $user->getPet($pet->getName());
 
             return $response->withJson($newPet, 201);

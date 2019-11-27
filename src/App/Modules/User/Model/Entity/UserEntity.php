@@ -66,5 +66,7 @@ class UserEntity extends DefaultEntity
         if (empty($this->pets[$name])) {
             throw new \Exception("Pet with name $name does not exists in User Entity");
         }
+
+        return $this->pets[$name];
     }
 }

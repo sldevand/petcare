@@ -2,16 +2,16 @@
 
 namespace App\Modules\User\Model\Repository;
 
-use PDO;
+use App\Modules\Pet\Model\Entity\PetEntity;
+use App\Modules\Pet\Model\Repository\PetRepository;
+use App\Modules\User\Model\Entity\UserEntity;
+use App\Modules\User\Model\Entity\UserPetEntity;
 use Exception;
 use Framework\Api\Entity\EntityInterface;
 use Framework\Api\Validator\ValidatorInterface;
 use Framework\Model\Repository\DefaultRepository;
 use Framework\Traits\Repository\RepositoryTimestampableTrait;
-use App\Modules\Pet\Model\Entity\PetEntity;
-use App\Modules\Pet\Model\Repository\PetRepository;
-use App\Modules\User\Model\Entity\UserEntity;
-use App\Modules\User\Model\Entity\UserPetEntity;
+use PDO;
 
 /**
  * Class UserRepository
@@ -66,17 +66,34 @@ class UserRepository extends DefaultRepository
     public function savePets(UserEntity $user, array $pets): UserEntity
     {
         foreach ($pets as $pet) {
-            $pet = $this->petRepository->save($pet);
-            $user->addPet($pet);
-            $userPetEntity = new UserPetEntity();
-            $userPetEntity
-                ->setUserId($user->getId())
-                ->setPetId($pet->getId());
-
-            $this->userPetRepository->create($userPetEntity);
+            $savedPet = $this->savePet($user, $pet);
+            $user->addPet($savedPet);
         }
 
         return $user;
+    }
+
+    /**
+     * @param UserEntity $user
+     * @param PetEntity $pet
+     * @return EntityInterface
+     * @throws Exception
+     */
+    public function savePet(UserEntity $user, PetEntity $pet): EntityInterface
+    {
+        $savedPet = $this->petRepository->save($pet);
+        $userPetEntity = new UserPetEntity();
+        $userPetEntity
+            ->setUserId($user->getId())
+            ->setPetId($savedPet->getId());
+
+        try{
+            $this->userPetRepository->fetchPetByUserId($user->getId(), $savedPet->getId());
+        } catch (Exception $exception){
+            $this->userPetRepository->create($userPetEntity);
+        }
+
+        return $savedPet;
     }
 
     /**
@@ -113,6 +130,23 @@ class UserRepository extends DefaultRepository
         }
 
         return $pets;
+    }
+
+    /**
+     * @param int $userId
+     * @param int $petId
+     * @return EntityInterface
+     * @throws \Framework\Exception\RepositoryException
+     * @throws Exception
+     */
+    public function fetchPet(int $userId, int $petId): EntityInterface
+    {
+        $userPet = $this->userPetRepository->fetchPetByUserId($userId, $petId);
+        if (empty($userPet)) {
+            throw new Exception("No userPet found with this $petId");
+        }
+
+        return $this->petRepository->fetchOne($petId);
     }
 
     /**

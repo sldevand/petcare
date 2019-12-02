@@ -61,15 +61,11 @@ class PetController extends DefaultController
             $pet = new PetEntity($entityParams);
 
             if (!empty($args['id'])) {
-
-                //TODO check if pet belongs to user
                 $pet->setId($args['id']);
+                $this->userRepository->fetchPet($user->getId(), $pet->getId());
             }
 
-
-            $user->addPet($pet);
-            $user = $this->userRepository->save($user);
-            $newPet = $user->getPet($pet->getName());
+            $newPet = $this->userRepository->savePet($user, $pet);
 
             return $response->withJson($newPet, 201);
         } catch (Exception $exception) {

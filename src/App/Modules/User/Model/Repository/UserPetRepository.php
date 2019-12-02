@@ -36,4 +36,15 @@ class UserPetRepository extends DefaultRepository
     {
         return $this->fetchAllByField('userId', $id);
     }
+
+    /**
+     * @param int $userId
+     * @param int $petId
+     * @return EntityInterface
+     * @throws \Framework\Exception\RepositoryException
+     */
+    public function fetchPetByUserId($userId, $petId): EntityInterface
+    {
+        return $this->fetchOneBy('userId', $userId, "petID = $petId");
+    }
 }

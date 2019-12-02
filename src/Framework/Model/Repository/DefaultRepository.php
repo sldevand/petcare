@@ -2,7 +2,6 @@
 
 namespace Framework\Model\Repository;
 
-use DateTime;
 use Exception;
 use Framework\Api\Entity\EntityInterface;
 use Framework\Api\Repository\RepositoryInterface;
@@ -118,12 +117,18 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
     /**
      * @param string $field
      * @param string| int $value
+     * @param string $and
      * @return EntityInterface
      * @throws RepositoryException
      */
-    public function fetchOneBy(string $field, $value): EntityInterface
+    public function fetchOneBy(string $field, $value, string $and = ''): EntityInterface
     {
         $sql = "SELECT * FROM $this->table WHERE $field=:$field";
+
+        if (!empty($and)) {
+            $sql .= " AND $and";
+        }
+
         $st = $this->prepare($sql);
         $st->bindValue(":$field", $value);
         $st->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $this->entityClass);

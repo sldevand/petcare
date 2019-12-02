@@ -51,22 +51,22 @@ class UserEntity extends DefaultEntity
      */
     public function addPet(EntityInterface $pet): UserEntity
     {
-        $this->pets[$pet->getName()] = $pet;
+        $this->pets[$pet->getId()] = $pet;
 
         return $this;
     }
 
     /**
-     * @param string $name
+     * @param int $id
      * @return \App\Modules\Pet\Model\Entity\PetEntity
-     * @throws \Exception
+     * @throws Exception
      */
-    public function getPet(string $name): PetEntity
+    public function getPet(int $id): PetEntity
     {
-        if (empty($this->pets[$name])) {
-            throw new \Exception("Pet with name $name does not exists in User Entity");
+        if (empty($this->pets[$id])) {
+            throw new \Exception("Pet with ID $id does not exists in User Entity");
         }
 
-        return $this->pets[$name];
+        return $this->pets[$id];
     }
 }

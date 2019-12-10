@@ -6,7 +6,7 @@ fields:
         type: text
         constraints:
             nullable: false
-            minLength: 4
+            minLength: 3
             maxLength: 256
     dob:
         column: dob

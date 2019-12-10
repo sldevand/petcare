@@ -9,6 +9,7 @@ use Slim\Http\Response;
 use Exception;
 use Firebase\JWT\JWT;
 use Framework\Api\Repository\RepositoryInterface;
+use Framework\Model\Validator\DefaultValidator;
 
 /**
  * Class UserController
@@ -86,21 +87,7 @@ class UserController extends AbstractController
     {
         $args = $request->getParams();
         try {
-            if (empty($args['password'])) {
-                return $response->withJson(
-                    ["errors" => "Please enter a password"],
-                    404
-                );
-            }
-
-            $hash = password_hash($args['password'], PASSWORD_DEFAULT);
-
-            $user = new UserEntity([
-                'firstName' => $args['firstName'],
-                'lastName' => $args['lastName'],
-                'email' => $args['email'],
-                'password' => $hash,
-            ]);
+            $user = new UserEntity($args);
 
             $apiKey = JWT::encode(
                 [
@@ -111,7 +98,9 @@ class UserController extends AbstractController
                 "HS256"
             );
 
-            $user->setApiKey($apiKey);
+            $user->setPassword(password_hash($args['password'], PASSWORD_DEFAULT))
+                 ->setApiKey($apiKey);
+
             $newUser = $this->repository->save($user);
 
             $return = [

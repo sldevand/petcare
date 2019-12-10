@@ -33,7 +33,7 @@ class UserEntityProvider
                 'firstName' => 'Foo',
                 'lastName' => 'Bar',
                 'email' => 'foo.bar@mail.com',
-                'password' => 'S3crEt',
+                'password' => 'S3crEtPASS',
                 'apiKey' => 'json.web.token',
                 'pets' => [PetEntityProvider::getPets()[1]]
             ])

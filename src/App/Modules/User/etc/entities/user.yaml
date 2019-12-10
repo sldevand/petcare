@@ -6,22 +6,29 @@ fields:
         type: text
         constraints:
             nullable: false
+            minLength: 4
+            maxLength: 50
     lastName:
         column: lastName
         type: text
         constraints:
             nullable: false
+            minLength: 4
+            maxLength: 50
     email:
         column: email
         type: text
         constraints:
             nullable: false
             unique: true
+            filter: email
     password:
         column: password
         type: text
         constraints:
             nullable: false
+            minLength: 8
+            maxLength: 64
     apiKey:
         column: apiKey
         type: text

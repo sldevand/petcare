@@ -46,11 +46,6 @@ class UserRepositoryTest extends TestCase
      */
     public function testSave()
     {
-        $pets = [];
-        foreach (PetEntityProvider::getPets() as $pet) {
-            $pets[$pet->getName()] = self::$petRepository->save($pet);
-        }
-
         $now = (new DateTime())->format('Y-m-d H:i:s');
 
         $attributes = [
@@ -59,8 +54,7 @@ class UserRepositoryTest extends TestCase
             'email' => 'foo@bar.com',
             'password' => 'p@SSw0rd',
             'apiKey' => 'gsdgsdgsF.resfsfd.essdffsd',
-            'createdAt' => $now,
-            'pets' => $pets
+            'createdAt' => $now
         ];
 
         $user = new UserEntity($attributes);
@@ -69,7 +63,6 @@ class UserRepositoryTest extends TestCase
 
         $this->assertEquals($user, $savedUser);
     }
-
 
     /**
      * @throws Exception

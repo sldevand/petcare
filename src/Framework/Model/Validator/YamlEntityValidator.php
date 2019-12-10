@@ -14,7 +14,7 @@ class YamlEntityValidator
     const MANDATORY_MAIN_KEYS = ['table', 'fields'];
     const MANDATORY_COLUMN_DESCRIPTION_KEYS = ['column', 'type'];
     const OPTIONAL_COLUMN_DESCRIPTION_KEYS = ['constraints'];
-    const OPTIONAL_CONSTRAINTS_KEYS = ['nullable', 'fk', 'unique'];
+    const OPTIONAL_CONSTRAINTS_KEYS = ['nullable', 'fk', 'unique','minLength', 'maxLength', 'pattern','filter'];
     const MANDATORY_FK_KEYS = ['reference', 'table', 'cascade'];
 
     /** @var string */

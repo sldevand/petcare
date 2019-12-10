@@ -6,15 +6,20 @@ fields:
         type: text
         constraints:
             nullable: false
-            unique: true
+            minLength: 4
+            maxLength: 256
     dob:
         column: dob
         type: text
+        constraints:
+            pattern: 
     specy:
         column: specy
         type: text
         constraints:
             nullable: false
+            minLength: 3
+            maxLength: 256
     createdAt:
         column: createdAt
         type: text

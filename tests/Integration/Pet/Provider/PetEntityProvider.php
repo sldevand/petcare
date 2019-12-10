@@ -34,8 +34,8 @@ class PetEntityProvider
         $catEntity = new PetEntity($attributesToUpdate);
 
         return [
-            'waf'  => $dogEntity,
-            'elie' => $catEntity
+            $dogEntity,
+            $catEntity
         ];
     }
 }

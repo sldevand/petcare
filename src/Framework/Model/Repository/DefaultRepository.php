@@ -180,9 +180,19 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
      */
     public function deleteOne(int $id): bool
     {
-        $sql = 'DELETE FROM ' . $this->table . ' WHERE id=:id';
-        $st = $this->db->prepare($sql);
-        $st->bindValue(":id", $id);
+        return $this->deleteOneBy('id', $id);
+    }
+
+    /**
+     * @param string $field
+     * @param mixed $value
+     * @return boolean
+     */
+    public function deleteOneBy(string $field, $value): bool
+    {
+        $sql = 'DELETE FROM ' . $this->table . " WHERE $field=:$field";
+        $st = $this->prepare($sql);
+        $st->bindValue(":$field", $value);
 
         return $st->execute();
     }

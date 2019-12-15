@@ -1,0 +1,20 @@
+table: petCare
+fields:
+    petId:
+        column: petId
+        type: integer
+        constraints:
+            fk:
+                reference: id
+                table: pet
+                cascade:
+                    - delete
+    careId:
+        column: careId
+        type: integer
+        constraints:
+            fk:
+                reference: id
+                table: care
+                cascade:
+                    - delete

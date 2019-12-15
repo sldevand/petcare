@@ -3,8 +3,6 @@
 namespace Framework\Api\Repository;
 
 use Framework\Api\Entity\EntityInterface;
-use Framework\Api\Validator\ValidatorInterface;
-use PDO;
 
 /**
  * Interface RepositoryInterface
@@ -14,27 +12,27 @@ interface RepositoryInterface
 {
     /**
      * @param EntityInterface $entity
-     * @return bool
+     * @return EntityInterface
      */
-    public function create(EntityInterface $entity): bool;
+    public function create(EntityInterface $entity): EntityInterface;
 
     /**
      * @param EntityInterface $entity
-     * @return bool
+     * @return EntityInterface
      */
-    public function update(EntityInterface $entity): bool;
+    public function update(EntityInterface $entity): EntityInterface;
 
     /**
      * @param EntityInterface $entity
-     * @return bool
+     * @return EntityInterface
      */
-    public function save(EntityInterface $entity): bool;
+    public function save(EntityInterface $entity): EntityInterface;
 
     /**
      * @param int $id
      * @return EntityInterface
      */
-    public function findOne(int $id): EntityInterface;
+    public function fetchOne(int $id): EntityInterface;
 
     /**
      * @return array

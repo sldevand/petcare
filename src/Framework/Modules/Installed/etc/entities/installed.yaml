@@ -1,0 +1,13 @@
+table: installed
+fields:
+    name:
+        column: name
+        type: text
+        constraints:
+            nullable: false
+            unique: true
+    version:
+        column: version
+        type: text
+        constraints:
+            nullable: false

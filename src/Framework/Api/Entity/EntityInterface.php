@@ -16,9 +16,9 @@ interface EntityInterface extends JsonSerializable
     public function getFields(): array;
 
     /**
-     * @return int
+     * @return int | null
      */
-    public function getId(): int;
+    public function getId(): ?int;
 
     /**
      * @param int $id
@@ -27,21 +27,8 @@ interface EntityInterface extends JsonSerializable
     public function setId(int $id): EntityInterface;
 
     /**
-     * @param string $name
-     * @param mixed $value
-     * @return EntityInterface
+     * @param string $property
+     * @return string
      */
-    public function __set(string $name, $value): EntityInterface;
-
-    /**
-     * @param string $name
-     * @return mixed
-     */
-    public function __get(string $name);
-
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function hasProperty(string $name): bool;
+    public function getPropertyMethod(string $property): string;
 }

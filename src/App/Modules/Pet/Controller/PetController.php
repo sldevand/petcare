@@ -4,7 +4,7 @@ namespace App\Modules\Pet\Controller;
 
 use App\Modules\Pet\Model\Entity\PetEntity;
 use Exception;
-use Framework\Container\AbstractContainerInjector;
+use Framework\Controller\DefaultController;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -12,38 +12,33 @@ use Slim\Http\Response;
  * Class PetController
  * @package App\Modules\Pet\Controller
  */
-class PetController extends AbstractContainerInjector
+class PetController extends DefaultController
 {
-    /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $args
-     * @return Response
-     */
-    public function all(Request $request, Response $response, $args = [])
-    {
-        $data = $this->container->get('petRepository')->fetchAll();
-
-        return $response->withJson($data, 200);
-    }
+    /** @var \App\Modules\User\Model\Repository\UserRepository */
+    protected $userRepository;
 
     /**
-     * @param Request $request
-     * @param Response $response
+     * @param \Slim\Http\Request $request
+     * @param \Slim\Http\Response $response
      * @param array $args
-     * @return Response
-     * @throws Exception
+     * @return \Slim\Http\Response
      */
-    public function create(Request $request, Response $response, array $args = []): Response
+    public function get(Request $request, Response $response, $args = []): Response
     {
-        $args = $request->getParams();
-        $entity = new PetEntity($args);
+        try {
+            $user = $this->getUserByApiKey($request);
 
-        if (!$this->container->get('petRepository')->create($entity)) {
-            return $response->withJson(["message" => "entity not created"], 204);
+            if (empty($args['name'])) {
+                $pets = $this->userRepository->fetchPets($user->getId());
+                return $response->withJson($pets, 200);
+            }
+
+            $pet = $this->repository->fetchOneBy('name', $args['name']);
+
+            return $response->withJson($pet, 200);
+        } catch (Exception $exception) {
+            return $response->withJson(["errors" => $exception->getMessage()], 404);
         }
-
-        return $response->withJson($entity, 201);
     }
 
     /**
@@ -52,10 +47,29 @@ class PetController extends AbstractContainerInjector
      * @param array $args
      * @return Response
      */
-    public function findOneByName(Request $request, Response $response, array $args = []): Response
+    protected function save(Request $request, Response $response, array $args = []): Response
     {
-        $data = $this->container->get('petRepository')->findOneByName($args['name']);
+        try {
+            $user = $this->getUserByApiKey($request);
 
-        return $response->withJson($data, 200);
+            $entityParams = [
+                'name' => $request->getParam('name'),
+                'specy' => $request->getParam('specy'),
+                'dob' => $request->getParam('dob')
+            ];
+
+            $pet = new PetEntity($entityParams);
+
+            if (!empty($args['id'])) {
+                $pet->setId($args['id']);
+                $this->userRepository->fetchPet($user->getId(), $pet->getId());
+            }
+
+            $newPet = $this->userRepository->savePet($user, $pet);
+
+            return $response->withJson($newPet, 201);
+        } catch (Exception $exception) {
+            return $response->withJson(["errors" => $exception->getMessage()], 400);
+        }
     }
 }

@@ -7,7 +7,7 @@ use PDOException;
 
 /**
  * Class PDOFactory
- * @package Lib\Resource
+ * @package Framework\Resource
  */
 class PDOFactory
 {

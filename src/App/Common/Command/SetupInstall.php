@@ -2,9 +2,8 @@
 
 namespace App\Common\Command;
 
-use App\Common\Setup\Installer;
 use Exception;
-use Framework\Resource\PDOFactory;
+use Slim\App;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -32,18 +31,13 @@ class SetupInstall extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        require __DIR__ . '/../../../bootstrap.php';
+        require_once __DIR__ . '/../../../bootstrap.php';
+        require_once VENDOR_DIR . '/autoload.php';
+        session_start();
         $settings = require SRC_DIR . '/settings.php';
+        $app = new App($settings);
+        require_once SRC_DIR . '/dependencies.php';
 
-        $prodSettings = $settings['settings']['pdo']['prod'];
-
-        $sqliteConnection = PDOFactory::getSqliteConnexion($prodSettings['db-file']);
-        $installer = new Installer(
-            $sqliteConnection,
-            $prodSettings['install-file'],
-            $output
-        );
-        $output->writeln('Installing database schema and modules');
-        $installer->execute();
+        $app->getContainer()->get('installer')->execute();
     }
 }

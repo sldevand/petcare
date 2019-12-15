@@ -1,6 +1,3 @@
 module:
     name: Pet
     version: 1.0.0
-    enabled: true
-    entities:
-        pet

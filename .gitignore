@@ -2,5 +2,7 @@
 /logs/
 !/logs/README.md
 .idea/
-database
-
+/var/db/*.db
+.vscode/
+src/.env
+.env

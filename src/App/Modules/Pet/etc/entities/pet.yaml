@@ -6,28 +6,23 @@ fields:
         type: text
         constraints:
             nullable: false
-
+            minLength: 3
+            maxLength: 256
     dob:
         column: dob
         type: text
+        constraints:
+            pattern: 
     specy:
         column: specy
         type: text
         constraints:
             nullable: false
-    imageId:
-        column: imageId
-        type: integer
-        constraints:
-            fk:
-                name: image_id_fk_image_id
-                reference: id
-                table: petImage
+            minLength: 3
+            maxLength: 256
     createdAt:
         column: createdAt
         type: text
-        constraints:
-            nullable: false
     updatedAt:
         column: updatedAt
         type: text

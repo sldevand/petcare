@@ -1,0 +1,48 @@
+table:
+    user
+fields:
+    firstName:
+        column: firstName
+        type: text
+        constraints:
+            nullable: false
+            minLength: 3
+            maxLength: 60
+    lastName:
+        column: lastName
+        type: text
+        constraints:
+            nullable: false
+            minLength: 3
+            maxLength: 50
+    email:
+        column: email
+        type: text
+        constraints:
+            nullable: false
+            unique: true
+            filter: email
+    password:
+        column: password
+        type: text
+        constraints:
+            nullable: false
+            minLength: 8
+            maxLength: 64
+    apiKey:
+        column: apiKey
+        type: text
+        constraints:
+            nullable: false
+    activated:
+        column: activated
+        type: integer
+    activationCode:
+        column: activationCode
+        type: text
+    createdAt:
+        column: createdAt
+        type: text
+    updatedAt:
+        column: updatedAt
+        type: text

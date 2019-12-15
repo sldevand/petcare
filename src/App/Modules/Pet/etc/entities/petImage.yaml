@@ -1,17 +1,17 @@
 table: petImage
 fields:
-    id:
-        column: id
+    petId:
+        column: petId
         type: integer
         constraints:
-            nullable: false
             fk:
-                reference: imageId
+                reference: id
                 table: pet
                 cascade:
                     - delete
+            nullable: false
     image:
         column: image
-        type: blob
+        type: string
         constraints:
             nullable: false

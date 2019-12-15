@@ -7,13 +7,15 @@ use Framework\Api\Entity\EntityInterface;
 use Framework\Api\Repository\RepositoryInterface;
 use Framework\Api\Validator\ValidatorInterface;
 use Framework\Exception\RepositoryException;
+use Framework\MagicObject;
 use PDO;
+use PDOStatement;
 
 /**
  * Class DefaultRepository
  * @package Framework\Model\Repository
  */
-abstract class DefaultRepository implements RepositoryInterface
+class DefaultRepository extends MagicObject implements RepositoryInterface
 {
     /** @var PDO */
     protected $db;
@@ -40,52 +42,61 @@ abstract class DefaultRepository implements RepositoryInterface
 
     /**
      * @param EntityInterface $entity
-     * @return bool
+     * @return EntityInterface
      * @throws Exception
      */
-    public function create(EntityInterface $entity): bool
+    public function create(EntityInterface $entity): EntityInterface
     {
         $this->validator->validate($entity);
         $sql = $this->prepareInsertSql($entity);
-        $st = $this->db->prepare($sql);
+        $st = $this->prepare($sql);
 
         foreach ($entity->getFields() as $property => $field) {
-            if (!empty($entity->__get($property))) {
-                $st->bindValue($property, $entity->__get($property));
+            $getPropertyMethod = $this->getPropertyMethod($property);
+            if (!empty($entity->$getPropertyMethod()) && $property !== 'id') {
+                $st->bindValue($property, $entity->$getPropertyMethod());
             }
         }
+        $st->execute();
+        $st->closeCursor();
 
-        return $st->execute();
+        $id = $this->getLastInserted($this->table);
+
+        return $this->fetchOne($id);
     }
 
     /**
      * @param EntityInterface $entity
-     * @return bool
+     * @return EntityInterface
      * @throws Exception
      */
-    public function update(EntityInterface $entity): bool
+    public function update(EntityInterface $entity): EntityInterface
     {
         $this->validator->validate($entity);
         $sql = $this->prepareUpdateSql($entity);
-        $st = $this->db->prepare($sql);
+        $st = $this->prepare($sql);
         $st->bindValue(':id', $entity->getId());
         foreach ($entity->getFields() as $property => $field) {
-            if (!empty($entity->__get($property))) {
-                $st->bindValue($property, $entity->__get($property));
+            $getPropertyMethod = $this->getPropertyMethod($property);
+            if (!empty($entity->$getPropertyMethod())) {
+                $st->bindValue(':' . $property, $entity->$getPropertyMethod());
             }
         }
 
-        return $st->execute();
+        $st->execute();
+        $st->closeCursor();
+
+        return $this->fetchOne($entity->getId());
     }
 
     /**
      * @param EntityInterface $entity
-     * @return bool
+     * @return EntityInterface
      * @throws Exception
      */
-    public function save(EntityInterface $entity): bool
+    public function save(EntityInterface $entity): EntityInterface
     {
-        if (!$entity->getId()) {
+        if (empty($entity->getId())) {
             return $this->create($entity);
         }
 
@@ -96,31 +107,71 @@ abstract class DefaultRepository implements RepositoryInterface
      * @param int $id
      * @return EntityInterface
      * @throws RepositoryException
+     * @throws Exception
      */
-    public function findOne(int $id): EntityInterface
+    public function fetchOne(int $id): EntityInterface
     {
-        $sql = "SELECT * FROM $this->table WHERE id=:id";
-        $st = $this->db->prepare($sql);
-        $st->bindValue(":id", $id);
+        return $this->fetchOneBy('id', $id);
+    }
+
+    /**
+     * @param string $field
+     * @param string| int $value
+     * @param string $and
+     * @return EntityInterface
+     * @throws RepositoryException
+     */
+    public function fetchOneBy(string $field, $value, string $and = ''): EntityInterface
+    {
+        $sql = "SELECT * FROM $this->table WHERE $field=:$field";
+
+        if (!empty($and)) {
+            $sql .= " AND $and";
+        }
+
+        $st = $this->prepare($sql);
+        $st->bindValue(":$field", $value);
         $st->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $this->entityClass);
         $st->execute();
 
         if (!$result = $st->fetch()) {
             $class = get_class($this);
-            throw new RepositoryException("$class::findOne --> cannot fetch: PDO error");
+            throw new RepositoryException("$class::fetchOneBy($field, $value) --> cannot fetch: PDO error");
         }
 
         return $result;
     }
 
     /**
-     * @return array
+     * @return EntityInterface[]
+     * @throws Exception
      */
     public function fetchAll(): array
     {
-        $sql = 'SELECT * FROM ' . $this->table;
+        $sql = "SELECT * FROM $this->table";
+        $st = $this->prepare($sql);
+        $st->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $this->entityClass);
+        $st->execute();
 
-        return $this->db->query($sql, PDO::FETCH_ASSOC)->fetchAll();
+        return $st->fetchAll();
+    }
+
+    /**
+     * @param string $field
+     * @param int $value
+     * @return EntityInterface[]
+     * @throws Exception
+     */
+    public function fetchAllByField(string $field, int $value): array
+    {
+        $sql = "SELECT * FROM $this->table WHERE $field=:$field";
+
+        $st = $this->prepare($sql);
+        $st->bindValue(":$field", $value);
+        $st->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $this->entityClass);
+        $st->execute();
+
+        return $st->fetchAll();
     }
 
     /**
@@ -129,11 +180,66 @@ abstract class DefaultRepository implements RepositoryInterface
      */
     public function deleteOne(int $id): bool
     {
-        $sql = 'DELETE FROM ' . $this->table . ' WHERE id=:id';
-        $st = $this->db->prepare($sql);
-        $st->bindValue(":id", $id);
+        return $this->deleteOneBy('id', $id);
+    }
+
+    /**
+     * @param string $field
+     * @param mixed $value
+     * @return boolean
+     */
+    public function deleteOneBy(string $field, $value): bool
+    {
+        $sql = 'DELETE FROM ' . $this->table . " WHERE $field=:$field";
+        $st = $this->prepare($sql);
+        $st->bindValue(":$field", $value);
 
         return $st->execute();
+    }
+
+    /**
+     * @param string $table
+     * @return mixed
+     * @throws Exception
+     */
+    public function getLastInserted($table)
+    {
+        $sql = 'SELECT seq FROM sqlite_sequence WHERE name="' . $table . '"';
+        $q = $this->query($sql);
+        $q->execute();
+        $res = $q->fetchColumn();
+
+        return $res;
+    }
+
+    /**
+     * @param string $sql
+     * @return PDOStatement
+     * @throws Exception
+     */
+    public function prepare($sql)
+    {
+        $query = $this->db->prepare($sql);
+        if (!$query) {
+            throw new Exception(implode(" ", $this->db->errorInfo()));
+        }
+
+        return $query;
+    }
+
+    /**
+     * @param string $sql
+     * @return PDOStatement
+     * @throws Exception
+     */
+    public function query($sql)
+    {
+        $query = $this->db->query($sql);
+        if (!$query) {
+            throw new Exception(implode(" ", $this->db->errorInfo()));
+        }
+
+        return $query;
     }
 
     /**
@@ -143,28 +249,13 @@ abstract class DefaultRepository implements RepositoryInterface
      */
     protected function prepareInsertSql(EntityInterface $entity): string
     {
-        $fieldsPart = '';
-        $valuesPart = '';
-        $fields = $entity->getFields();
+        $columns = $columns = $this->prepareColumns($entity);
 
-        $iter = 1;
-        foreach ($fields as $property => $field) {
-            $value = $entity->__get($property);
-            $iter++;
-            if (is_null($value)) {
-                continue;
-            }
-
-            $fieldsPart .= $field['column'];
-            $valuesPart .= ':' . $property;
-            if ($iter < count($fields)) {
-                $fieldsPart .= ',';
-                $valuesPart .= ',';
-            }
-        }
+        $columnsSql = implode(',', array_keys($columns));
+        $valuesSql = implode(',', $columns);
 
         return <<<SQL
-INSERT INTO $this->table ($fieldsPart) VALUES ($valuesPart);
+INSERT INTO $this->table ($columnsSql) VALUES ($valuesSql);
 SQL;
     }
 
@@ -175,26 +266,41 @@ SQL;
      */
     protected function prepareUpdateSql(EntityInterface $entity): string
     {
-        $fieldsPart = '';
-        $fields = $entity->getFields();
+        $columns = $this->prepareColumns($entity);
 
-        $iter = 1;
-        foreach ($fields as $property => $field) {
-            $value = $entity->__get($property);
-            $iter++;
+        $columnsArr = [];
+        foreach ($columns as $key => $value) {
+            $columnsArr[] = $key . ' = ' . $value;
+        }
+
+        $columnsSql = implode(',', $columnsArr);
+
+        return <<<SQL
+UPDATE $this->table SET $columnsSql WHERE id = :id;
+SQL;
+    }
+
+    /**
+     * @param EntityInterface $entity
+     * @return array
+     */
+    protected function prepareColumns(EntityInterface $entity): array
+    {
+        $columns = [];
+        foreach ($entity->getFields() as $property => $field) {
+            if ($property === 'id') {
+                continue;
+            }
+
+            $propertyMethod = $entity->getPropertyMethod($property);
+            $value = $entity->$propertyMethod();
             if (is_null($value)) {
                 continue;
             }
 
-            $fieldsPart .= $field['column'] . ' = :' . $property;
-
-            if ($iter < count($fields)) {
-                $fieldsPart .= ',';
-            }
+            $columns[$field['column']] = ':' . $property;
         }
 
-        return <<<SQL
-UPDATE $this->table SET $fieldsPart WHERE id = :id;
-SQL;
+        return $columns;
     }
 }

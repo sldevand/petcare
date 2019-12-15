@@ -9,8 +9,8 @@ namespace Framework\Api\Query;
 interface BuilderInterface
 {
     /**
-     * @param array $entityConfig
+     * @param string $entityFile
      * @return string
      */
-    public function createTable(array $entityConfig): string;
+    public function createTable(string $entityFile): string;
 }

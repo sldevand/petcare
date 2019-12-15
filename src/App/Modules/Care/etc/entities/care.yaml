@@ -1,0 +1,20 @@
+table:
+    care
+fields:
+    title:
+        column: title
+        type: text
+        constraints:
+            nullable: false
+            unique: true
+            minLength: 4
+            maxLength: 256
+    content:
+        column: content
+        type: text
+    createdAt:
+        column: createdAt
+        type: text
+    updatedAt:
+        column: updatedAt
+        type: text

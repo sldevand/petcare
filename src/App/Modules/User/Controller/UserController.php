@@ -20,6 +20,9 @@ class UserController extends AbstractController
     /** @var array */
     protected $settings;
 
+    /** @var UserEntity */
+    protected $currentUser;
+
     /**
      * UserController constructor
      *
@@ -113,13 +116,13 @@ class UserController extends AbstractController
                 ->setActivated(0)
                 ->setActivationCode($activationCode);
 
-            $newUser = $this->repository->save($user);
+            $this->currentUser = $this->repository->save($user);
 
-            //TODO Send an email to user for activation
+            $this->setState('subscribe');
 
             $return = [
-                'email' => $newUser->getEmail(),
-                'apiKey' => $newUser->getApiKey()
+                'email' => $this->currentUser->getEmail(),
+                'apiKey' => $this->currentUser->getApiKey()
             ];
 
             return $response->withJson($return, 201);
@@ -178,5 +181,13 @@ class UserController extends AbstractController
                 404
             );
         }
+    }
+
+    /**
+     * @return UserEntity
+     */
+    public function getCurrentUser(): UserEntity
+    {
+        return $this->currentUser;
     }
 }

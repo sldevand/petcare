@@ -100,7 +100,6 @@ class UserLifeCycleTest extends TestCase
 
     public function testLoginAfterActivation()
     {
-
         $url = self::$websiteUrl . '/user/login';
         $user = self::$user;
 

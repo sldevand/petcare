@@ -73,10 +73,33 @@ class UserLifeCycleTest extends TestCase
         $this->postWithBody($url, $user);
     }
 
+
+    public function testActivation()
+    {
+        $user = self::$userRepository->fetchOneBy("email", self::$user['email']);
+        $id = $user->getId();
+        $activationCode = $user->getActivationCode();
+
+        $url = self::$websiteUrl . "/user/activate/$id/$activationCode";
+
+        $client = new Client([
+            'headers' => ['Content-Type' => 'application/json']
+        ]);
+
+        $res = $client->get($url);
+
+        self::assertEquals("200", $res->getStatusCode());
+        self::assertEquals("application/json", $res->getHeader('content-type')[0]);
+
+        $contents = $res->getBody()->getContents();
+        $jsonContents = \json_decode($contents, true);
+
+        self::assertEquals(self::$user['email'], $jsonContents['email']);
+        self::assertEquals(1, $jsonContents['activated']);
+    }
+
     public function testLoginAfterActivation()
     {
-
-        //TODO activate user by mocking a click on email's activation link
 
         $url = self::$websiteUrl . '/user/login';
         $user = self::$user;

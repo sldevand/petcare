@@ -29,8 +29,7 @@ class UserController extends AbstractController
     public function __construct(
         RepositoryInterface $repository,
         array $settings
-    )
-    {
+    ) {
         parent::__construct($repository);
         $this->settings = $settings;
     }
@@ -140,13 +139,39 @@ class UserController extends AbstractController
      */
     public function activate(Request $request, Response $response, $args = []): Response
     {
-        $args = $request->getParams();
+        if (empty($args['id']) || empty($args['activationCode'])) {
+            return $response->withJson(
+                ["errors" => "Cannot activate user, id or activation Code missing"],
+                401
+            );
+        }
 
         try {
-            //TODO test if activationCode of user equals code in url
-            $return = [];
+            $user = $this->repository->fetchOne($args['id']);
 
-            return $response->withJson($return, 201);
+            if (!empty($user->getActivated())) {
+                return $response->withJson(
+                    ["errors" => "User has already been activated"],
+                    304
+                );
+            }
+
+            if ($user->getActivationCode() !== $args['activationCode']) {
+                return $response->withJson(
+                    ["errors" => "activation code from email is different from activation code in database"],
+                    304
+                );
+            }
+
+            $user->setActivated(1);
+            $activatedUser = $this->repository->save($user);
+
+            $return = [
+                'email' => $activatedUser->getEmail(),
+                'activated' => $activatedUser->getActivated()
+            ];
+
+            return $response->withJson($return, 200);
         } catch (Exception $e) {
             return $response->withJson(
                 ["errors" => $e->getMessage()],

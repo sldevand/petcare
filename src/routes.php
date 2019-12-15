@@ -19,5 +19,5 @@ $app->group('/api', function () {
 $app->group('/user', function () {
     $this->post('/login', 'userController:login');
     $this->post('/subscribe', 'userController:subscribe');
-    $this->post('/activate', 'userController:activate');
+    $this->get('/activate/{id}/{activationCode}', 'userController:activate');
 });

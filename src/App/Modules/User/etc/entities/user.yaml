@@ -34,6 +34,9 @@ fields:
         type: text
         constraints:
             nullable: false
+    activated:
+        column: activated
+        type: integer
     createdAt:
         column: createdAt
         type: text

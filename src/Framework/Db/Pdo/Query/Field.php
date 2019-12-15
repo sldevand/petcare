@@ -132,6 +132,14 @@ class Field extends Hydratable
     /**
      * @return string
      */
+    public function exists()
+    {
+        return "SELECT COUNT(*) AS CNTREC FROM pragma_table_info('tablename') WHERE name='$this->name'";
+    }
+
+    /**
+     * @return string
+     */
     public function toSql(): string
     {
         $size = '';

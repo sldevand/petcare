@@ -37,6 +37,8 @@ class UserLifeCycleTest extends TestCase
         $app = new App($settings);
         require SRC_DIR . '/dependencies.php';
 
+        $container = $app->getContainer();
+
         self::$userRepository = $container->get('userRepository');
 
         $dotEnv = new \Symfony\Component\Dotenv\Dotenv();
@@ -56,12 +58,28 @@ class UserLifeCycleTest extends TestCase
         self::assertEquals(self::$user['email'], self::$subscribedUser['email']);
     }
 
-    public function testLogin()
+    public function testLoginBeforeActivation()
     {
+        self::expectException(\GuzzleHttp\Exception\ClientException::class);
+        self::expectExceptionMessage(
+            '{"errors":"User is not activated, please click the link in your email to activate the account"'
+        );
+
         $url = self::$websiteUrl . '/user/login';
         $user = self::$user;
         unset($user['firstName']);
         unset($user['lastName']);
+
+        $this->postWithBody($url, $user);
+    }
+
+    public function testLoginAfterActivation()
+    {
+
+        //TODO activate user by mocking a click on email's activation link
+
+        $url = self::$websiteUrl . '/user/login';
+        $user = self::$user;
 
         $res = $this->postWithBody($url, $user);
 

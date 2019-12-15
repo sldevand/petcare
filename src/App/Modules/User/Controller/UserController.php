@@ -29,7 +29,8 @@ class UserController extends AbstractController
     public function __construct(
         RepositoryInterface $repository,
         array $settings
-    ) {
+    )
+    {
         parent::__construct($repository);
         $this->settings = $settings;
     }
@@ -59,6 +60,13 @@ class UserController extends AbstractController
             if (!password_verify($password, $user->getPassword())) {
                 return $response->withJson(
                     ["errors" => "Wrong password !"],
+                    401
+                );
+            }
+
+            if (!$user->getActivated()) {
+                return $response->withJson(
+                    ["errors" => "User is not activated, please click the link in your email to activate the account"],
                     401
                 );
             }
@@ -98,15 +106,45 @@ class UserController extends AbstractController
                 "HS256"
             );
 
-            $user->setPassword(password_hash($args['password'], PASSWORD_DEFAULT))
-                 ->setApiKey($apiKey);
+            $activationCode = bin2hex(random_bytes(24));
+
+            $user
+                ->setPassword(password_hash($args['password'], PASSWORD_DEFAULT))
+                ->setApiKey($apiKey)
+                ->setActivated(0)
+                ->setActivationCode($activationCode);
 
             $newUser = $this->repository->save($user);
+
+            //TODO Send an email to user for activation
 
             $return = [
                 'email' => $newUser->getEmail(),
                 'apiKey' => $newUser->getApiKey()
             ];
+
+            return $response->withJson($return, 201);
+        } catch (Exception $e) {
+            return $response->withJson(
+                ["errors" => $e->getMessage()],
+                404
+            );
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param Response $response
+     * @param array $args
+     * @return Response
+     */
+    public function activate(Request $request, Response $response, $args = []): Response
+    {
+        $args = $request->getParams();
+
+        try {
+            //TODO test if activationCode of user equals code in url
+            $return = [];
 
             return $response->withJson($return, 201);
         } catch (Exception $e) {

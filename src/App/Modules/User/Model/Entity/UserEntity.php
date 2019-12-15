@@ -34,6 +34,9 @@ class UserEntity extends DefaultEntity
     /** @var bool */
     protected $activated;
 
+    /** @var string */
+    protected $activationCode;
+
     /** @var PetEntity[] */
     protected $pets;
 

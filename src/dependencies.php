@@ -3,10 +3,11 @@
 use App\Modules\Care\Model\Repository\CareRepository;
 use App\Modules\Mail\Observer\MailObserver;
 use App\Modules\Pet\Controller\PetController;
-use App\Modules\User\Controller\UserController;
 use App\Modules\Pet\Model\Repository\PetCareRepository;
 use App\Modules\Pet\Model\Repository\PetImageRepository;
 use App\Modules\Pet\Model\Repository\PetRepository;
+use App\Modules\Token\Helper\Token;
+use App\Modules\User\Controller\UserController;
 use App\Modules\User\Model\Repository\UserPetRepository;
 use App\Modules\User\Model\Repository\UserRepository;
 use Psr\Container\ContainerInterface;
@@ -16,7 +17,6 @@ require_once FRAMEWORK_DIR . '/dependencies.php';
 
 $dotenv = new Dotenv();
 $dotenv->load(ENV_FILE);
-
 
 $container['mailer'] = function ($container) {
     $twig = $container['view'];
@@ -40,6 +40,11 @@ $container['view'] = function ($container) {
     $view->addExtension(new \Slim\Views\TwigExtension($container['router'], $basePath));
 
     return $view;
+};
+
+//helpers
+$container['tokenHelper'] =  function (ContainerInterface $c) {
+    return new Token();
 };
 
 // repositories
@@ -88,7 +93,7 @@ $container['petController'] = function (ContainerInterface $c) {
 };
 
 $container['userController'] = function (ContainerInterface $c) use ($settings) {
-    $userController = new UserController($c->get('userRepository'), $settings);
+    $userController = new UserController($c->get('userRepository'), $c->get('tokenHelper'), $settings);
     $userController->attach($c->get('mailObserver'));
 
     return $userController;

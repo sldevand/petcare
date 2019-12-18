@@ -2,14 +2,13 @@
 
 namespace App\Modules\User\Controller;
 
-use Framework\Controller\AbstractController;
+use App\Modules\Token\Helper\Token;
 use App\Modules\User\Model\Entity\UserEntity;
+use Exception;
+use Framework\Api\Repository\RepositoryInterface;
+use Framework\Controller\AbstractController;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Exception;
-use Firebase\JWT\JWT;
-use Framework\Api\Repository\RepositoryInterface;
-use Framework\Model\Validator\DefaultValidator;
 
 /**
  * Class UserController
@@ -23,18 +22,24 @@ class UserController extends AbstractController
     /** @var UserEntity */
     protected $currentUser;
 
+    /** @var Token */
+    protected $token;
+
     /**
      * UserController constructor
      *
      * @param RepositoryInterface $repository
+     * @param Token $token
      * @param array $settings
      */
     public function __construct(
         RepositoryInterface $repository,
+        Token $token,
         array $settings
     ) {
         parent::__construct($repository);
         $this->settings = $settings;
+        $this->token = $token;
     }
 
     /**
@@ -99,14 +104,7 @@ class UserController extends AbstractController
         try {
             $user = new UserEntity($args);
 
-            $apiKey = JWT::encode(
-                [
-                    'lastName' => $user->getLastName(),
-                    'email' => $user->getEmail()
-                ],
-                $this->settings['settings']['jwt']['secret'],
-                "HS256"
-            );
+            $apiKey = $this->token->generate($user, $this->settings['settings']['jwt']['secret']);
 
             $activationCode = bin2hex(random_bytes(24));
 

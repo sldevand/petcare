@@ -50,7 +50,8 @@ class UserController extends AbstractController
      */
     public function login(Request $request, Response $response, $args = []): Response
     {
-        $args = $request->getParams();
+        $args = $request->getBody()->getContents();
+        $args = json_decode($args, true);
 
         if (empty($args['email']) || empty($args['password'])) {
             return $response->withJson(
@@ -100,7 +101,9 @@ class UserController extends AbstractController
      */
     public function subscribe(Request $request, Response $response, $args = []): Response
     {
-        $args = $request->getParams();
+        $args = $request->getBody()->getContents();
+        $args = json_decode($args, true);
+
         try {
             $user = new UserEntity($args);
 
@@ -120,7 +123,8 @@ class UserController extends AbstractController
 
             $return = [
                 'email' => $this->currentUser->getEmail(),
-                'apiKey' => $this->currentUser->getApiKey()
+                'activated' => $this->currentUser->getActivated(),
+                'message' => "An activation link was sent by email, please click the link to activate your account"
             ];
 
             return $response->withJson($return, 201);

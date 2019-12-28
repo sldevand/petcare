@@ -11,3 +11,5 @@ $app->add(new JwtAuthentication(
         "path" => ["/api"]
     ]
 ));
+
+$app->add(new Tuupola\Middleware\CorsMiddleware());

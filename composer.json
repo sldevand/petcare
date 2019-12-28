@@ -27,7 +27,8 @@
         "ext-yaml": "*",
         "ext-pdo": "*",
         "ext-http": "*",
-        "andrewdyer/slim3-mailer": "^1.1"
+        "andrewdyer/slim3-mailer": "^1.1",
+        "tuupola/cors-middleware": "^1.1"
     },
     "require-dev": {
         "phpunit/phpunit": ">=4.8 < 6.0",

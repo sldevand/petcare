@@ -81,7 +81,8 @@ class UserController extends AbstractController
 
             $return = [
                 'email' => $user->getEmail(),
-                'apiKey' => $user->getApiKey()
+                'apiKey' => $user->getApiKey(),
+                'message' => "You have successfully logged in!"
             ];
 
             return $response->withJson($return, 200);

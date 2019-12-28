@@ -9,6 +9,7 @@ use Framework\Api\Repository\RepositoryInterface;
 use Framework\Controller\AbstractController;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use Slim\Http\StatusCode;
 
 /**
  * Class UserController
@@ -54,9 +55,10 @@ class UserController extends AbstractController
         $args = json_decode($args, true);
 
         if (empty($args['email']) || empty($args['password'])) {
-            return $response->withJson(
-                ["errors" => "Cannot login, email or password is missing!"],
-                401
+            return $this->sendError(
+                $response,
+                "Cannot login, email or password is missing!",
+                StatusCode::HTTP_UNAUTHORIZED
             );
         }
 
@@ -65,31 +67,33 @@ class UserController extends AbstractController
             $password = $args['password'];
             $user = $this->repository->fetchOneBy('email', $args['email']);
 
+
             if (!password_verify($password, $user->getPassword())) {
-                return $response->withJson(
-                    ["errors" => "Wrong password !"],
-                    401
+                return $this->sendError(
+                    $response,
+                    "Wrong Password!",
+                    StatusCode::HTTP_UNAUTHORIZED
                 );
             }
 
             if (!$user->getActivated()) {
-                return $response->withJson(
-                    ["errors" => "User is not activated, please click the link in your email to activate the account"],
-                    401
+                return $this->sendError(
+                    $response,
+                    "User is not activated, please click the link in your email to activate the account!",
+                    StatusCode::HTTP_UNAUTHORIZED
                 );
             }
 
             $return = [
                 'email' => $user->getEmail(),
-                'apiKey' => $user->getApiKey(),
-                'message' => "You have successfully logged in!"
+                'apiKey' => $user->getApiKey()
             ];
 
-            return $response->withJson($return, 200);
+            return $this->sendSuccess($response, "You have successfully logged in!", $return);
         } catch (Exception $e) {
-            return $response->withJson(
-                ["errors" => "User with email $email does not exists"],
-                404
+            return $this->sendError(
+                $response,
+                "User with email $email does not exists"
             );
         }
     }
@@ -124,16 +128,16 @@ class UserController extends AbstractController
 
             $return = [
                 'email' => $this->currentUser->getEmail(),
-                'activated' => $this->currentUser->getActivated(),
-                'message' => "An activation link was sent by email, please click the link to activate your account"
+                'activated' => $this->currentUser->getActivated()
             ];
 
-            return $response->withJson($return, 201);
-        } catch (Exception $e) {
-            return $response->withJson(
-                ["errors" => $e->getMessage()],
-                404
+            return $this->sendSuccess(
+                $response,
+                "An activation link was sent by email, please click the link to activate your account",
+                $return
             );
+        } catch (Exception $e) {
+            return $this->sendError($response, $e->getMessage());
         }
     }
 
@@ -146,9 +150,10 @@ class UserController extends AbstractController
     public function activate(Request $request, Response $response, $args = []): Response
     {
         if (empty($args['id']) || empty($args['activationCode'])) {
-            return $response->withJson(
-                ["errors" => "Cannot activate user, id or activation Code missing"],
-                401
+            return $this->sendError(
+                $response,
+                "Cannot activate user, id or activation Code missing",
+                StatusCode::HTTP_OK
             );
         }
 
@@ -156,16 +161,18 @@ class UserController extends AbstractController
             $user = $this->repository->fetchOne($args['id']);
 
             if (!empty($user->getActivated())) {
-                return $response->withJson(
-                    ["errors" => "User has already been activated"],
-                    304
+                return $this->sendError(
+                    $response,
+                    "User has already been activated",
+                    StatusCode::HTTP_OK
                 );
             }
 
             if ($user->getActivationCode() !== $args['activationCode']) {
-                return $response->withJson(
-                    ["errors" => "activation code from email is different from activation code in database"],
-                    304
+                return $this->sendError(
+                    $response,
+                    "Activation code from email is different from activation code in database",
+                    StatusCode::HTTP_OK
                 );
             }
 
@@ -177,12 +184,13 @@ class UserController extends AbstractController
                 'activated' => $activatedUser->getActivated()
             ];
 
-            return $response->withJson($return, 200);
-        } catch (Exception $e) {
-            return $response->withJson(
-                ["errors" => $e->getMessage()],
-                404
+            return $this->sendSuccess(
+                $response,
+                "Your account is activated, Welcome !",
+                $return
             );
+        } catch (Exception $e) {
+            return $this->sendError($response, $e->getMessage());
         }
     }
 

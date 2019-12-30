@@ -51,7 +51,7 @@ class UserLifeCycleTest extends TestCase
         $url = self::$websiteUrl . '/user/subscribe';
         $res = $this->postWithBody($url, self::$user);
 
-        self::assertEquals("201", $res->getStatusCode());
+        self::assertEquals("200", $res->getStatusCode());
         self::assertEquals("application/json", $res->getHeader('content-type')[0]);
         $contents = $res->getBody()->getContents();
         self::$subscribedUser = \json_decode($contents, true);
@@ -62,7 +62,7 @@ class UserLifeCycleTest extends TestCase
     {
         self::expectException(\GuzzleHttp\Exception\ClientException::class);
         self::expectExceptionMessage(
-            '{"errors":"User is not activated, please click the link in your email to activate the account"'
+            '{"status":0,"errors":"User is not activated, please click the link in your email to activate the account!"}'
         );
 
         $url = self::$websiteUrl . '/user/login';
@@ -110,8 +110,7 @@ class UserLifeCycleTest extends TestCase
         $contents = $res->getBody()->getContents();
         $jsonContents = \json_decode($contents, true);
 
-        self::assertEquals(self::$subscribedUser['email'], $jsonContents['email']);
-        self::assertEquals(self::$subscribedUser['apiKey'], $jsonContents['apiKey']);
+        self::assertEquals(self::$user['email'], $jsonContents['email']);
     }
 
     /**

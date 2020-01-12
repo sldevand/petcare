@@ -27,8 +27,7 @@ class DefaultController extends AbstractController
     public function __construct(
         RepositoryInterface $repository,
         UserRepository $userRepository
-    )
-    {
+    ) {
         parent::__construct($repository);
         $this->userRepository = $userRepository;
     }

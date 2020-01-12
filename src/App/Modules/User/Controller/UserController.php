@@ -156,7 +156,7 @@ class UserController extends AbstractController
                 $return
             );
         } catch (Exception $e) {
-            return $this->sendError($response, $e->getMessage());
+            return $this->sendError($response, "An error occurred on subscription");
         }
     }
 
@@ -210,7 +210,7 @@ class UserController extends AbstractController
                 $return
             );
         } catch (Exception $e) {
-            return $this->sendError($response, $e->getMessage());
+            return $this->sendError($response, "An error occurred on activation");
         }
     }
 

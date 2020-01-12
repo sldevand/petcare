@@ -1,0 +1,34 @@
+table:
+  activation
+fields:
+  userId:
+    column: userId
+    type: integer
+    constraints:
+      fk:
+        reference: id
+        table: user
+        cascade:
+        - delete
+        - update
+  activationCode:
+    column: activationCode
+    type: text
+    constraints:
+      nullable: false
+  mailSent:
+    column: mailSent
+    type: integer
+    constraints:
+      nullable: false
+  activated:
+    column: activated
+    type: integer
+    constraints:
+      nullable: false
+  createdAt:
+    column: createdAt
+    type: text
+  updatedAt:
+    column: updatedAt
+    type: text

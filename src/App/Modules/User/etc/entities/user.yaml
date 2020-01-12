@@ -34,12 +34,6 @@ fields:
         type: text
         constraints:
             nullable: false
-    activated:
-        column: activated
-        type: integer
-    activationCode:
-        column: activationCode
-        type: text
     createdAt:
         column: createdAt
         type: text

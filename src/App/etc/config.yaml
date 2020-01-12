@@ -5,3 +5,5 @@ modules:
         enabled: true
     Care:
         enabled: true
+    Activation:
+        enabled: true

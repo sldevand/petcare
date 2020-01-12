@@ -8,6 +8,7 @@ use App\Modules\Pet\Model\Repository\PetCareRepository;
 use App\Modules\Pet\Model\Repository\PetImageRepository;
 use App\Modules\Pet\Model\Repository\PetRepository;
 use App\Modules\Token\Helper\Token;
+use App\Modules\User\Controller\UserApiController;
 use App\Modules\User\Controller\UserController;
 use App\Modules\User\Model\Repository\UserPetRepository;
 use App\Modules\User\Model\Repository\UserRepository;
@@ -110,4 +111,10 @@ $container['userController'] = function (ContainerInterface $c) use ($settings) 
     $userController->attach($c->get('mailObserver'));
 
     return $userController;
+};
+
+$container['userApiController'] = function (ContainerInterface $c) use ($settings) {
+    $userApiController = new UserApiController($c->get('userRepository'), $c->get('userRepository'));
+
+    return $userApiController;
 };

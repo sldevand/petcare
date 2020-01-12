@@ -44,8 +44,7 @@ class UserController extends AbstractController
         Token $token,
         ActivationRepository $activationRepository,
         array $settings
-    )
-    {
+    ) {
         parent::__construct($repository);
         $this->settings = $settings;
         $this->token = $token;

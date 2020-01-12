@@ -69,4 +69,19 @@ class UserEntity extends DefaultEntity
 
         return $this->pets[$id];
     }
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'firstName' => $this->firstName,
+            'lastName'  => $this->lastName,
+            'email'     => $this->email,
+            'pets'      => $this->pets,
+            'id'        => $this->id
+        ];
+    }
 }

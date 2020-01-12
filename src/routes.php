@@ -14,6 +14,9 @@ $app->group('/api', function () {
         $this->put('/{id}', 'petController:put');
         $this->delete('/{id}', 'petController:delete');
     });
+    $this->group('/user', function () {
+        $this->get('', 'userApiController:get');
+    });
 });
 
 $app->group('/user', function () {

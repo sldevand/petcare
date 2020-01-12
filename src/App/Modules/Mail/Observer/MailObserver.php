@@ -52,9 +52,9 @@ class MailObserver extends Observer
         $dotenv = new Dotenv();
         $dotenv->load(ENV_FILE);
 
-        $websiteUrl = $_ENV['WEBSITE_URL'];
+        $frontWebsiteUrl = $_ENV['FRONT_WEBSITE_URL'];
 
-        $link = $websiteUrl . "/user/activate/" . $id . "/" . $activationCode;
+        $link = $frontWebsiteUrl . "/account/activate/" . $id . "/" . $activationCode;
 
         $sent = $this->mailer->sendMessage(
             'email/user-activation.html.twig',

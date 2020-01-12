@@ -18,7 +18,7 @@ class MailObserver extends Observer
     protected $mailer;
 
     /** @var ActivationRepository */
-    private $activationRepository;
+    protected $activationRepository;
 
     /**
      * MailObserver constructor.
@@ -30,8 +30,7 @@ class MailObserver extends Observer
         Mailer $mailer,
         ActivationRepository $activationRepository,
         $subject = null
-    )
-    {
+    ) {
         parent::__construct($subject);
         $this->mailer = $mailer;
         $this->activationRepository = $activationRepository;

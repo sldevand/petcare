@@ -177,6 +177,7 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
     /**
      * @param int $id
      * @return bool
+     * @throws Exception
      */
     public function deleteOne(int $id): bool
     {
@@ -187,9 +188,12 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
      * @param string $field
      * @param mixed $value
      * @return boolean
+     * @throws Exception
      */
     public function deleteOneBy(string $field, $value): bool
     {
+        $this->db->exec("PRAGMA foreign_keys=ON");
+
         $sql = 'DELETE FROM ' . $this->table . " WHERE $field=:$field";
         $st = $this->prepare($sql);
         $st->bindValue(":$field", $value);

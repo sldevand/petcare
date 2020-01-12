@@ -8,6 +8,7 @@ use Framework\Api\Entity\EntityInterface;
 use Framework\Api\Repository\RepositoryInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use Slim\Http\StatusCode;
 
 /**
  * Class DefaultController
@@ -26,7 +27,8 @@ class DefaultController extends AbstractController
     public function __construct(
         RepositoryInterface $repository,
         UserRepository $userRepository
-    ) {
+    )
+    {
         parent::__construct($repository);
         $this->userRepository = $userRepository;
     }
@@ -42,16 +44,16 @@ class DefaultController extends AbstractController
         try {
             if (empty($args['id'])) {
                 $entities = $this->repository->fetchAll();
-                return $response->withJson($entities, 200);
+                return $this->sendSuccess($response, 'Entities successfully fetched!', $entities);
             }
 
             $id = $args['id'];
             $entity = $this->repository->fetchOne($id);
         } catch (Exception $exception) {
-            return $response->withJson(["errors" => $exception->getMessage()], 404);
+            return $this->sendError($response, 'Error while fetching entity!');
         }
 
-        return $response->withJson($entity, 200);
+        return $this->sendSuccess($response, 'Entity successfully fetched!', $entity);
     }
 
     /**
@@ -66,9 +68,10 @@ class DefaultController extends AbstractController
         $args = $request->getParams();
 
         if (!empty($args['id'])) {
-            return $response->withJson(
-                ["errors" => "Cannot create an entity with an id in a POST method"],
-                400
+            return $this->sendError(
+                $response,
+                "Cannot create an entity with an id in a POST method",
+                StatusCode::HTTP_NOT_ACCEPTABLE
             );
         }
 
@@ -85,9 +88,10 @@ class DefaultController extends AbstractController
     public function put(Request $request, Response $response, array $args = []): Response
     {
         if (empty($args['id'])) {
-            return $response->withJson(
-                ["errors" => "Cannot update an entity with an empty id in a PUT method"],
-                400
+            return $this->sendError(
+                $response,
+                "Cannot update an entity with an empty id in a PUT method",
+                StatusCode::HTTP_NOT_ACCEPTABLE
             );
         }
 
@@ -106,9 +110,10 @@ class DefaultController extends AbstractController
     public function delete(Request $request, Response $response, array $args = []): Response
     {
         if (empty($args['id'])) {
-            return $response->withJson(
-                ["errors" => "Cannot delete an entity with an empty id in a DELETE method"],
-                400
+            return $this->sendError(
+                $response,
+                "Cannot delete an entity with an empty id in a DELETE method",
+                StatusCode::HTTP_NOT_ACCEPTABLE
             );
         }
 
@@ -117,10 +122,14 @@ class DefaultController extends AbstractController
             $entity = $this->repository->fetchOne($id);
             $this->repository->deleteOne($id);
         } catch (Exception $exception) {
-            return $response->withJson(["errors" => $exception->getMessage()], 404);
+            return $this->sendError(
+                $response,
+                "An error occurred while deleting the entity",
+                StatusCode::HTTP_NOT_ACCEPTABLE
+            );
         }
 
-        return $response->withJson($entity, 204);
+        return $this->sendSuccess($response, "Entity successfully deleted", $entity);
     }
 
     /**
@@ -139,10 +148,15 @@ class DefaultController extends AbstractController
             }
             $newEntity = $this->repository->save($entity);
         } catch (Exception $exception) {
-            return $response->withJson(["errors" => $exception->getMessage()], 400);
+            return $this->sendError($response, "An error occurred while saving the entity");
         }
 
-        return $response->withJson($newEntity, 201);
+        return $this->sendSuccess(
+            $response,
+            'Entity successfully saved!',
+            $newEntity,
+            StatusCode::HTTP_CREATED
+        );
     }
 
     /**

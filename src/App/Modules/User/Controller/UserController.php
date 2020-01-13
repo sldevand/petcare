@@ -2,6 +2,8 @@
 
 namespace App\Modules\User\Controller;
 
+use App\Modules\Activation\Model\Entity\ActivationEntity;
+use App\Modules\Activation\Model\Repository\ActivationRepository;
 use App\Modules\Token\Helper\Token;
 use App\Modules\User\Model\Entity\UserEntity;
 use Exception;
@@ -26,21 +28,27 @@ class UserController extends AbstractController
     /** @var Token */
     protected $token;
 
+    /** @var ActivationRepository */
+    protected $activationRepository;
+
     /**
      * UserController constructor
      *
      * @param RepositoryInterface $repository
      * @param Token $token
+     * @param ActivationRepository $activationRepository
      * @param array $settings
      */
     public function __construct(
         RepositoryInterface $repository,
         Token $token,
+        ActivationRepository $activationRepository,
         array $settings
     ) {
         parent::__construct($repository);
         $this->settings = $settings;
         $this->token = $token;
+        $this->activationRepository = $activationRepository;
     }
 
     /**
@@ -67,7 +75,6 @@ class UserController extends AbstractController
             $password = $args['password'];
             $user = $this->repository->fetchOneBy('email', $args['email']);
 
-
             if (!password_verify($password, $user->getPassword())) {
                 return $this->sendError(
                     $response,
@@ -76,7 +83,9 @@ class UserController extends AbstractController
                 );
             }
 
-            if (!$user->getActivated()) {
+            $activation = $this->activationRepository->fetchOneBy('userId', $user->getId());
+
+            if (!$activation->getActivated()) {
                 return $this->sendError(
                     $response,
                     "User is not activated, please click the link in your email to activate the account!",
@@ -116,19 +125,29 @@ class UserController extends AbstractController
 
             $activationCode = bin2hex(random_bytes(24));
 
-            $user
-                ->setPassword(password_hash($args['password'], PASSWORD_DEFAULT))
-                ->setApiKey($apiKey)
-                ->setActivated(0)
-                ->setActivationCode($activationCode);
+            $user->setPassword(password_hash($args['password'], PASSWORD_DEFAULT))
+                ->setApiKey($apiKey);
 
             $this->currentUser = $this->repository->save($user);
 
+            $this->activationRepository->save(
+                new ActivationEntity(
+                    [
+                        'userId'         => $this->currentUser->getId(),
+                        'activated'      => false,
+                        'mailSent'       => false,
+                        'activationCode' => $activationCode
+                    ]
+                )
+            );
+
             $this->setState('subscribe');
+
+            $activation = $this->activationRepository->fetchOneBy('userId', $this->currentUser->getId());
 
             $return = [
                 'email' => $this->currentUser->getEmail(),
-                'activated' => $this->currentUser->getActivated()
+                'activated' => $activation->getActivated()
             ];
 
             return $this->sendSuccess(
@@ -137,7 +156,7 @@ class UserController extends AbstractController
                 $return
             );
         } catch (Exception $e) {
-            return $this->sendError($response, $e->getMessage());
+            return $this->sendError($response, "An error occurred on subscription");
         }
     }
 
@@ -159,8 +178,9 @@ class UserController extends AbstractController
 
         try {
             $user = $this->repository->fetchOne($args['id']);
+            $activation = $this->activationRepository->fetchOneBy('userId', $user->getId());
 
-            if (!empty($user->getActivated())) {
+            if (!empty($activation->getActivated())) {
                 return $this->sendError(
                     $response,
                     "User has already been activated",
@@ -168,7 +188,7 @@ class UserController extends AbstractController
                 );
             }
 
-            if ($user->getActivationCode() !== $args['activationCode']) {
+            if ($activation->getActivationCode() !== $args['activationCode']) {
                 return $this->sendError(
                     $response,
                     "Activation code from email is different from activation code in database",
@@ -176,12 +196,12 @@ class UserController extends AbstractController
                 );
             }
 
-            $user->setActivated(1);
-            $activatedUser = $this->repository->save($user);
+            $activation->setActivated(1);
+            $savedActivation = $this->activationRepository->save($activation);
 
             $return = [
-                'email' => $activatedUser->getEmail(),
-                'activated' => $activatedUser->getActivated()
+                'email' => $user->getEmail(),
+                'activated' => $savedActivation->getActivated()
             ];
 
             return $this->sendSuccess(
@@ -190,7 +210,7 @@ class UserController extends AbstractController
                 $return
             );
         } catch (Exception $e) {
-            return $this->sendError($response, $e->getMessage());
+            return $this->sendError($response, "An error occurred on activation");
         }
     }
 

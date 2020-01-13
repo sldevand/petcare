@@ -3,6 +3,7 @@
 namespace Framework\Controller;
 
 use Framework\Api\Repository\RepositoryInterface;
+use Framework\Model\Entity\DefaultEntity;
 use Framework\Observer\Subject;
 use Slim\Http\Response;
 use Slim\Http\StatusCode;
@@ -47,19 +48,18 @@ abstract class AbstractController extends Subject
     /**
      * @param Response $response
      * @param string $message
-     * @param array $data
+     * @param array | DefaultEntity $data
      * @param int $status
      * @return Response
      */
-    protected function sendSuccess(Response $response, string $message, array $data = [], $status = StatusCode::HTTP_OK): Response
+    protected function sendSuccess(Response $response, string $message, $data = [], $status = StatusCode::HTTP_OK): Response
     {
-        $responseArray = array_merge(
+        $responseArray =
             [
-                "status" => 1,
-                'message' => $message
-            ],
-            $data
-        );
+                'status' => 1,
+                'message' => $message,
+                'data' => $data
+            ];
 
         return $response->withJson(
             $responseArray,

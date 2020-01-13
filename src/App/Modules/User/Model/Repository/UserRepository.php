@@ -87,9 +87,9 @@ class UserRepository extends DefaultRepository
             ->setUserId($user->getId())
             ->setPetId($savedPet->getId());
 
-        try{
+        try {
             $this->userPetRepository->fetchPetByUserId($user->getId(), $savedPet->getId());
-        } catch (Exception $exception){
+        } catch (Exception $exception) {
             $this->userPetRepository->create($userPetEntity);
         }
 

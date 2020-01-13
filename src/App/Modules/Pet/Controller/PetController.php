@@ -7,6 +7,7 @@ use Exception;
 use Framework\Controller\DefaultController;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use Slim\Http\StatusCode;
 
 /**
  * Class PetController
@@ -30,14 +31,14 @@ class PetController extends DefaultController
 
             if (empty($args['name'])) {
                 $pets = $this->userRepository->fetchPets($user->getId());
-                return $response->withJson($pets, 200);
+                return $this->sendSuccess($response, 'List of pets', $pets);
             }
 
             $pet = $this->repository->fetchOneBy('name', $args['name']);
 
-            return $response->withJson($pet, 200);
+            return $this->sendSuccess($response, "Informations on " . $args['name'], $pet);
         } catch (Exception $exception) {
-            return $response->withJson(["errors" => $exception->getMessage()], 404);
+            return $this->sendError($response, $exception->getMessage());
         }
     }
 
@@ -67,9 +68,9 @@ class PetController extends DefaultController
 
             $newPet = $this->userRepository->savePet($user, $pet);
 
-            return $response->withJson($newPet, 201);
+            return $this->sendSuccess($response, 'Pet has been saved!', $newPet, StatusCode::HTTP_CREATED);
         } catch (Exception $exception) {
-            return $response->withJson(["errors" => $exception->getMessage()], 400);
+            return $this->sendError($response, "An error occurred when Pet save");
         }
     }
 }

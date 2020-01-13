@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Activation\Model\Repository\ActivationRepository;
 use App\Modules\Care\Model\Repository\CareRepository;
 use App\Modules\Mail\Observer\MailObserver;
 use App\Modules\Pet\Controller\PetController;
@@ -7,6 +8,7 @@ use App\Modules\Pet\Model\Repository\PetCareRepository;
 use App\Modules\Pet\Model\Repository\PetImageRepository;
 use App\Modules\Pet\Model\Repository\PetRepository;
 use App\Modules\Token\Helper\Token;
+use App\Modules\User\Controller\UserApiController;
 use App\Modules\User\Controller\UserController;
 use App\Modules\User\Model\Repository\UserPetRepository;
 use App\Modules\User\Model\Repository\UserRepository;
@@ -21,8 +23,8 @@ $dotenv->load(ENV_FILE);
 $container['mailer'] = function ($container) {
     $twig = $container['view'];
     $mailer = new \Anddye\Mailer\Mailer($twig, [
-        'host'     => $_ENV['SMTP_HOST'],  // SMTP Host
-        'port'     => $_ENV['SMTP_PORT'],  // SMTP Port
+        'host' => $_ENV['SMTP_HOST'],  // SMTP Host
+        'port' => $_ENV['SMTP_PORT'],  // SMTP Port
         'username' => $_ENV['SMTP_USERNAME'],  // SMTP Username
         'password' => $_ENV['SMTP_PASSWORD'],  // SMTP Password
         'protocol' => $_ENV['SMTP_PROTOCOL']   // SSL or TLS
@@ -43,7 +45,7 @@ $container['view'] = function ($container) {
 };
 
 //helpers
-$container['tokenHelper'] =  function (ContainerInterface $c) {
+$container['tokenHelper'] = function (ContainerInterface $c) {
     return new Token();
 };
 
@@ -73,6 +75,13 @@ $container['userPetRepository'] = function (ContainerInterface $c) {
     return new UserPetRepository($c->get('pdo'), $c->get('defaultValidator'));
 };
 
+$container['activationRepository'] = function (ContainerInterface $c) {
+    return new ActivationRepository(
+        $c->get('pdo'),
+        $c->get('defaultValidator')
+    );
+};
+
 $container['userRepository'] = function (ContainerInterface $c) {
     return new UserRepository(
         $c->get('pdo'),
@@ -84,7 +93,7 @@ $container['userRepository'] = function (ContainerInterface $c) {
 
 // observers
 $container['mailObserver'] = function (ContainerInterface $c) {
-    return new MailObserver($c->get('mailer'));
+    return new MailObserver($c->get('mailer'), $c->get('activationRepository'));
 };
 
 // controllers
@@ -93,8 +102,19 @@ $container['petController'] = function (ContainerInterface $c) {
 };
 
 $container['userController'] = function (ContainerInterface $c) use ($settings) {
-    $userController = new UserController($c->get('userRepository'), $c->get('tokenHelper'), $settings);
+    $userController = new UserController(
+        $c->get('userRepository'),
+        $c->get('tokenHelper'),
+        $c->get('activationRepository'),
+        $settings
+    );
     $userController->attach($c->get('mailObserver'));
 
     return $userController;
+};
+
+$container['userApiController'] = function (ContainerInterface $c) use ($settings) {
+    $userApiController = new UserApiController($c->get('userRepository'), $c->get('userRepository'));
+
+    return $userApiController;
 };

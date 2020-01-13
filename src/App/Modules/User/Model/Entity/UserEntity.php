@@ -31,12 +31,6 @@ class UserEntity extends DefaultEntity
     /** @var string */
     protected $apiKey;
 
-    /** @var bool */
-    protected $activated;
-
-    /** @var string */
-    protected $activationCode;
-
     /** @var PetEntity[] */
     protected $pets;
 
@@ -74,5 +68,20 @@ class UserEntity extends DefaultEntity
         }
 
         return $this->pets[$id];
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'firstName' => $this->firstName,
+            'lastName'  => $this->lastName,
+            'email'     => $this->email,
+            'pets'      => $this->pets,
+            'id'        => $this->id
+        ];
     }
 }

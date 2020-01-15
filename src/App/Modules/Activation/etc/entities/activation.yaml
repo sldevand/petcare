@@ -19,13 +19,9 @@ fields:
   mailSent:
     column: mailSent
     type: integer
-    constraints:
-      nullable: false
   activated:
     column: activated
     type: integer
-    constraints:
-      nullable: false
   createdAt:
     column: createdAt
     type: text

@@ -106,6 +106,7 @@ $container['userController'] = function (ContainerInterface $c) use ($settings) 
         $c->get('userRepository'),
         $c->get('tokenHelper'),
         $c->get('activationRepository'),
+        $c->get('logger'),
         $settings
     );
     $userController->attach($c->get('mailObserver'));

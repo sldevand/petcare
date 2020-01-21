@@ -3,7 +3,7 @@
 use Symfony\Component\Dotenv\Dotenv;
 
 $dotEnv = new Dotenv();
-$dotEnv->load(__DIR__.'/.env');
+$dotEnv->load(__DIR__ . '/.env');
 
 return [
     'settings' => [
@@ -18,7 +18,7 @@ return [
         // Monolog settings
         'logger' => [
             'name' => 'slim-app',
-            'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../logs/app.log',
+            'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../var/log/app.log',
             'level' => \Monolog\Logger::DEBUG,
         ],
 

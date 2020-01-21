@@ -9,6 +9,8 @@ use App\Modules\User\Model\Entity\UserEntity;
 use Exception;
 use Framework\Api\Repository\RepositoryInterface;
 use Framework\Controller\AbstractController;
+use PDOException;
+use Psr\Log\LoggerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Http\StatusCode;
@@ -31,24 +33,30 @@ class UserController extends AbstractController
     /** @var ActivationRepository */
     protected $activationRepository;
 
+    /** @var LoggerInterface */
+    protected $logger;
+
     /**
      * UserController constructor
      *
      * @param RepositoryInterface $repository
      * @param Token $token
      * @param ActivationRepository $activationRepository
+     * @param LoggerInterface $logger
      * @param array $settings
      */
     public function __construct(
         RepositoryInterface $repository,
         Token $token,
         ActivationRepository $activationRepository,
+        LoggerInterface $logger,
         array $settings
     ) {
         parent::__construct($repository);
         $this->settings = $settings;
         $this->token = $token;
         $this->activationRepository = $activationRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -100,6 +108,7 @@ class UserController extends AbstractController
 
             return $this->sendSuccess($response, "You have successfully logged in!", $return);
         } catch (Exception $e) {
+            $this->logger->alert($e->getMessage());
             return $this->sendError(
                 $response,
                 "User with email $email does not exists"
@@ -155,7 +164,15 @@ class UserController extends AbstractController
                 "An activation link was sent by email, please click the link to activate your account",
                 $return
             );
+        } catch (PDOException $e) {
+            $this->logger->alert($e->getMessage());
+            return $this->sendError($response, $this->getErrorMessage($e));
         } catch (Exception $e) {
+            $this->logger->alert($e->getMessage());
+            if (!empty($this->currentUser)) {
+                $this->repository->deleteOne($this->currentUser->getId());
+            }
+
             return $this->sendError($response, "An error occurred on subscription");
         }
     }
@@ -220,5 +237,20 @@ class UserController extends AbstractController
     public function getCurrentUser(): UserEntity
     {
         return $this->currentUser;
+    }
+
+    /**
+     * @param Exception $exception
+     * @return string
+     */
+    protected function getErrorMessage(Exception $exception): string
+    {
+        switch ($exception->getCode()) {
+            case '23000':
+                return 'User already exists';
+                break;
+            default:
+                return 'An error occurred';
+        }
     }
 }

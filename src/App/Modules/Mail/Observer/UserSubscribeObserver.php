@@ -9,10 +9,10 @@ use Framework\Observer\Observer;
 use Symfony\Component\Dotenv\Dotenv;
 
 /**
- * Class MailObserver
+ * Class UserSubscribeObserver
  * @package App\Modules\Mail\Observer
  */
-class MailObserver extends Observer
+class UserSubscribeObserver extends Observer
 {
     /** @var Mailer */
     protected $mailer;
@@ -21,7 +21,7 @@ class MailObserver extends Observer
     protected $activationRepository;
 
     /**
-     * MailObserver constructor.
+     * UserSubscribeObserver constructor.
      * @param Mailer $mailer
      * @param ActivationRepository $activationRepository
      * @param null $subject

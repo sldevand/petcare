@@ -18,7 +18,7 @@ class UserLifeCycleTest extends TestCase
     /** @var \App\Modules\User\Model\Repository\UserRepository */
     public static $userRepository;
 
-    /** @var \App\Modules\Activation\Model\Repository\ActivationRepository */
+    /** @var \App\Modules\Activation\Model\Repository\PasswordResetRepository */
     public static $activationRepository;
 
     /** @var array */

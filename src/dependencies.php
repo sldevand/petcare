@@ -2,7 +2,7 @@
 
 use App\Modules\Activation\Model\Repository\ActivationRepository;
 use App\Modules\Care\Model\Repository\CareRepository;
-use App\Modules\Mail\Observer\MailObserver;
+use App\Modules\Mail\Observer\UserSubscribeObserver;
 use App\Modules\Pet\Controller\PetController;
 use App\Modules\Pet\Model\Repository\PetCareRepository;
 use App\Modules\Pet\Model\Repository\PetImageRepository;
@@ -12,7 +12,6 @@ use App\Modules\User\Controller\ActivateController;
 use App\Modules\User\Controller\LoginController;
 use App\Modules\User\Controller\SubscribeController;
 use App\Modules\User\Controller\UserApiController;
-use App\Modules\User\Controller\UserController;
 use App\Modules\User\Helper\ApiKey;
 use App\Modules\User\Model\Repository\UserPetRepository;
 use App\Modules\User\Model\Repository\UserRepository;
@@ -100,7 +99,7 @@ $container['userRepository'] = function (ContainerInterface $c) {
 
 // observers
 $container['mailObserver'] = function (ContainerInterface $c) {
-    return new MailObserver($c->get('mailer'), $c->get('activationRepository'));
+    return new UserSubscribeObserver($c->get('mailer'), $c->get('activationRepository'));
 };
 
 // controllers

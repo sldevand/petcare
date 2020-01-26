@@ -2,7 +2,10 @@
 
 namespace App\Modules\User\Controller;
 
+use App\Modules\User\Helper\ApiKey;
+use App\Modules\User\Model\Repository\UserRepository;
 use Exception;
+use Framework\Api\Repository\RepositoryInterface;
 use Framework\Controller\DefaultController;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -13,6 +16,24 @@ use Slim\Http\Response;
  */
 class UserApiController extends DefaultController
 {
+    /** @var \App\Modules\User\Helper\ApiKey */
+    protected $apiKeyHelper;
+
+    /**
+     * UserApiController constructor.
+     * @param RepositoryInterface $repository
+     * @param UserRepository $userRepository
+     * @param ApiKey $apiKeyHelper
+     */
+    public function __construct(
+        RepositoryInterface $repository,
+        UserRepository $userRepository,
+        ApiKey $apiKeyHelper
+    ) {
+        parent::__construct($repository, $userRepository);
+        $this->apiKeyHelper = $apiKeyHelper;
+    }
+
     /**
      * @param Request $request
      * @param Response $response
@@ -22,7 +43,7 @@ class UserApiController extends DefaultController
     public function get(Request $request, Response $response, $args = []): Response
     {
         try {
-            $user = $this->getUserByApiKey($request);
+            $user = $this->apiKeyHelper->getUserByApiKey($request);
         } catch (Exception $exception) {
             return $this->sendError($response, 'Error while fetching user!');
         }

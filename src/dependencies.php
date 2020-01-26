@@ -13,6 +13,7 @@ use App\Modules\User\Controller\LoginController;
 use App\Modules\User\Controller\SubscribeController;
 use App\Modules\User\Controller\UserApiController;
 use App\Modules\User\Controller\UserController;
+use App\Modules\User\Helper\ApiKey;
 use App\Modules\User\Model\Repository\UserPetRepository;
 use App\Modules\User\Model\Repository\UserRepository;
 use Psr\Container\ContainerInterface;
@@ -49,6 +50,10 @@ $container['view'] = function ($container) {
 //helpers
 $container['tokenHelper'] = function (ContainerInterface $c) {
     return new Token();
+};
+
+$container['apiKeyHelper'] = function (ContainerInterface $c) {
+    return new ApiKey($c->get('userRepository'));
 };
 
 // repositories
@@ -103,21 +108,8 @@ $container['petController'] = function (ContainerInterface $c) {
     return new PetController($c->get('petRepository'), $c->get('userRepository'));
 };
 
-$container['userController'] = function (ContainerInterface $c) use ($settings) {
-    $userController = new UserController(
-        $c->get('userRepository'),
-        $c->get('tokenHelper'),
-        $c->get('activationRepository'),
-        $c->get('logger'),
-        $settings
-    );
-    $userController->attach($c->get('mailObserver'));
-
-    return $userController;
-};
-
 $container['userApiController'] = function (ContainerInterface $c) use ($settings) {
-    return new UserApiController($c->get('userRepository'), $c->get('userRepository'));
+    return new UserApiController($c->get('userRepository'), $c->get('userRepository'), $c->get('apiKeyHelper'));
 };
 
 $container['userLoginController'] = function (ContainerInterface $c) use ($settings) {

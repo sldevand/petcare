@@ -8,6 +8,9 @@ use App\Modules\Pet\Model\Repository\PetCareRepository;
 use App\Modules\Pet\Model\Repository\PetImageRepository;
 use App\Modules\Pet\Model\Repository\PetRepository;
 use App\Modules\Token\Helper\Token;
+use App\Modules\User\Controller\ActivateController;
+use App\Modules\User\Controller\LoginController;
+use App\Modules\User\Controller\SubscribeController;
 use App\Modules\User\Controller\UserApiController;
 use App\Modules\User\Controller\UserController;
 use App\Modules\User\Model\Repository\UserPetRepository;
@@ -30,8 +33,7 @@ $container['mailer'] = function ($container) {
         'protocol' => $_ENV['SMTP_PROTOCOL']   // SSL or TLS
     ]);
 
-    // Set the details of the default sender
-    $mailer->setDefaultFrom('no-reply@mail.com', 'Webmaster');
+    $mailer->setDefaultFrom('no-reply@mail.com', 'Petcare Team');
 
     return $mailer;
 };
@@ -115,7 +117,26 @@ $container['userController'] = function (ContainerInterface $c) use ($settings) 
 };
 
 $container['userApiController'] = function (ContainerInterface $c) use ($settings) {
-    $userApiController = new UserApiController($c->get('userRepository'), $c->get('userRepository'));
+    return new UserApiController($c->get('userRepository'), $c->get('userRepository'));
+};
 
-    return $userApiController;
+$container['userLoginController'] = function (ContainerInterface $c) use ($settings) {
+    return new LoginController($c->get('userRepository'), $c->get('activationRepository'), $c->get('logger'));
+};
+
+$container['userActivateController'] = function (ContainerInterface $c) use ($settings) {
+    return new ActivateController($c->get('userRepository'), $c->get('activationRepository'));
+};
+
+$container['userSubscribeController'] = function (ContainerInterface $c) use ($settings) {
+    $userSubscribeController = new SubscribeController(
+        $c->get('userRepository'),
+        $c->get('tokenHelper'),
+        $c->get('activationRepository'),
+        $c->get('logger'),
+        $settings
+    );
+    $userSubscribeController->attach($c->get('mailObserver'));
+
+    return $userSubscribeController;
 };

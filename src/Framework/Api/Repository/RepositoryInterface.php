@@ -35,6 +35,14 @@ interface RepositoryInterface
     public function fetchOne(int $id): EntityInterface;
 
     /**
+     * @param string $field
+     * @param $value
+     * @param string $and
+     * @return EntityInterface
+     */
+    public function fetchOneBy(string $field, $value, string $and = ''): EntityInterface;
+
+    /**
      * @return array
      */
     public function fetchAll(): array;

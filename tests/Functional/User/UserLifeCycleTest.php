@@ -58,7 +58,10 @@ class UserLifeCycleTest extends TestCase
         self::assertEquals("200", $res->getStatusCode());
         self::assertEquals("application/json", $res->getHeader('content-type')[0]);
         $contents = $res->getBody()->getContents();
-        self::$subscribedUser = \json_decode($contents, true);
+        $jsonResponse = \json_decode($contents, true);
+        self::assertEquals($jsonResponse['status'], "1");
+
+        self::$subscribedUser = $jsonResponse['data'];
         self::assertEquals(self::$user['email'], self::$subscribedUser['email']);
     }
 
@@ -100,9 +103,8 @@ class UserLifeCycleTest extends TestCase
 
         $contents = $res->getBody()->getContents();
         $jsonContents = \json_decode($contents, true);
-
-        self::assertEquals(self::$user['email'], $jsonContents['email']);
-        self::assertEquals(1, $jsonContents['activated']);
+        self::assertEquals(self::$user['email'], $jsonContents['data']['email']);
+        self::assertEquals(1, $jsonContents['data']['activated']);
     }
 
     public function testLoginAfterActivation()
@@ -117,8 +119,8 @@ class UserLifeCycleTest extends TestCase
         $contents = $res->getBody()->getContents();
         $jsonContents = \json_decode($contents, true);
 
-        self::assertEquals(self::$user['email'], $jsonContents['email']);
-        self::assertNotEmpty($jsonContents['apiKey']);
+        self::assertEquals(self::$user['email'], $jsonContents['data']['email']);
+        self::assertNotEmpty($jsonContents['data']['apiKey']);
     }
 
     /**

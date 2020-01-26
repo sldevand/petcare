@@ -67,10 +67,10 @@ class UserController extends AbstractController
      */
     public function login(Request $request, Response $response, $args = []): Response
     {
-        $args = $request->getBody()->getContents();
-        $args = json_decode($args, true);
+        $contents = $request->getBody()->getContents();
+        $params = json_decode($contents, true);
 
-        if (empty($args['email']) || empty($args['password'])) {
+        if (empty($params['email']) || empty($params['password'])) {
             return $this->sendError(
                 $response,
                 "Cannot login, email or password is missing!",
@@ -79,10 +79,10 @@ class UserController extends AbstractController
         }
 
         try {
-            $email = $args['email'];
-            $password = $args['password'];
-            $user = $this->repository->fetchOneBy('email', $args['email']);
+            $email = $params['email'];
+            $password = $params['password'];
 
+            $user = $this->repository->fetchOneBy('email', $params['email']);
             if (!password_verify($password, $user->getPassword())) {
                 return $this->sendError(
                     $response,
@@ -124,17 +124,17 @@ class UserController extends AbstractController
      */
     public function subscribe(Request $request, Response $response, $args = []): Response
     {
-        $args = $request->getBody()->getContents();
-        $args = json_decode($args, true);
+        $contents = $request->getBody()->getContents();
+        $params = json_decode($contents, true);
 
         try {
-            $user = new UserEntity($args);
+            $user = new UserEntity($params);
 
             $apiKey = $this->token->generate($user, $this->settings['settings']['jwt']['secret']);
 
             $activationCode = bin2hex(random_bytes(24));
 
-            $user->setPassword(password_hash($args['password'], PASSWORD_DEFAULT))
+            $user->setPassword(password_hash($params['password'], PASSWORD_DEFAULT))
                 ->setApiKey($apiKey);
 
             $this->currentUser = $this->repository->save($user);

@@ -7,3 +7,5 @@ modules:
         enabled: true
     Activation:
         enabled: true
+    PasswordReset:
+        enabled: true

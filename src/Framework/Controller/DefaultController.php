@@ -157,36 +157,4 @@ class DefaultController extends AbstractController
             StatusCode::HTTP_CREATED
         );
     }
-
-    /**
-     * @param \Slim\Http\Request $request
-     * @return string
-     * @throws \Exception
-     */
-    protected function getApiKey(Request $request): string
-    {
-        $authHeaderArr = $request->getHeader('Authorization');
-        if (empty($authHeaderArr) && count($authHeaderArr) !== 1) {
-            throw new Exception('No authorization header found');
-        }
-
-        $authorizationHeaderArr = explode(' ', $authHeaderArr[0]);
-
-        if (empty($authorizationHeaderArr) && count($authorizationHeaderArr) !== 2) {
-            throw new Exception('No authorization header found');
-        }
-
-        return $authorizationHeaderArr[1];
-    }
-
-    /**
-     * @param \Slim\Http\Request $request
-     * @return \Framework\Api\Entity\EntityInterface
-     * @throws \Exception
-     */
-    protected function getUserByApiKey(Request $request): EntityInterface
-    {
-        $apiKey = $this->getApiKey($request);
-        return $this->userRepository->fetchByApiKey($apiKey);
-    }
 }

@@ -3,6 +3,7 @@
 namespace Framework\Api\Repository;
 
 use Framework\Api\Entity\EntityInterface;
+use Framework\Exception\RepositoryException;
 
 /**
  * Interface RepositoryInterface
@@ -33,6 +34,15 @@ interface RepositoryInterface
      * @return EntityInterface
      */
     public function fetchOne(int $id): EntityInterface;
+
+    /**
+     * @param string $field
+     * @param $value
+     * @param string $and
+     * @return EntityInterface
+     * @throws RepositoryException
+     */
+    public function fetchOneBy(string $field, $value, string $and = ''): EntityInterface;
 
     /**
      * @return array

@@ -2,14 +2,17 @@
 
 use App\Modules\Activation\Model\Repository\ActivationRepository;
 use App\Modules\Care\Model\Repository\CareRepository;
-use App\Modules\Mail\Observer\MailObserver;
+use App\Modules\Mail\Observer\UserSubscribeObserver;
 use App\Modules\Pet\Controller\PetController;
 use App\Modules\Pet\Model\Repository\PetCareRepository;
 use App\Modules\Pet\Model\Repository\PetImageRepository;
 use App\Modules\Pet\Model\Repository\PetRepository;
 use App\Modules\Token\Helper\Token;
+use App\Modules\User\Controller\ActivateController;
+use App\Modules\User\Controller\LoginController;
+use App\Modules\User\Controller\SubscribeController;
 use App\Modules\User\Controller\UserApiController;
-use App\Modules\User\Controller\UserController;
+use App\Modules\User\Helper\ApiKey;
 use App\Modules\User\Model\Repository\UserPetRepository;
 use App\Modules\User\Model\Repository\UserRepository;
 use Psr\Container\ContainerInterface;
@@ -30,8 +33,7 @@ $container['mailer'] = function ($container) {
         'protocol' => $_ENV['SMTP_PROTOCOL']   // SSL or TLS
     ]);
 
-    // Set the details of the default sender
-    $mailer->setDefaultFrom('no-reply@mail.com', 'Webmaster');
+    $mailer->setDefaultFrom('no-reply@mail.com', 'Petcare Team');
 
     return $mailer;
 };
@@ -47,6 +49,10 @@ $container['view'] = function ($container) {
 //helpers
 $container['tokenHelper'] = function (ContainerInterface $c) {
     return new Token();
+};
+
+$container['apiKeyHelper'] = function (ContainerInterface $c) {
+    return new ApiKey($c->get('userRepository'));
 };
 
 // repositories
@@ -93,7 +99,7 @@ $container['userRepository'] = function (ContainerInterface $c) {
 
 // observers
 $container['mailObserver'] = function (ContainerInterface $c) {
-    return new MailObserver($c->get('mailer'), $c->get('activationRepository'));
+    return new UserSubscribeObserver($c->get('mailer'), $c->get('activationRepository'));
 };
 
 // controllers
@@ -101,21 +107,27 @@ $container['petController'] = function (ContainerInterface $c) {
     return new PetController($c->get('petRepository'), $c->get('userRepository'));
 };
 
-$container['userController'] = function (ContainerInterface $c) use ($settings) {
-    $userController = new UserController(
+$container['userApiController'] = function (ContainerInterface $c) use ($settings) {
+    return new UserApiController($c->get('userRepository'), $c->get('userRepository'), $c->get('apiKeyHelper'));
+};
+
+$container['userLoginController'] = function (ContainerInterface $c) use ($settings) {
+    return new LoginController($c->get('userRepository'), $c->get('activationRepository'), $c->get('logger'));
+};
+
+$container['userActivateController'] = function (ContainerInterface $c) use ($settings) {
+    return new ActivateController($c->get('userRepository'), $c->get('activationRepository'));
+};
+
+$container['userSubscribeController'] = function (ContainerInterface $c) use ($settings) {
+    $userSubscribeController = new SubscribeController(
         $c->get('userRepository'),
         $c->get('tokenHelper'),
         $c->get('activationRepository'),
         $c->get('logger'),
         $settings
     );
-    $userController->attach($c->get('mailObserver'));
+    $userSubscribeController->attach($c->get('mailObserver'));
 
-    return $userController;
-};
-
-$container['userApiController'] = function (ContainerInterface $c) use ($settings) {
-    $userApiController = new UserApiController($c->get('userRepository'), $c->get('userRepository'));
-
-    return $userApiController;
+    return $userSubscribeController;
 };

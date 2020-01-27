@@ -1,9 +1,5 @@
 <?php
 
-use Firebase\JWT\JWT;
-use Slim\Http\Request;
-use Slim\Http\Response;
-
 $container = $app->getContainer();
 
 $app->group('/api', function () {
@@ -20,7 +16,7 @@ $app->group('/api', function () {
 });
 
 $app->group('/user', function () {
-    $this->post('/login', 'userController:login');
-    $this->post('/subscribe', 'userController:subscribe');
-    $this->get('/activate/{id}/{activationCode}', 'userController:activate');
+    $this->post('/login', 'userLoginController:execute');
+    $this->post('/subscribe', 'userSubscribeController:execute');
+    $this->get('/activate/{id}/{activationCode}', 'userActivateController:execute');
 });

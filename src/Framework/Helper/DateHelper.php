@@ -19,4 +19,15 @@ class DateHelper
     {
         return (new DateTime())->format('Y-m-d H:i:s');
     }
+
+    /**
+     * @param string $dateTime
+     * @return int
+     */
+    public static function timeElapsedInMinutes($dateTime)
+    {
+        $now = new DateTime();
+
+        return $now->diff(new DateTime($dateTime))->i;
+    }
 }

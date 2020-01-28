@@ -4,6 +4,7 @@ namespace App\Modules\PasswordReset\Model\Entity;
 
 use Exception;
 use Framework\Model\Entity\DefaultEntity;
+use Framework\Traits\Entity\EntityTimestampableTrait;
 
 /**
  * Class PasswordResetEntity
@@ -11,6 +12,8 @@ use Framework\Model\Entity\DefaultEntity;
  */
 class PasswordResetEntity extends DefaultEntity
 {
+    use EntityTimestampableTrait;
+
     /** @var int */
     protected $userId;
 

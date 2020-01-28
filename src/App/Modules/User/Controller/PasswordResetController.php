@@ -10,6 +10,7 @@ use Framework\Api\Entity\EntityInterface;
 use Framework\Api\Repository\RepositoryInterface;
 use Framework\Controller\AbstractController;
 use Framework\Exception\RepositoryException;
+use Framework\Helper\DateHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Http\StatusCode;
@@ -21,6 +22,8 @@ use Symfony\Component\Dotenv\Dotenv;
  */
 class PasswordResetController extends AbstractController
 {
+    const MAX_TIME_ELAPSED = 10;
+
     /** @var MailSender */
     protected $mailSender;
 
@@ -64,8 +67,19 @@ class PasswordResetController extends AbstractController
             $resetCode = bin2hex(random_bytes(24));
             $passwordResetEntity = $this->getPasswordEntity($user, $resetCode);
 
+            if (empty($date = $passwordResetEntity->getUpdatedAt())) {
+                $date = $passwordResetEntity->getCreatedAt();
+            }
+
+            $diff = DateHelper::timeElapsedInMinutes($date);
+            if ($diff > self::MAX_TIME_ELAPSED) {
+                $passwordResetEntity->setMailSent(false);
+                $this->passwordResetRepository->save($passwordResetEntity);
+            }
+
             if ($passwordResetEntity->getMailSent()) {
-                return $this->sendSuccess($response, "Mail was already sent !");
+                $remaining = self::MAX_TIME_ELAPSED - $diff;
+                return $this->sendSuccess($response, "Mail was already sent ! Please wait $remaining minutes");
             }
 
             if (empty($this->sendMail($user, $resetCode))) {
@@ -118,13 +132,14 @@ class PasswordResetController extends AbstractController
         } catch (RepositoryException $e) {
             $passwordResetEntity = new PasswordResetEntity(
                 [
-                    'userId'    => $user->getId(),
-                    'resetCode' => $resetCode,
-                    'mailSent'  => false,
-                    'reset'     => false
+                    'userId' => $user->getId(),
+                    'mailSent' => false,
+                    'reset' => false
                 ]
             );
         }
+
+        $passwordResetEntity->setResetCode($resetCode);
 
         return $passwordResetEntity;
     }

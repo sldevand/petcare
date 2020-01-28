@@ -6,6 +6,7 @@ use App\Modules\PasswordReset\Model\Entity\PasswordResetEntity;
 use Framework\Api\Entity\EntityInterface;
 use Framework\Api\Validator\ValidatorInterface;
 use Framework\Model\Repository\DefaultRepository;
+use Framework\Traits\Repository\RepositoryTimestampableTrait;
 use PDO;
 
 /**
@@ -14,6 +15,8 @@ use PDO;
  */
 class PasswordResetRepository extends DefaultRepository
 {
+    use RepositoryTimestampableTrait;
+
     /**
      * PasswordResetRepository constructor.
      * @param PDO $db

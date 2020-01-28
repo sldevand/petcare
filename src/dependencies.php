@@ -113,7 +113,7 @@ $container['userRepository'] = function (ContainerInterface $c) {
 
 // observers
 $container['mailObserver'] = function (ContainerInterface $c) {
-    return new UserSubscribeObserver($c->get('mailer'), $c->get('activationRepository'));
+    return new UserSubscribeObserver($c->get('mailSender'), $c->get('activationRepository'));
 };
 
 // controllers

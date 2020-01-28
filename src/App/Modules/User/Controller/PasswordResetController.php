@@ -2,11 +2,9 @@
 
 namespace App\Modules\User\Controller;
 
-use Anddye\Mailer\Mailer;
 use App\Modules\Mail\Service\MailSender;
 use App\Modules\PasswordReset\Model\Entity\PasswordResetEntity;
 use App\Modules\PasswordReset\Model\Repository\PasswordResetRepository;
-use App\Modules\User\Model\Entity\UserEntity;
 use Exception;
 use Framework\Api\Entity\EntityInterface;
 use Framework\Api\Repository\RepositoryInterface;
@@ -23,7 +21,7 @@ use Symfony\Component\Dotenv\Dotenv;
  */
 class PasswordResetController extends AbstractController
 {
-    /** @var MailSende */
+    /** @var MailSender */
     protected $mailSender;
 
     /** @var PasswordResetRepository */
@@ -57,11 +55,7 @@ class PasswordResetController extends AbstractController
         $params = json_decode($contents, true);
 
         if (empty($params['email'])) {
-            return $this->sendError(
-                $response,
-                "Email field is missing !",
-                StatusCode::HTTP_BAD_REQUEST
-            );
+            return $this->sendError($response, "Email field is missing !", StatusCode::HTTP_BAD_REQUEST);
         }
 
         try {
@@ -74,7 +68,7 @@ class PasswordResetController extends AbstractController
                 return $this->sendSuccess($response, "Mail was already sent !");
             }
 
-            if (!$this->sendMail($user, $resetCode)) {
+            if (empty($this->sendMail($user, $resetCode))) {
                 return $this->sendError($response, "No mail was sent, please contact us !");
             }
 
@@ -96,9 +90,9 @@ class PasswordResetController extends AbstractController
     /**
      * @param EntityInterface $user
      * @param string $resetCode
-     * @return bool
+     * @return int
      */
-    protected function sendMail(EntityInterface $user, string $resetCode): bool
+    protected function sendMail(EntityInterface $user, string $resetCode): int
     {
         $dotenv = new Dotenv();
         $dotenv->load(ENV_FILE);

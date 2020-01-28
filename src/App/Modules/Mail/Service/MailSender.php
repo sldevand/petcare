@@ -3,6 +3,7 @@
 namespace App\Modules\Mail\Service;
 
 use Anddye\Mailer\Mailer;
+use Framework\Api\Entity\EntityInterface;
 
 /**
  * Class MailSender
@@ -24,13 +25,13 @@ class MailSender
     }
 
     /**
-     * @param $view
-     * @param $user
-     * @param $link
-     * @param $subject
+     * @param string $view
+     * @param EntityInterface $user
+     * @param string $link
+     * @param string $subject
      * @return int
      */
-    public function sendMailWithLink($view, $user, $link, $subject)
+    public function sendMailWithLink(string $view, EntityInterface $user, string $link, string $subject): int
     {
         return $this->mailer->sendMessage(
             $view,

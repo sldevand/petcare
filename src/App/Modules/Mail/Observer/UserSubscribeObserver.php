@@ -2,8 +2,9 @@
 
 namespace App\Modules\Mail\Observer;
 
-use Anddye\Mailer\Mailer;
 use App\Modules\Activation\Model\Repository\ActivationRepository;
+use App\Modules\Mail\Service\MailSender;
+use Framework\Api\Entity\EntityInterface;
 use Framework\Api\Observer\SubjectInterface;
 use Framework\Observer\Observer;
 use Symfony\Component\Dotenv\Dotenv;
@@ -14,25 +15,25 @@ use Symfony\Component\Dotenv\Dotenv;
  */
 class UserSubscribeObserver extends Observer
 {
-    /** @var Mailer */
-    protected $mailer;
+    /** @var MailSender */
+    protected $mailSender;
 
     /** @var ActivationRepository */
     protected $activationRepository;
 
     /**
      * UserSubscribeObserver constructor.
-     * @param Mailer $mailer
+     * @param MailSender $mailSender
      * @param ActivationRepository $activationRepository
      * @param null $subject
      */
     public function __construct(
-        Mailer $mailer,
+        MailSender $mailSender,
         ActivationRepository $activationRepository,
         $subject = null
     ) {
         parent::__construct($subject);
-        $this->mailer = $mailer;
+        $this->mailSender = $mailSender;
         $this->activationRepository = $activationRepository;
     }
 
@@ -44,33 +45,29 @@ class UserSubscribeObserver extends Observer
     public function subscribe(SubjectInterface $subject)
     {
         $user = $subject->getCurrentUser();
-        $id = $user->getId();
+        $activation = $this->activationRepository->fetchOneBy('userId', $user->getId());
 
-        $activation = $this->activationRepository->fetchOneBy('userId', $id);
-        $activationCode = $activation->getActivationCode();
+        if ($this->sendMail($user, $activation->getActivationCode())) {
+            $activation->setMailSent(true);
+            $this->activationRepository->save($activation);
+        }
+    }
 
+    /**
+     * @param EntityInterface $user
+     * @param string $activationCode
+     * @return int
+     */
+    protected function sendMail(EntityInterface $user, string $activationCode): int
+    {
         $dotenv = new Dotenv();
         $dotenv->load(ENV_FILE);
 
         $frontWebsiteUrl = $_ENV['FRONT_WEBSITE_URL'];
+        $view = 'email/user-activation.html.twig';
+        $link = $frontWebsiteUrl . "/account/activate/" . $user->getId() . "/" . $activationCode;
+        $subject = 'PetCare subscription';
 
-        $link = $frontWebsiteUrl . "/account/activate/" . $id . "/" . $activationCode;
-
-        $sent = $this->mailer->sendMessage(
-            'email/user-activation.html.twig',
-            [
-                'firstName' => $user->getFirstName(),
-                'link' => $link
-            ],
-            function ($message) use ($user) {
-                $message->setTo($user->getEmail(), $user->getFirstName());
-                $message->setSubject('You have subscribed to PetCare!');
-            }
-        );
-
-        if ($sent) {
-            $activation->setMailSent(1);
-            $this->activationRepository->save($activation);
-        }
+        return $this->mailSender->sendMailWithLink($view, $user, $link, $subject);
     }
 }

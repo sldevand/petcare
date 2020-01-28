@@ -116,7 +116,7 @@ $container['userLoginController'] = function (ContainerInterface $c) use ($setti
 };
 
 $container['userActivateController'] = function (ContainerInterface $c) use ($settings) {
-    return new ActivateController($c->get('userRepository'), $c->get('activationRepository'));
+    return new ActivateController($c->get('userRepository'), $c->get('activationRepository'), $c->get('logger'));
 };
 
 $container['userSubscribeController'] = function (ContainerInterface $c) use ($settings) {

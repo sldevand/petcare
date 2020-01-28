@@ -6,6 +6,7 @@ use App\Modules\Activation\Model\Repository\ActivationRepository;
 use Exception;
 use Framework\Api\Repository\RepositoryInterface;
 use Framework\Controller\AbstractController;
+use Psr\Log\LoggerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Http\StatusCode;
@@ -19,18 +20,23 @@ class ActivateController extends AbstractController
     /** @var ActivationRepository */
     protected $activationRepository;
 
+    /** @var \Psr\Log\LoggerInterface */
+    protected $logger;
+
     /**
      * ActivateController constructor
-     *
      * @param RepositoryInterface $repository
      * @param ActivationRepository $activationRepository
+     * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct(
         RepositoryInterface $repository,
-        ActivationRepository $activationRepository
+        ActivationRepository $activationRepository,
+        LoggerInterface $logger
     ) {
         parent::__construct($repository);
         $this->activationRepository = $activationRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -83,6 +89,7 @@ class ActivateController extends AbstractController
                 $return
             );
         } catch (Exception $e) {
+            $this->logger->error($e->getMessage());
             return $this->sendError($response, "An error occurred on activation");
         }
     }

@@ -3,6 +3,7 @@
 namespace App\Modules\PasswordReset\Model\Repository;
 
 use App\Modules\PasswordReset\Model\Entity\PasswordResetEntity;
+use Framework\Api\Entity\EntityInterface;
 use Framework\Api\Validator\ValidatorInterface;
 use Framework\Model\Repository\DefaultRepository;
 use PDO;

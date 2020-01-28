@@ -3,9 +3,12 @@
 namespace App\Modules\User\Controller;
 
 use Anddye\Mailer\Mailer;
+use App\Modules\Mail\Service\MailSender;
 use App\Modules\PasswordReset\Model\Entity\PasswordResetEntity;
 use App\Modules\PasswordReset\Model\Repository\PasswordResetRepository;
+use App\Modules\User\Model\Entity\UserEntity;
 use Exception;
+use Framework\Api\Entity\EntityInterface;
 use Framework\Api\Repository\RepositoryInterface;
 use Framework\Controller\AbstractController;
 use Framework\Exception\RepositoryException;
@@ -20,8 +23,8 @@ use Symfony\Component\Dotenv\Dotenv;
  */
 class PasswordResetController extends AbstractController
 {
-    /** @var Mailer */
-    protected $mailer;
+    /** @var MailSende */
+    protected $mailSender;
 
     /** @var PasswordResetRepository */
     protected $passwordResetRepository;
@@ -29,17 +32,17 @@ class PasswordResetController extends AbstractController
     /**
      * PasswordResetController constructor.
      * @param RepositoryInterface $repository
-     * @param Mailer $mailer
      * @param PasswordResetRepository $passwordResetRepository
+     * @param MailSender $mailSender
      */
     public function __construct(
         RepositoryInterface $repository,
-        Mailer $mailer,
-        PasswordResetRepository $passwordResetRepository
+        PasswordResetRepository $passwordResetRepository,
+        MailSender $mailSender
     ) {
         parent::__construct($repository);
-        $this->mailer = $mailer;
         $this->passwordResetRepository = $passwordResetRepository;
+        $this->mailSender = $mailSender;
     }
 
     /**
@@ -50,7 +53,10 @@ class PasswordResetController extends AbstractController
      */
     public function execute(Request $request, Response $response, $args = []): Response
     {
-        if (empty($args['email'])) {
+        $contents = $request->getBody()->getContents();
+        $params = json_decode($contents, true);
+
+        if (empty($params['email'])) {
             return $this->sendError(
                 $response,
                 "Email field is missing !",
@@ -59,52 +65,73 @@ class PasswordResetController extends AbstractController
         }
 
         try {
-            $user = $this->repository->fetchOneBy('email', $args['email']);
+            $user = $this->repository->fetchOneBy('email', $params['email']);
 
             $resetCode = bin2hex(random_bytes(24));
+            $passwordResetEntity = $this->getPasswordEntity($user, $resetCode);
 
-            $passwordResetEntity = new PasswordResetEntity(
-                [
-                    'userId'         => $user->getId(),
-                    'reset'      => false,
-                    'mailSent'       => false,
-                    'resetCode' => $resetCode
-                ]
-            );
+            if ($passwordResetEntity->getMailSent()) {
+                return $this->sendSuccess($response, "Mail was already sent !");
+            }
 
-            $this->passwordResetRepository->save($passwordResetEntity);
-
-            $dotenv = new Dotenv();
-            $dotenv->load(ENV_FILE);
-            $frontWebsiteUrl = $_ENV['FRONT_WEBSITE_URL'];
-
-            $link = $frontWebsiteUrl . "/user/passwordReset/" . $user->getId() . "/" . $resetCode;
-
-            $sent = $this->mailer->sendMessage(
-                'email/password-reset.html.twig',
-                [
-                    'firstName' => $user->getFirstName(),
-                    'link' => $link
-                ],
-                function ($message) use ($user) {
-                    $message->setTo($user->getEmail(), $user->getFirstName());
-                    $message->setSubject('PetCare password reset');
-                }
-            );
-
-            if (!$sent) {
+            if (!$this->sendMail($user, $resetCode)) {
                 return $this->sendError($response, "No mail was sent, please contact us !");
             }
+
+            $passwordResetEntity->setMailSent(true);
+            $this->passwordResetRepository->save($passwordResetEntity);
 
             return $this->sendSuccess(
                 $response,
                 "We sent you an email, please click the link in it to reset your password"
             );
         } catch (RepositoryException $e) {
-            $argEmail = $args['email'];
+            $argEmail = $params['email'];
             return $this->sendError($response, "This user with email $argEmail doesn't exists !");
         } catch (Exception $e) {
             return $this->sendError($response, "An error occurred on password reset !");
         }
+    }
+
+    /**
+     * @param EntityInterface $user
+     * @param string $resetCode
+     * @return bool
+     */
+    protected function sendMail(EntityInterface $user, string $resetCode): bool
+    {
+        $dotenv = new Dotenv();
+        $dotenv->load(ENV_FILE);
+        $frontWebsiteUrl = $_ENV['FRONT_WEBSITE_URL'];
+
+        $view = 'email/password-reset.html.twig';
+        $link = $frontWebsiteUrl . "/user/passwordReset/" . $user->getId() . "/" . $resetCode;
+        $subject = 'PetCare password reset';
+
+        return $this->mailSender->sendMailWithLink($view, $user, $link, $subject);
+    }
+
+    /**
+     * @param EntityInterface $user
+     * @param string $resetCode
+     * @return EntityInterface
+     * @throws Exception
+     */
+    protected function getPasswordEntity(EntityInterface $user, string $resetCode): EntityInterface
+    {
+        try {
+            $passwordResetEntity = $this->passwordResetRepository->fetchOneBy('userId', $user->getId());
+        } catch (RepositoryException $e) {
+            $passwordResetEntity = new PasswordResetEntity(
+                [
+                    'userId'    => $user->getId(),
+                    'resetCode' => $resetCode,
+                    'mailSent'  => false,
+                    'reset'     => false
+                ]
+            );
+        }
+
+        return $passwordResetEntity;
     }
 }

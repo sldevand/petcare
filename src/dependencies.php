@@ -3,6 +3,8 @@
 use App\Modules\Activation\Model\Repository\ActivationRepository;
 use App\Modules\Care\Model\Repository\CareRepository;
 use App\Modules\Mail\Observer\UserSubscribeObserver;
+use App\Modules\Mail\Service\MailSender;
+use App\Modules\PasswordReset\Model\Repository\PasswordResetRepository;
 use App\Modules\Pet\Controller\PetController;
 use App\Modules\Pet\Model\Repository\PetCareRepository;
 use App\Modules\Pet\Model\Repository\PetImageRepository;
@@ -10,6 +12,7 @@ use App\Modules\Pet\Model\Repository\PetRepository;
 use App\Modules\Token\Helper\Token;
 use App\Modules\User\Controller\ActivateController;
 use App\Modules\User\Controller\LoginController;
+use App\Modules\User\Controller\PasswordResetController;
 use App\Modules\User\Controller\SubscribeController;
 use App\Modules\User\Controller\UserApiController;
 use App\Modules\User\Helper\ApiKey;
@@ -23,6 +26,7 @@ require_once FRAMEWORK_DIR . '/dependencies.php';
 $dotenv = new Dotenv();
 $dotenv->load(ENV_FILE);
 
+//core dependencies
 $container['mailer'] = function ($container) {
     $twig = $container['view'];
     $mailer = new \Anddye\Mailer\Mailer($twig, [
@@ -46,6 +50,12 @@ $container['view'] = function ($container) {
     return $view;
 };
 
+//services
+$container['mailSender'] = function (ContainerInterface $c) {
+    return new MailSender($c->get('mailer'));
+};
+
+
 //helpers
 $container['tokenHelper'] = function (ContainerInterface $c) {
     return new Token();
@@ -58,6 +68,10 @@ $container['apiKeyHelper'] = function (ContainerInterface $c) {
 // repositories
 $container['careRepository'] = function (ContainerInterface $c) {
     return new CareRepository($c->get('pdo'), $c->get('defaultValidator'));
+};
+
+$container['passwordResetRepository'] = function (ContainerInterface $c) {
+    return new PasswordResetRepository($c->get('pdo'), $c->get('defaultValidator'));
 };
 
 $container['petImageRepository'] = function (ContainerInterface $c) {
@@ -117,6 +131,10 @@ $container['userLoginController'] = function (ContainerInterface $c) use ($setti
 
 $container['userActivateController'] = function (ContainerInterface $c) use ($settings) {
     return new ActivateController($c->get('userRepository'), $c->get('activationRepository'), $c->get('logger'));
+};
+
+$container['userPasswordResetController'] = function (ContainerInterface $c) use ($settings) {
+    return new PasswordResetController($c->get('userRepository'), $c->get('passwordResetRepository'), $c->get('mailSender'));
 };
 
 $container['userSubscribeController'] = function (ContainerInterface $c) use ($settings) {

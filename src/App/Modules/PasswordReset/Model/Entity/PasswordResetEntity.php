@@ -15,7 +15,7 @@ class PasswordResetEntity extends DefaultEntity
     protected $userId;
 
     /** @var string */
-    protected $passwordCode;
+    protected $resetCode;
 
     /** @var bool */
     protected $mailSent;

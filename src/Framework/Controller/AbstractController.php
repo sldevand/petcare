@@ -81,7 +81,7 @@ abstract class AbstractController extends Subject
      */
     protected function checkMandatoryParams(array $params): string
     {
-        return implode(' , ', array_diff($this->mandatoryParams, $params));
+        return implode(' , ', array_diff($this->mandatoryParams, array_keys($params)));
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Modules\User\Controller;
 
 use App\Modules\PasswordReset\Model\Repository\PasswordResetRepository;
+use App\Modules\Token\Helper\Token;
 use Exception;
 use Framework\Api\Repository\RepositoryInterface;
 use Framework\Controller\AbstractController;
@@ -18,7 +19,7 @@ use Slim\Http\StatusCode;
  */
 class PasswordChangeController extends AbstractController
 {
-    protected $mandatoryParams = ['id', 'resetCode','email', 'newPassword'];
+    protected $mandatoryParams = ['id', 'resetCode', 'email', 'newPassword'];
 
     /** @var PasswordResetRepository */
     protected $passwordResetRepository;
@@ -26,20 +27,32 @@ class PasswordChangeController extends AbstractController
     /** @var \Psr\Log\LoggerInterface */
     protected $logger;
 
+    /** @var \App\Modules\Token\Helper\Token */
+    protected $token;
+
+    /** @var array */
+    protected $settings;
+
     /**
      * PasswordChangeController constructor.
      * @param RepositoryInterface $repository
      * @param PasswordResetRepository $passwordResetRepository
-     * @param \Psr\Log\LoggerInterface $logger
+     * @param LoggerInterface $logger
+     * @param Token $token
+     * @param array $settings
      */
     public function __construct(
         RepositoryInterface $repository,
         PasswordResetRepository $passwordResetRepository,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        Token $token,
+        array $settings
     ) {
         parent::__construct($repository);
         $this->passwordResetRepository = $passwordResetRepository;
         $this->logger = $logger;
+        $this->token = $token;
+        $this->settings = $settings;
     }
 
     /**
@@ -59,20 +72,33 @@ class PasswordChangeController extends AbstractController
 
         try {
             $user = $this->repository->fetchOneBy('email', $params['email']);
+            $passwordReset = $this->passwordResetRepository->fetchOneBy('userId', $user->getId());
 
-            //TODO Check if id and resetCode matches with db
+            if (
+                $params['resetCode'] === $passwordReset->getResetCode()
+                && $params['id'] === $user->getId()
+            ) {
+                throw new Exception("ressetCode or userId do not match with database!");
+            }
 
-            //TODO change user password and apiKey
+            $apiKey = $this->token->generate($user, $this->settings['settings']['jwt']['secret']);
+            $user
+                ->setPassword(password_hash($params['newPassword'], PASSWORD_DEFAULT))
+                ->setApiKey($apiKey);
 
-            //TODO delete passwordReset row with user_id
+            $this->repository->save($user);
+
+            if (!$this->passwordResetRepository->deleteOne($passwordReset->getId())) {
+                throw new Exception(
+                    "Could not delete the passwordReset entity with userId "
+                    . $passwordReset->getUserId()
+                );
+            }
 
             return $this->sendSuccess(
                 $response,
                 "You successfully changed your password."
             );
-        } catch (RepositoryException $e) {
-            $argEmail = $params['email'];
-            return $this->sendError($response, "This user with email $argEmail doesn't exists !");
         } catch (Exception $e) {
             $this->logger->error($e->getMessage());
             return $this->sendError($response, "An error occurred on password change !");

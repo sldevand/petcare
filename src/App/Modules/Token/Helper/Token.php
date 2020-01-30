@@ -2,8 +2,8 @@
 
 namespace App\Modules\Token\Helper;
 
-use App\Modules\User\Model\Entity\UserEntity;
 use Firebase\JWT\JWT;
+use Framework\Api\Entity\EntityInterface;
 use Framework\Helper\DateHelper;
 
 /**
@@ -13,12 +13,12 @@ use Framework\Helper\DateHelper;
 class Token
 {
     /**
-     * @param UserEntity $user
+     * @param EntityInterface $user
      * @param string $secret
      * @return string
      * @throws \Exception
      */
-    public function generate($user, $secret)
+    public function generate(EntityInterface $user, string $secret): string
     {
         return JWT::encode(
             [

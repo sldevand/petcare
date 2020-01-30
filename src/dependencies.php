@@ -122,19 +122,19 @@ $container['petController'] = function (ContainerInterface $c) {
     return new PetController($c->get('petRepository'), $c->get('userRepository'));
 };
 
-$container['userApiController'] = function (ContainerInterface $c) use ($settings) {
+$container['userApiController'] = function (ContainerInterface $c) {
     return new UserApiController($c->get('userRepository'), $c->get('userRepository'), $c->get('apiKeyHelper'));
 };
 
-$container['userLoginController'] = function (ContainerInterface $c) use ($settings) {
+$container['userLoginController'] = function (ContainerInterface $c) {
     return new LoginController($c->get('userRepository'), $c->get('activationRepository'), $c->get('logger'));
 };
 
-$container['userActivateController'] = function (ContainerInterface $c) use ($settings) {
+$container['userActivateController'] = function (ContainerInterface $c) {
     return new ActivateController($c->get('userRepository'), $c->get('activationRepository'), $c->get('logger'));
 };
 
-$container['userPasswordResetController'] = function (ContainerInterface $c) use ($settings) {
+$container['userPasswordResetController'] = function (ContainerInterface $c) {
     return new PasswordResetController(
         $c->get('userRepository'),
         $c->get('passwordResetRepository'),
@@ -147,7 +147,9 @@ $container['userPasswordChangeController'] = function (ContainerInterface $c) us
     return new PasswordChangeController(
         $c->get('userRepository'),
         $c->get('passwordResetRepository'),
-        $c->get('logger')
+        $c->get('logger'),
+        $c->get('tokenHelper'),
+        $settings
     );
 };
 

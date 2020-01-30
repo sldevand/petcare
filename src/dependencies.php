@@ -12,6 +12,7 @@ use App\Modules\Pet\Model\Repository\PetRepository;
 use App\Modules\Token\Helper\Token;
 use App\Modules\User\Controller\ActivateController;
 use App\Modules\User\Controller\LoginController;
+use App\Modules\User\Controller\PasswordChangeController;
 use App\Modules\User\Controller\PasswordResetController;
 use App\Modules\User\Controller\SubscribeController;
 use App\Modules\User\Controller\UserApiController;
@@ -134,7 +135,20 @@ $container['userActivateController'] = function (ContainerInterface $c) use ($se
 };
 
 $container['userPasswordResetController'] = function (ContainerInterface $c) use ($settings) {
-    return new PasswordResetController($c->get('userRepository'), $c->get('passwordResetRepository'), $c->get('mailSender'));
+    return new PasswordResetController(
+        $c->get('userRepository'),
+        $c->get('passwordResetRepository'),
+        $c->get('mailSender'),
+        $c->get('logger')
+    );
+};
+
+$container['userPasswordChangeController'] = function (ContainerInterface $c) use ($settings) {
+    return new PasswordChangeController(
+        $c->get('userRepository'),
+        $c->get('passwordResetRepository'),
+        $c->get('logger')
+    );
 };
 
 $container['userSubscribeController'] = function (ContainerInterface $c) use ($settings) {

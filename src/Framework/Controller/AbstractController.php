@@ -5,6 +5,7 @@ namespace Framework\Controller;
 use Framework\Api\Repository\RepositoryInterface;
 use Framework\Model\Entity\DefaultEntity;
 use Framework\Observer\Subject;
+use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Http\StatusCode;
 
@@ -14,7 +15,10 @@ use Slim\Http\StatusCode;
  */
 abstract class AbstractController extends Subject
 {
-    /** @var RepositoryInterface */
+    /** @var array */
+    protected $mandatoryParams = [];
+
+    /** @var \Framework\Api\Repository\RepositoryInterface */
     protected $repository;
 
     /**
@@ -52,8 +56,12 @@ abstract class AbstractController extends Subject
      * @param int $status
      * @return Response
      */
-    protected function sendSuccess(Response $response, string $message, $data = [], $status = StatusCode::HTTP_OK): Response
-    {
+    protected function sendSuccess(
+        Response $response,
+        string $message,
+        $data = [],
+        $status = StatusCode::HTTP_OK
+    ): Response {
         $responseArray =
             [
                 'status' => 1,
@@ -65,5 +73,24 @@ abstract class AbstractController extends Subject
             $responseArray,
             $status
         );
+    }
+
+    /**
+     * @param array $params
+     * @return string
+     */
+    protected function checkMandatoryParams(array $params): string
+    {
+        return implode(' , ', array_diff($this->mandatoryParams, $params));
+    }
+
+    /**
+     * @param \Slim\Http\Request $request
+     * @return mixed
+     */
+    protected function getBodyJsonParams(Request $request)
+    {
+        $contents = $request->getBody()->getContents();
+        return json_decode($contents, true);
     }
 }

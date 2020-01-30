@@ -11,6 +11,7 @@ use Framework\Api\Repository\RepositoryInterface;
 use Framework\Controller\AbstractController;
 use Framework\Exception\RepositoryException;
 use Framework\Helper\DateHelper;
+use Psr\Log\LoggerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Http\StatusCode;
@@ -30,20 +31,26 @@ class PasswordResetController extends AbstractController
     /** @var PasswordResetRepository */
     protected $passwordResetRepository;
 
+    /** @var \Psr\Log\LoggerInterface */
+    protected $logger;
+
     /**
      * PasswordResetController constructor.
      * @param RepositoryInterface $repository
      * @param PasswordResetRepository $passwordResetRepository
      * @param MailSender $mailSender
+     * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct(
         RepositoryInterface $repository,
         PasswordResetRepository $passwordResetRepository,
-        MailSender $mailSender
+        MailSender $mailSender,
+        LoggerInterface $logger
     ) {
         parent::__construct($repository);
         $this->passwordResetRepository = $passwordResetRepository;
         $this->mailSender = $mailSender;
+        $this->logger = $logger;
     }
 
     /**
@@ -54,8 +61,7 @@ class PasswordResetController extends AbstractController
      */
     public function execute(Request $request, Response $response, $args = []): Response
     {
-        $contents = $request->getBody()->getContents();
-        $params = json_decode($contents, true);
+        $params = $this->getBodyJsonParams($request);
 
         if (empty($params['email'])) {
             return $this->sendError($response, "Email field is missing !", StatusCode::HTTP_BAD_REQUEST);
@@ -93,10 +99,11 @@ class PasswordResetController extends AbstractController
                 $response,
                 "We sent you an email, please click the link in it to reset your password"
             );
-        } catch (RepositoryException $e) {
+        } catch (RepositoryException $exception) {
             $argEmail = $params['email'];
             return $this->sendError($response, "This user with email $argEmail doesn't exists !");
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
+            $this->logger->error($exception->getMessage());
             return $this->sendError($response, "An error occurred on password reset !");
         }
     }
@@ -113,7 +120,7 @@ class PasswordResetController extends AbstractController
         $frontWebsiteUrl = $_ENV['FRONT_WEBSITE_URL'];
 
         $view = 'email/password-reset.html.twig';
-        $link = $frontWebsiteUrl . "/user/passwordReset/" . $user->getId() . "/" . $resetCode;
+        $link = $frontWebsiteUrl . "/user/passwordChange/" . $user->getId() . "/" . $resetCode;
         $subject = 'PetCare password reset';
 
         return $this->mailSender->sendMailWithLink($view, $user, $link, $subject);

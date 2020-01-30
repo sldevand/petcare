@@ -20,4 +20,5 @@ $app->group('/user', function () {
     $this->post('/subscribe', 'userSubscribeController:execute');
     $this->get('/activate/{id}/{activationCode}', 'userActivateController:execute');
     $this->post('/passwordReset', 'userPasswordResetController:execute');
+    $this->post('/passwordChange/{id}/{activationCode}', 'userPasswordChangeController:execute');
 });

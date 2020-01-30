@@ -45,8 +45,7 @@ class LoginController extends AbstractController
      */
     public function execute(Request $request, Response $response, $args = []): Response
     {
-        $contents = $request->getBody()->getContents();
-        $params = json_decode($contents, true);
+        $params = $this->getBodyJsonParams($request);
 
         if (empty($params['email']) || empty($params['password'])) {
             return $this->sendError(

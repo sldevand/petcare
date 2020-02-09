@@ -20,6 +20,9 @@ class LoginController extends AbstractController
     /** @var ActivationRepository */
     protected $activationRepository;
 
+    /** @var LoggerInterface */
+    protected $logger;
+
     /**
      * LoginController constructor
      *

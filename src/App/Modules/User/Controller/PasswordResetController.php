@@ -78,13 +78,13 @@ class PasswordResetController extends AbstractController
             }
 
             $diff = DateHelper::timeElapsedInMinutes($date);
-            if ($diff > self::MAX_TIME_ELAPSED) {
+            $remaining = self::MAX_TIME_ELAPSED - $diff;
+            if ($remaining <= 0) {
                 $passwordResetEntity->setMailSent(false);
-                $this->passwordResetRepository->save($passwordResetEntity);
+                $passwordResetEntity = $this->passwordResetRepository->save($passwordResetEntity);
             }
 
             if ($passwordResetEntity->getMailSent()) {
-                $remaining = self::MAX_TIME_ELAPSED - $diff;
                 return $this->sendSuccess($response, "Mail was already sent ! Please wait $remaining minutes");
             }
 
@@ -120,7 +120,7 @@ class PasswordResetController extends AbstractController
         $frontWebsiteUrl = $_ENV['FRONT_WEBSITE_URL'];
 
         $view = 'email/password-reset.html.twig';
-        $link = $frontWebsiteUrl . "/user/passwordChange/" . $user->getId() . "/" . $resetCode;
+        $link = $frontWebsiteUrl . "/passwordChange/" . $user->getId() . "/" . $resetCode;
         $subject = 'PetCare password reset';
 
         return $this->mailSender->sendMailWithLink($view, $user, $link, $subject);

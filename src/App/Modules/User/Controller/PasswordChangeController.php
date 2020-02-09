@@ -72,13 +72,29 @@ class PasswordChangeController extends AbstractController
 
         try {
             $user = $this->repository->fetchOneBy('email', $params['email']);
-            $passwordReset = $this->passwordResetRepository->fetchOneBy('userId', $user->getId());
+        } catch (Exception $exception) {
+            $email = $params['email'];
+            return $this->sendError(
+                $response,
+                "User with email $email does not exists"
+            );
+        }
 
+        try {
+            $passwordReset = $this->passwordResetRepository->fetchOneBy('userId', $user->getId());
+        } catch (Exception $exception) {
+            return $this->sendError(
+                $response,
+                'You did not asked to reset your password or you have already changed it !'
+            );
+        }
+
+        try {
             if (
                 $params['resetCode'] === $passwordReset->getResetCode()
                 && $params['id'] === $user->getId()
             ) {
-                throw new Exception("ressetCode or userId do not match with database!");
+                throw new Exception("resetCode or userId do not match with database!");
             }
 
             $apiKey = $this->token->generate($user, $this->settings['settings']['jwt']['secret']);
@@ -86,7 +102,7 @@ class PasswordChangeController extends AbstractController
                 ->setPassword(password_hash($params['newPassword'], PASSWORD_DEFAULT))
                 ->setApiKey($apiKey);
 
-            $this->repository->save($user);
+            $user = $this->repository->save($user);
 
             if (!$this->passwordResetRepository->deleteOne($passwordReset->getId())) {
                 throw new Exception(
@@ -95,13 +111,17 @@ class PasswordChangeController extends AbstractController
                 );
             }
 
+            if (!password_verify($params['newPassword'], $user->getPassword())) {
+                throw new Exception('Password in database does not matches with the one submitted');
+            }
+
             return $this->sendSuccess(
                 $response,
                 "You successfully changed your password."
             );
         } catch (Exception $e) {
             $this->logger->error($e->getMessage());
-            return $this->sendError($response, "An error occurred on password change !");
+            return $this->sendError($response, "Impossible to change your password, an error ocurred !");
         }
     }
 }

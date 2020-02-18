@@ -22,7 +22,8 @@ GIT_BRANCH=develop
 
 #Remote vars
 REMOTE_HOST=pi@raspi3
-REMOTE_WWW_PATH=/home/pi/tmp
+REMOTE_WWW_PATH=/var/www
+REMOTE_TMP_PATH=/home/pi/tmp
 REMOTE_APP_NAME=petcare
 REMOTE_SCRIPT_PATH=$LOCAL_APP_PATH/deploy/remote/commands.sh
 
@@ -46,14 +47,13 @@ rm -rfv $LOCAL_REPO_PATH/*.md
 rm -rfv $LOCAL_REPO_PATH/*.xml
 rm -rfv $LOCAL_REPO_PATH/.git
 
-myEcho "***END $LOCAL_APP_NAME deployer script END***"
-
 ssh-add ~/.ssh/raspi3_key
 
-ssh $REMOTE_HOST rm -rvf $REMOTE_WWW_PATH/$REMOTE_APP_NAME
+myEcho "***Remote : copy from local $LOCAL_REPO_PATH to remote $REMOTE_HOST:$REMOTE_TMP_PATH***"
+scp -r $LOCAL_REPO_PATH $REMOTE_HOST:$REMOTE_TMP_PATH
+ssh $REMOTE_HOST 'bash -s' < $REMOTE_SCRIPT_PATH
 
-scp -r $LOCAL_REPO_PATH $REMOTE_HOST:$REMOTE_WWW_PATH
-
+myEcho "***Local : remove build files***"
 rm -rf $LOCAL_BUILD_PATH
 
-ssh $REMOTE_HOST 'bash -s' < $REMOTE_SCRIPT_PATH
+myEcho "***END $LOCAL_APP_NAME deployer script END***"

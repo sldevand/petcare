@@ -3,8 +3,12 @@
 namespace App\Modules\Pet\Controller;
 
 use App\Modules\Pet\Model\Entity\PetEntity;
+use App\Modules\User\Helper\ApiKey;
+use App\Modules\User\Model\Repository\UserRepository;
 use Exception;
+use Framework\Api\Repository\RepositoryInterface;
 use Framework\Controller\DefaultController;
+use Psr\Log\LoggerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Http\StatusCode;
@@ -18,6 +22,32 @@ class PetController extends DefaultController
     /** @var \App\Modules\User\Model\Repository\UserRepository */
     protected $userRepository;
 
+    /** @var \App\Modules\User\Helper\ApiKey */
+    protected $apiKeyHelper;
+
+    /** @var \Psr\Log\LoggerInterface */
+    protected $logger;
+
+    /**
+     * PetController constructor.
+     * @param \Framework\Api\Repository\RepositoryInterface $repository
+     * @param \App\Modules\User\Model\Repository\UserRepository $userRepository
+     * @param \App\Modules\User\Helper\ApiKey $apiKeyHelper
+     * @param \Psr\Log\LoggerInterface $logger
+     */
+    public function __construct(
+        RepositoryInterface $repository,
+        UserRepository $userRepository,
+        ApiKey $apiKeyHelper,
+        LoggerInterface $logger
+    )
+    {
+        parent::__construct($repository, $userRepository);
+        $this->apiKeyHelper = $apiKeyHelper;
+        $this->logger = $logger;
+    }
+
+
     /**
      * @param \Slim\Http\Request $request
      * @param \Slim\Http\Response $response
@@ -27,7 +57,7 @@ class PetController extends DefaultController
     public function get(Request $request, Response $response, $args = []): Response
     {
         try {
-            $user = $this->getUserByApiKey($request);
+            $user = $this->apiKeyHelper->getUserByApiKey($request);
 
             if (empty($args['name'])) {
                 $pets = $this->userRepository->fetchPets($user->getId());
@@ -38,7 +68,8 @@ class PetController extends DefaultController
 
             return $this->sendSuccess($response, "Informations on " . $args['name'], $pet);
         } catch (Exception $exception) {
-            return $this->sendError($response, $exception->getMessage());
+            $this->logger->alert($exception->getMessage());
+            return $this->sendError($response, "An error occurred when fetching Pet");
         }
     }
 
@@ -51,12 +82,14 @@ class PetController extends DefaultController
     protected function save(Request $request, Response $response, array $args = []): Response
     {
         try {
-            $user = $this->getUserByApiKey($request);
+            $params = $this->getBodyJsonParams($request);
+
+            $user = $this->apiKeyHelper->getUserByApiKey($request);
 
             $entityParams = [
-                'name' => $request->getParam('name'),
-                'specy' => $request->getParam('specy'),
-                'dob' => $request->getParam('dob')
+                'name'  => $params['name'] ?? "",
+                'specy' => $params['specy'] ?? "",
+                'dob'   => $params['dob'] ?? ""
             ];
 
             $pet = new PetEntity($entityParams);
@@ -70,6 +103,7 @@ class PetController extends DefaultController
 
             return $this->sendSuccess($response, 'Pet has been saved!', $newPet, StatusCode::HTTP_CREATED);
         } catch (Exception $exception) {
+            $this->logger->alert($exception->getMessage());
             return $this->sendError($response, "An error occurred when Pet save");
         }
     }

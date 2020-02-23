@@ -119,7 +119,7 @@ $container['mailObserver'] = function (ContainerInterface $c) {
 
 // controllers
 $container['petController'] = function (ContainerInterface $c) {
-    return new PetController($c->get('petRepository'), $c->get('userRepository'));
+    return new PetController($c->get('petRepository'), $c->get('userRepository'), $c->get('apiKeyHelper'), $c->get('logger'));
 };
 
 $container['userApiController'] = function (ContainerInterface $c) {

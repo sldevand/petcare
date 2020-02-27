@@ -31,7 +31,7 @@ class UserRepositoryTest extends TestCase
     /**
      * @throws Exception
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $app = BaseTestFramework::generateApp();
         $container = $app->getContainer();
@@ -82,7 +82,7 @@ class UserRepositoryTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         self::$db->exec("PRAGMA foreign_keys=ON");
         self::$db->exec('DELETE FROM user;');

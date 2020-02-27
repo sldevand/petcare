@@ -25,7 +25,7 @@ class CareRepositoryTest extends TestCase
     /**
      * @throws Exception
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $app = BaseTestFramework::generateApp();
         $container = $app->getContainer();

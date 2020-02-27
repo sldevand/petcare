@@ -24,7 +24,7 @@ class PetCareRepositoryTest extends TestCase
     /**
      * @throws Exception
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $app = BaseTestFramework::generateApp();
         $container = $app->getContainer();
@@ -49,7 +49,7 @@ class PetCareRepositoryTest extends TestCase
         $this->assertEquals($beforePetCare, $newPetCare, 'Can\'t save PetCare');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         self::$db->exec("PRAGMA foreign_keys=ON");
         self::$db->exec("DELETE FROM petCare;");

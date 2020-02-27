@@ -28,7 +28,7 @@ class PetImageRepositoryTest extends TestCase
     /**
      * @throws Exception
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $app = BaseTestFramework::generateApp();
         $container = $app->getContainer();
@@ -123,7 +123,7 @@ class PetImageRepositoryTest extends TestCase
         $this->assertTrue($petAfter === false);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         self::$db->exec('DELETE FROM petImage;');
     }

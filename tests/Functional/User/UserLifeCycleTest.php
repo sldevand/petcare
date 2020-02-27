@@ -38,7 +38,7 @@ class UserLifeCycleTest extends TestCase
     /** @var array */
     public static $subscribedUser = [];
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         require __DIR__ . '/../../../src/bootstrap.php';
         require VENDOR_DIR . '/autoload.php';
@@ -234,7 +234,7 @@ class UserLifeCycleTest extends TestCase
         );
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         self::$userRepository->deleteOneBy('email', self::$user['email']);
     }

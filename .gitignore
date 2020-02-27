@@ -6,3 +6,4 @@
 .vscode/
 src/.env
 .env
+tests/Integration/.env

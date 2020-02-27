@@ -23,7 +23,7 @@ class PetRepositoryTest extends TestCase
     /** @var PDO $db */
     protected static $db;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $app = BaseTestFramework::generateApp();
         $container = $app->getContainer();
@@ -32,7 +32,7 @@ class PetRepositoryTest extends TestCase
         self::$petRepository = $container->get('petRepository');
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         self::$db->exec("PRAGMA foreign_keys=ON");
         self::$db->exec('DELETE FROM pet;');
@@ -226,7 +226,7 @@ class PetRepositoryTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         self::$db->exec("PRAGMA foreign_keys=ON");
         self::$db->exec('DELETE FROM pet;');

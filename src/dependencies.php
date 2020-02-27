@@ -6,6 +6,7 @@ use App\Modules\Mail\Observer\UserSubscribeObserver;
 use App\Modules\Mail\Service\MailSender;
 use App\Modules\PasswordReset\Model\Repository\PasswordResetRepository;
 use App\Modules\Pet\Controller\PetController;
+use App\Modules\Pet\Controller\PetImageController;
 use App\Modules\Pet\Model\Repository\PetCareRepository;
 use App\Modules\Pet\Model\Repository\PetImageRepository;
 use App\Modules\Pet\Model\Repository\PetRepository;
@@ -120,6 +121,10 @@ $container['mailObserver'] = function (ContainerInterface $c) {
 // controllers
 $container['petController'] = function (ContainerInterface $c) {
     return new PetController($c->get('petRepository'), $c->get('userRepository'), $c->get('apiKeyHelper'), $c->get('logger'));
+};
+
+$container['petImageController'] = function (ContainerInterface $c) {
+    return new PetImageController($c->get('petImageRepository'), $c->get('userRepository'), $c->get('apiKeyHelper'), $c->get('logger'));
 };
 
 $container['userApiController'] = function (ContainerInterface $c) {

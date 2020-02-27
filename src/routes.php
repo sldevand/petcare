@@ -9,6 +9,8 @@ $app->group('/api', function () {
         $this->post('', 'petController:post');
         $this->put('/{id}', 'petController:put');
         $this->delete('/{id}', 'petController:delete');
+        $this->get('/images/{petId}', 'petImageController:get');
+        $this->get('/images/', 'petController:get');
     });
     $this->group('/user', function () {
         $this->get('', 'userApiController:get');

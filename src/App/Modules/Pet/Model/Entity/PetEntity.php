@@ -80,4 +80,17 @@ class PetEntity extends DefaultEntity
 
         return $this;
     }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'id'    => $this->getId(),
+            'name'  => $this->getName(),
+            'dob'   => $this->getDob(),
+            'specy' => $this->getSpecy()
+        ];
+    }
 }

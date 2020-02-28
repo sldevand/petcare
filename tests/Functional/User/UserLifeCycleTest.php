@@ -3,7 +3,6 @@
 namespace Tests\Functional\User;
 
 use GuzzleHttp\Client;
-use Slim\App;
 use Tests\Functional\DefaultLifeCycleTest;
 
 /**
@@ -209,23 +208,6 @@ class UserLifeCycleTest extends DefaultLifeCycleTest
 
         self::assertEquals(self::$user['email'], $jsonContents['data']['email']);
         self::assertNotEmpty($jsonContents['data']['apiKey']);
-    }
-
-    /**
-     * @param string $url
-     * @param array $body
-     * @return mixed
-     */
-    public function postWithBody(string $url, array $body)
-    {
-        $client = new Client([
-            'headers' => ['Content-Type' => 'application/json']
-        ]);
-
-        return $client->post(
-            $url,
-            ['body' => json_encode($body)]
-        );
     }
 
     public static function tearDownAfterClass(): void

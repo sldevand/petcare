@@ -2,10 +2,8 @@
 
 namespace Tests\Functional\User;
 
+use App\Modules\Token\Helper\Token;
 use App\Modules\User\Model\Entity\UserEntity;
-use GuzzleHttp\Client;
-use PHPUnit\Framework\TestCase;
-use Slim\App;
 use Tests\Functional\DefaultLifeCycleTest;
 
 /**
@@ -27,17 +25,7 @@ class PetLifeCycleTest extends DefaultLifeCycleTest
     public static $pet = [
         'name' => 'TESTName',
         'specy' => 'cat',
-        'dob' => '2015-10-25',
-        'image' => ''
-    ];
-
-    /** @var array */
-    public static $user = [
-        'firstName' => 'John',
-        'lastName' => 'Doe',
-        'email' => 'foo@bar.com',
-        'password' => 'p@SSw0rd',
-        'apiKey' => 'gsdgsdgsF.resfsfd.essdffsd'
+        'dob' => '2015-10-25'
     ];
 
     /**
@@ -54,50 +42,100 @@ class PetLifeCycleTest extends DefaultLifeCycleTest
         $dotEnv->load(__DIR__ . '/../.env');
         self::$websiteUrl = $_ENV['WEBSITE_URL'];
 
-        $user = new UserEntity(self::$user);
-        self::$userRepository->save($user);
+        $user = new UserEntity(self::$mockedUser);
+        $token = new Token();
+        $apiKey = $token->generate($user, self::$settings['settings']['jwt']['secret']);
+        $user->setApiKey($apiKey);
+
+        self::$savedUser = self::$userRepository->save($user);
     }
 
     public function testPost()
     {
         $url = self::$websiteUrl . '/api/pets';
-        $res = $this->postWithBody($url, self::$pet);
+        $res = $this->postWithBody($url, self::$pet, true);
 
         self::assertEquals("201", $res->getStatusCode());
         self::assertEquals("application/json", $res->getHeader('content-type')[0]);
         $contents = $res->getBody()->getContents();
         $jsonResponse = \json_decode($contents, true);
         self::assertEquals($jsonResponse['status'], "1");
+        self::assertEquals($jsonResponse['message'], "Pet has been saved!");
 
-        self::assertEquals(self::$pet, $jsonResponse['data']);
+        $expected = [
+            'name' => 'TESTName',
+            'specy' => 'cat',
+            'dob' => '2015-10-25'
+        ];
+
+        $expected['id'] = self::$savedUser->getId();
+
+        self::assertEquals($expected['name'], $jsonResponse['data']['name']);
+        self::assertEquals($expected['specy'], $jsonResponse['data']['specy']);
+        self::assertEquals($expected['dob'], $jsonResponse['data']['dob']);
     }
 
-    /**
-     * @param string $url
-     * @param array $body
-     * @return mixed
-     */
-    public function postWithBody(string $url, array $body)
+    public function testGetList()
     {
-        $options =
+        $url = self::$websiteUrl . '/api/pets';
+
+        $mockPets = [
             [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Authorization' => 'Bearer ' . self::$user['apiKey']
-                ]
-            ];
+                'name' => 'TESTName5',
+                'specy' => 'dog',
+                'dob' => '2012-11-11'
+            ],
+            [
+                'name' => 'TESTName6',
+                'specy' => 'dog',
+                'dob' => '2010-10-11'
+            ]
+        ];
 
-        $client = new Client($options);
+        foreach ($mockPets as $mockPet) {
+            $this->postWithBody($url, $mockPet, true);
+        }
 
-        return $client->post(
-            $url,
-            ['body' => json_encode($body)]
-        );
+        $res = $this->get($url, true);
+
+        self::assertEquals("200", $res->getStatusCode());
+        self::assertEquals("application/json", $res->getHeader('content-type')[0]);
+        $contents = $res->getBody()->getContents();
+        $jsonResponse = \json_decode($contents, true);
+        self::assertEquals($jsonResponse['status'], "1");
+        self::assertEquals($jsonResponse['message'], "List of pets");
+        self::assertEquals(count($jsonResponse['data']), 3);
+    }
+
+    public function testGetOne()
+    {
+        $name = self::$pet['name'];
+        $url = self::$websiteUrl . "/api/pets/$name";
+
+        $fetchedPet = self::$petRepository->fetchOneBy('name', $name);
+
+        $res = $this->get($url, true);
+
+        self::assertEquals("200", $res->getStatusCode());
+        self::assertEquals("application/json", $res->getHeader('content-type')[0]);
+        $contents = $res->getBody()->getContents();
+        $jsonResponse = \json_decode($contents, true);
+        self::assertEquals("1", $jsonResponse['status']);
+        self::assertEquals("Informations on $name", $jsonResponse['message']);
+
+        $expectedData = [
+            'id' => $fetchedPet->getId(),
+            'name' => 'TESTName',
+            'dob' => '2015-10-25',
+            'specy' => 'cat'
+        ];
+
+        self::assertEquals($expectedData, $jsonResponse['data']);
     }
 
     public static function tearDownAfterClass()
     {
         self::$petRepository->deleteOneBy('name', self::$pet['name']);
-        self::$userRepository->deleteOneBy('email', self::$user['email']);
+        self::$userRepository->deleteOneBy('email', self::$mockedUser['email']);
     }
 }

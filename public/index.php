@@ -14,8 +14,9 @@ require __DIR__ . '/../src/bootstrap.php';
 require VENDOR_DIR . '/autoload.php';
 session_start();
 $settings = require SRC_DIR . '/settings.php';
-$app = new App($settings);
+$container = new \Slim\Container($settings);
 require SRC_DIR . '/dependencies.php';
+$app = new App($container);
 require SRC_DIR . '/middleware.php';
 require SRC_DIR . '/routes.php';
 

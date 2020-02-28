@@ -3,14 +3,14 @@
 namespace Tests\Functional\User;
 
 use GuzzleHttp\Client;
-use PHPUnit\Framework\TestCase;
 use Slim\App;
+use Tests\Functional\DefaultLifeCycleTest;
 
 /**
  * Class UserLifeCycleTest
  * @package Tests\Functional\Usery
  */
-class UserLifeCycleTest extends TestCase
+class UserLifeCycleTest extends DefaultLifeCycleTest
 {
     /** @var string */
     public static $websiteUrl;
@@ -40,13 +40,7 @@ class UserLifeCycleTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        require __DIR__ . '/../../../src/bootstrap.php';
-        require VENDOR_DIR . '/autoload.php';
-        $settings = require SRC_DIR . '/settings.php';
-        $app = new App($settings);
-        require SRC_DIR . '/dependencies.php';
-
-        $container = $app->getContainer();
+        $container = self::getContainer();
 
         self::$userRepository = $container->get('userRepository');
         self::$activationRepository = $container->get('activationRepository');

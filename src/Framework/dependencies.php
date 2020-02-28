@@ -10,9 +10,6 @@ use Slim\Views\PhpRenderer;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 // DIC configuration
-/** @var ContainerInterface $container */
-$container = $app->getContainer();
-
 // view renderer
 $container['renderer'] = function (ContainerInterface $c) {
     $settings = $c->get('settings')['renderer'];

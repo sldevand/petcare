@@ -10,6 +10,9 @@ if (PHP_SAPI == 'cli-server') {
     }
 }
 
+//error_reporting(-1);
+//ini_set('display_errors', true);
+
 require __DIR__ . '/../src/bootstrap.php';
 require VENDOR_DIR . '/autoload.php';
 session_start();

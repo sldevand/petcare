@@ -2,6 +2,7 @@
 
 use App\Modules\Activation\Model\Repository\ActivationRepository;
 use App\Modules\Care\Model\Repository\CareRepository;
+use App\Modules\Image\Service\ImageManager;
 use App\Modules\Mail\Observer\UserSubscribeObserver;
 use App\Modules\Mail\Service\MailSender;
 use App\Modules\PasswordReset\Model\Repository\PasswordResetRepository;
@@ -57,6 +58,9 @@ $container['mailSender'] = function (ContainerInterface $c) {
     return new MailSender($c->get('mailer'));
 };
 
+$container['imageManager'] = function (ContainerInterface $c) use ($settings) {
+    return new ImageManager($c->get('fileManager'), $settings);
+};
 
 //helpers
 $container['tokenHelper'] = function (ContainerInterface $c) {
@@ -120,7 +124,7 @@ $container['mailObserver'] = function (ContainerInterface $c) {
 
 // controllers
 $container['petController'] = function (ContainerInterface $c) {
-    return new PetController($c->get('petRepository'), $c->get('userRepository'), $c->get('apiKeyHelper'), $c->get('logger'));
+    return new PetController($c->get('petRepository'), $c->get('userRepository'), $c->get('apiKeyHelper'), $c->get('logger'), $c->get('imageManager'));
 };
 
 $container['petImageController'] = function (ContainerInterface $c) {

@@ -35,6 +35,10 @@ return [
         //JWT settings
         'jwt' => [
             'secret' =>  $_ENV['JWT_SECRET']
+        ],
+
+        'assets' => [
+            'images' => $_ENV['IMAGES_PATH']
         ]
     ],
 ];

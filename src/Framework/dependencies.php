@@ -5,6 +5,7 @@ use Framework\Db\Pdo\Query\Builder;
 use Framework\Model\Validator\DefaultValidator;
 use Framework\Modules\Installed\Model\Repository\InstalledRepository;
 use Framework\Resource\PDOFactory;
+use Framework\Service\FileManager;
 use Psr\Container\ContainerInterface;
 use Slim\Views\PhpRenderer;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -42,7 +43,7 @@ $container['queryBuilder'] = function (ContainerInterface $c) {
     return new Builder();
 };
 
-//validators
+// validators
 $container['defaultValidator'] = function (ContainerInterface $c) {
     return new DefaultValidator();
 };
@@ -52,6 +53,11 @@ $container['installedRepository'] = function (ContainerInterface $c) {
         $c->get('pdo'),
         $c->get('defaultValidator')
     );
+};
+
+// services
+$container['fileManager'] = function (ContainerInterface $c) {
+    return new FileManager();
 };
 
 // InstallDatabase

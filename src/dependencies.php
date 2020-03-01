@@ -47,7 +47,14 @@ $container['mailer'] = function ($container) {
 
 $container['view'] = function ($container) {
     $view = new \Slim\Views\Twig(VIEWS_DIR);
-    $basePath = rtrim(str_ireplace('index.php', '', $container['request']->getUri()->getBasePath()), '/');
+    $basePath = rtrim(
+        str_ireplace(
+            'index.php',
+            '',
+            $container['request']->getUri()->getBasePath()
+        ),
+        '/'
+    );
     $view->addExtension(new \Slim\Views\TwigExtension($container['router'], $basePath));
 
     return $view;
@@ -93,7 +100,8 @@ $container['petRepository'] = function (ContainerInterface $c) {
         $c->get('pdo'),
         $c->get('defaultValidator'),
         $c->get('petImageRepository'),
-        $c->get('petCareRepository')
+        $c->get('petCareRepository'),
+        $c->get('imageManager')
     );
 };
 
@@ -124,11 +132,23 @@ $container['mailObserver'] = function (ContainerInterface $c) {
 
 // controllers
 $container['petController'] = function (ContainerInterface $c) {
-    return new PetController($c->get('petRepository'), $c->get('userRepository'), $c->get('apiKeyHelper'), $c->get('logger'), $c->get('imageManager'));
+    return new PetController(
+        $c->get('petRepository'),
+        $c->get('userRepository'),
+        $c->get('apiKeyHelper'),
+        $c->get('logger'),
+        $c->get('imageManager')
+    );
 };
 
 $container['petImageController'] = function (ContainerInterface $c) {
-    return new PetImageController($c->get('petImageRepository'), $c->get('userRepository'), $c->get('apiKeyHelper'), $c->get('logger'));
+    return new PetImageController(
+        $c->get('petImageRepository'),
+        $c->get('userRepository'),
+        $c->get('apiKeyHelper'),
+        $c->get('logger'),
+        $c->get('imageManager')
+    );
 };
 
 $container['userApiController'] = function (ContainerInterface $c) {

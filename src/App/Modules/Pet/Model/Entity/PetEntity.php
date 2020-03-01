@@ -90,7 +90,8 @@ class PetEntity extends DefaultEntity
             'id'    => $this->getId(),
             'name'  => $this->getName(),
             'dob'   => $this->getDob(),
-            'specy' => $this->getSpecy()
+            'specy' => $this->getSpecy(),
+            'image' => $this->getImage()
         ];
     }
 }

@@ -68,16 +68,16 @@ class FileManager
     /**
      * @param string $filename
      * @param string $data
-     * @return bool
+     * @return string
      * @throws \Exception
      */
-    public function save(string $filename, string $data): bool
+    public function save(string $filename, string $data): string
     {
         if (file_put_contents($filename, $data) === false) {
             throw new \Exception('Could not put contents in file : ' . $filename);
         }
 
-        return true;
+        return $filename;
     }
 
     /**

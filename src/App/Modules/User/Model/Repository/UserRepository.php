@@ -21,12 +21,19 @@ class UserRepository extends DefaultRepository
 {
     use RepositoryTimestampableTrait;
 
-    /** @var UserPetRepository */
+    /** @var \App\Modules\User\Model\Repository\UserPetRepository */
     protected $userPetRepository;
 
-    /** @var PetRepository */
+    /** @var \App\Modules\Pet\Model\Repository\PetRepository */
     protected $petRepository;
 
+    /**
+     * UserRepository constructor.
+     * @param PDO $db
+     * @param \Framework\Api\Validator\ValidatorInterface $validator
+     * @param \App\Modules\User\Model\Repository\UserPetRepository $userPetRepository
+     * @param \App\Modules\Pet\Model\Repository\PetRepository $petRepository
+     */
     public function __construct(
         PDO $db,
         ValidatorInterface $validator,
@@ -134,19 +141,21 @@ class UserRepository extends DefaultRepository
 
     /**
      * @param int $userId
-     * @param int $petId
+     * @param $value
+     * @param string $field
      * @return EntityInterface
      * @throws \Framework\Exception\RepositoryException
      * @throws Exception
      */
-    public function fetchPet(int $userId, int $petId): EntityInterface
+    public function fetchPet(int $userId, $value, string $field = 'id'): EntityInterface
     {
-        $userPet = $this->userPetRepository->fetchPetByUserId($userId, $petId);
+        $pet = $this->petRepository->fetchOneBy($field, $value);
+        $userPet = $this->userPetRepository->fetchPetByUserId($userId, $pet->getId());
         if (empty($userPet)) {
-            throw new Exception("No userPet found with this $petId");
+            throw new Exception("No userPet found with this " . $pet->getId());
         }
 
-        return $this->petRepository->fetchOne($petId);
+        return $pet;
     }
 
     /**

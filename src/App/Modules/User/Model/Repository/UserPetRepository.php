@@ -32,7 +32,7 @@ class UserPetRepository extends DefaultRepository
      * @return EntityInterface[]
      * @throws Exception
      */
-    public function fetchAllByUserId($id): array
+    public function fetchAllByUserId(int $id): array
     {
         return $this->fetchAllByField('userId', $id);
     }
@@ -43,7 +43,7 @@ class UserPetRepository extends DefaultRepository
      * @return EntityInterface
      * @throws \Framework\Exception\RepositoryException
      */
-    public function fetchPetByUserId($userId, $petId): EntityInterface
+    public function fetchPetByUserId(int $userId, int $petId): EntityInterface
     {
         return $this->fetchOneBy('userId', $userId, "petID = $petId");
     }

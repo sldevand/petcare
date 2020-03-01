@@ -127,7 +127,8 @@ class PetLifeCycleTest extends DefaultLifeCycleTest
             'id' => $fetchedPet->getId(),
             'name' => 'TESTName',
             'dob' => '2015-10-25',
-            'specy' => 'cat'
+            'specy' => 'cat',
+            'image' => null
         ];
 
         self::assertEquals($expectedData, $jsonResponse['data']);

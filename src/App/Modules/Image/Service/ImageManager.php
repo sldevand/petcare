@@ -30,11 +30,23 @@ class ImageManager
     }
 
     /**
+     * @param string $path
+     * @return string
+     */
+    public function getImageFromPath(string $path): string
+    {
+        $type = pathinfo($path, PATHINFO_EXTENSION);
+        $data = file_get_contents($path);
+        return 'data:image/' . $type . ';base64,' . base64_encode($data);
+    }
+
+    /**
      * @param string $img
      * @param string $file
+     * @return string
      * @throws Exception
      */
-    public function generateImage(string $img, string $file)
+    public function generateImage(string $img, string $file): string
     {
         $imageDir = $this->fileManager->getDirName($file);
         $this->fileManager->makeDirectory($imageDir, true);
@@ -50,7 +62,8 @@ class ImageManager
         $base64Image = base64_decode($imageParts[1]);
 
         $fullPath = $file . '.' . $extension;
-        $this->fileManager->save($fullPath, $base64Image);
+
+        return $this->fileManager->save($fullPath, $base64Image);
     }
 
     public function getImagesDirectory()

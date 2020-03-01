@@ -2,6 +2,7 @@
 
 namespace App\Modules\Pet\Model\Repository;
 
+use App\Modules\Image\Service\ImageManager;
 use App\Modules\Pet\Model\Entity\PetEntity;
 use Exception;
 use Framework\Api\Entity\EntityInterface;
@@ -19,29 +20,35 @@ class PetRepository extends DefaultRepository
 {
     use RepositoryTimestampableTrait;
 
-    /** @var PetImageRepository */
+    /** @var \App\Modules\Pet\Model\Repository\PetImageRepository */
     protected $petImageRepository;
 
-    /** @var PetCareRepository */
+    /** @var \App\Modules\Pet\Model\Repository\PetCareRepository */
     protected $petCareRepository;
+
+    /** @var \App\Modules\Image\Service\ImageManager */
+    protected $imageManager;
 
     /**
      * PetRepository constructor.
-     * @param PDO $db
-     * @param ValidatorInterface $validator
-     * @param PetImageRepository $petImageRepository
-     * @param PetCareRepository $petCareRepository
+     * @param \PDO $db
+     * @param \Framework\Api\Validator\ValidatorInterface $validator
+     * @param \App\Modules\Pet\Model\Repository\PetImageRepository $petImageRepository
+     * @param \App\Modules\Pet\Model\Repository\PetCareRepository $petCareRepository
+     * @param \App\Modules\Image\Service\ImageManager $imageManager
      */
     public function __construct(
         PDO $db,
         ValidatorInterface $validator,
         PetImageRepository $petImageRepository,
-        PetCareRepository $petCareRepository
+        PetCareRepository $petCareRepository,
+        ImageManager $imageManager
     ) {
         $this->table = "pet";
         $this->entityClass = PetEntity::class;
         $this->petImageRepository = $petImageRepository;
         $this->petCareRepository = $petCareRepository;
+        $this->imageManager = $imageManager;
         parent::__construct($db, $validator);
     }
 
@@ -78,6 +85,11 @@ class PetRepository extends DefaultRepository
     {
         try {
             $image = $this->petImageRepository->fetchOneBy('petId', $entity->getId());
+
+            $imagePath = $image->getImage();
+            $encodedImage = $this->imageManager->getImageFromPath($imagePath);
+            $image->setImage($encodedImage);
+
             $entity->setImage($image);
         } catch (RepositoryException $e) {
             //Intentionally empty statement
@@ -121,6 +133,20 @@ class PetRepository extends DefaultRepository
     public function fetchOne(int $id): EntityInterface
     {
         $pet = parent::fetchOne($id);
+
+        return $this->fetchImage($pet);
+    }
+
+    /**
+     * @param string $field
+     * @param int|string $value
+     * @param string $and
+     * @return EntityInterface
+     * @throws RepositoryException
+     */
+    public function fetchOneBy(string $field, $value, string $and = ''): EntityInterface
+    {
+        $pet = parent::fetchOneBy($field, $value, $and);
 
         return $this->fetchImage($pet);
     }

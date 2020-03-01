@@ -2,6 +2,7 @@
 
 namespace App\Modules\Pet\Controller;
 
+use App\Modules\Image\Service\ImageManager;
 use App\Modules\User\Helper\ApiKey;
 use App\Modules\User\Model\Repository\UserRepository;
 use Exception;
@@ -26,22 +27,28 @@ class PetImageController extends DefaultController
     /** @var \Psr\Log\LoggerInterface */
     protected $logger;
 
+    /** @var \App\Modules\Image\Service\ImageManager */
+    protected $imageManager;
+
     /**
      * PetImageController constructor.
      * @param RepositoryInterface $repository
      * @param UserRepository $userRepository
      * @param ApiKey $apiKeyHelper
      * @param LoggerInterface $logger
+     * @param ImageManager $imageManager
      */
     public function __construct(
         RepositoryInterface $repository,
         UserRepository $userRepository,
         ApiKey $apiKeyHelper,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        ImageManager $imageManager
     ) {
         parent::__construct($repository, $userRepository);
         $this->apiKeyHelper = $apiKeyHelper;
         $this->logger = $logger;
+        $this->imageManager = $imageManager;
     }
 
 
@@ -55,17 +62,12 @@ class PetImageController extends DefaultController
     {
         try {
             $user = $this->apiKeyHelper->getUserByApiKey($request);
+            $pet = $this->userRepository->fetchPet($user->getId(), $args['petId']);
+            $petImage = $this->repository->fetchOneBy('petId', $pet->getId());
 
-            if (empty($args['petId'])) {
-                $pets = $this->userRepository->fetchPets($user->getId());
-
-                //TODO check if petImages belong to user pets
-
-                $petImages = $this->repository->fetchAll();
-
-                return $this->sendSuccess($response, "Fetched Pet Image" . $args['name'], $petImages);
-            }
-            $petImage = $this->repository->fetchOneBy('petId', $args['petId']);
+            $imagePath = $petImage->getImage();
+            $encodedImage = $this->imageManager->getImageFromPath($imagePath);
+            $petImage->setImage($encodedImage);
 
             return $this->sendSuccess($response, "Fetched Pet Image" . $args['name'], $petImage);
         } catch (Exception $exception) {

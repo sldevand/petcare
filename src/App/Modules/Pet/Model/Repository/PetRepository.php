@@ -66,16 +66,31 @@ class PetRepository extends DefaultRepository
 
     /**
      * @param EntityInterface $entity
+     * @param bool $thumbnailOnly
      * @return EntityInterface
      */
-    public function fetchImage(EntityInterface $entity): EntityInterface
+    public function fetchImage(EntityInterface $entity, bool $thumbnailOnly = false): EntityInterface
     {
         try {
             $image = $this->petImageRepository->fetchOneBy('petId', $entity->getId());
 
-            $imagePath = $image->getImage();
-            $encodedImage = $this->imageManager->getImageFromPath($imagePath);
-            $image->setImage($encodedImage);
+            if (!$thumbnailOnly) {
+                $imagePath = $image->getImage();
+                if (empty($imagePath)) {
+                    return $entity;
+                }
+                $encodedImage = $this->imageManager->getImageFromPath($imagePath);
+                $image->setImage($encodedImage);
+            } else {
+                $image->setImage('');
+            }
+
+            $thumbnailPath = $image->getThumbnail();
+            if (empty($thumbnailPath)) {
+                return $entity;
+            }
+            $encodedThumbnail = $this->imageManager->getImageFromPath($thumbnailPath);
+            $image->setThumbnail($encodedThumbnail);
 
             $entity->setImage($image);
         } catch (RepositoryException $e) {
@@ -137,7 +152,7 @@ class PetRepository extends DefaultRepository
         $pets = parent::fetchAllByField($field, $value);
 
         foreach ($pets as $key => $pet) {
-            $pets[$key] = $this->fetchImage($pet);
+            $pets[$key] = $this->fetchImage($pet, true);
         }
 
         return $pets;

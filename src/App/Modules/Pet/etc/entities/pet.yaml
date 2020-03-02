@@ -1,6 +1,16 @@
 table:
     pet
 fields:
+    userId:
+        column: userId
+        type: integer
+        constraints:
+            fk:
+                reference: id
+                table: user
+                cascade:
+                - delete
+                - update
     name:
         column: name
         type: text

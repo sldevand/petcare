@@ -4,15 +4,15 @@ namespace Tests\Integration\Framework;
 
 use App\Common\Setup\Installer;
 use App\Modules\Care\Model\Repository\CareRepository;
-use App\Modules\Pet\Model\Repository\PetCareRepository;
+use App\Modules\Image\Service\ImageManager;
 use App\Modules\Pet\Model\Repository\PetImageRepository;
 use App\Modules\Pet\Model\Repository\PetRepository;
-use App\Modules\User\Model\Repository\UserPetRepository;
 use App\Modules\User\Model\Repository\UserRepository;
 use Framework\Db\Pdo\Query\Builder;
 use Framework\Model\Validator\DefaultValidator;
 use Framework\Modules\Installed\Model\Repository\InstalledRepository;
 use Framework\Resource\PDOFactory;
+use Framework\Service\FileManager;
 use Psr\Container\ContainerInterface;
 use Slim\App;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -69,6 +69,14 @@ class BaseTestFramework
             );
         };
 
+        $container['fileManager'] = function (ContainerInterface $c) use ($settings) {
+            return new FileManager();
+        };
+
+        $container['imageManager'] = function (ContainerInterface $c) use ($settings) {
+            return new ImageManager($c->get('fileManager'), $settings);
+        };
+
         $container['petImageRepository'] = function (ContainerInterface $container) {
             return new PetImageRepository($container->get('pdoTest'), $container->get('defaultValidator'));
         };
@@ -78,25 +86,17 @@ class BaseTestFramework
                 $container->get('pdoTest'),
                 $container->get('defaultValidator'),
                 $container->get('petImageRepository'),
-                $container->get('petCareRepository')
+                $container->get('imageManager')
             );
         };
 
-        $container['userPetRepository'] = function (ContainerInterface $container) {
-            return new UserPetRepository($container->get('pdoTest'), $container->get('defaultValidator'));
-        };
 
         $container['userRepository'] = function (ContainerInterface $container) {
             return new UserRepository(
                 $container->get('pdoTest'),
                 $container->get('defaultValidator'),
-                $container->get('userPetRepository'),
                 $container->get('petRepository')
             );
-        };
-
-        $container['petCareRepository'] = function (ContainerInterface $container) {
-            return new PetCareRepository($container->get('pdoTest'), $container->get('defaultValidator'));
         };
 
         $container['careRepository'] = function (ContainerInterface $container) {

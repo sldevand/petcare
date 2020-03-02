@@ -2,7 +2,9 @@
 
 namespace Tests\Integration\Pet\Repository;
 
+use App\Modules\Image\Service\ImageManager;
 use App\Modules\Pet\Model\Entity\PetEntity;
+use App\Modules\Pet\Model\Entity\PetImageEntity;
 use App\Modules\Pet\Model\Repository\PetRepository;
 use Exception;
 use Framework\Exception\RepositoryException;
@@ -20,8 +22,12 @@ class PetRepositoryTest extends TestCase
     /** @var PetRepository */
     protected static $petRepository;
 
+    /** @var ImageManager */
+    protected static $imageManager;
+
     /** @var PDO $db */
     protected static $db;
+
 
     public static function setUpBeforeClass(): void
     {
@@ -30,6 +36,7 @@ class PetRepositoryTest extends TestCase
         self::$db = $container->get('pdoTest');
         $container->get('installerTest')->execute();
         self::$petRepository = $container->get('petRepository');
+        self::$imageManager = $container->get('imageManager');
     }
 
     public function setUp(): void
@@ -188,10 +195,15 @@ class PetRepositoryTest extends TestCase
         $beforeEntity->setId($afterEntity->getId());
 
         //Save new PetImage and attach it to PetEntity
-        $dogImageEntity = PetImageEntityProvider::getPetImages()['dog'];
+        $dogImageEntity = clone PetImageEntityProvider::getPetImages()['dog'];
         $afterEntity->setImage($dogImageEntity);
         $entityWithImageSaved = self::$petRepository->save($afterEntity);
         $entityWithImageFetched = self::$petRepository->fetchImage($afterEntity);
+
+        $encodedImage = self::$imageManager->getImageFromPath($dogImageEntity->getImage());
+        $dogImageEntity->setImage($encodedImage);
+        $dogImageEntity->setId($entityWithImageSaved->getImage()->getId());
+        $entityWithImageSaved->setImage($dogImageEntity);
 
         $this->assertEquals($entityWithImageSaved, $entityWithImageFetched, 'Can\'t save PetEntity');
     }
@@ -215,6 +227,11 @@ class PetRepositoryTest extends TestCase
 
         $savedDogEntity = self::$petRepository->save($dogEntity);
         $savedCatEntity = self::$petRepository->save($catEntity);
+
+        $catImageEntity = $savedCatEntity->getImage();
+        $encodedImage = self::$imageManager->getImageFromPath($catImageEntity->getImage());
+        $catImageEntity->setImage($encodedImage);
+        $savedCatEntity->setImage($catImageEntity);
 
         $expected = [
             $savedDogEntity,

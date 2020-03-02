@@ -64,24 +64,6 @@ class UserRepositoryTest extends TestCase
         $this->assertEquals($user, $savedUser);
     }
 
-    /**
-     * @throws Exception
-     */
-    public function testFetchAll()
-    {
-        $this->tearDown();
-        $users = UserEntityProvider::getUsers();
-
-        $expected = [];
-        foreach ($users as $user) {
-            $expected[] = self::$userRepository->save($user);
-        }
-
-        $actual = self::$userRepository->fetchAll();
-
-        $this->assertEquals($expected, $actual);
-    }
-
     protected function tearDown(): void
     {
         self::$db->exec("PRAGMA foreign_keys=ON");

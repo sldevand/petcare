@@ -21,9 +21,6 @@ class UserRepository extends DefaultRepository
 {
     use RepositoryTimestampableTrait;
 
-    /** @var \App\Modules\User\Model\Repository\UserPetRepository */
-    protected $userPetRepository;
-
     /** @var \App\Modules\Pet\Model\Repository\PetRepository */
     protected $petRepository;
 
@@ -31,19 +28,16 @@ class UserRepository extends DefaultRepository
      * UserRepository constructor.
      * @param PDO $db
      * @param \Framework\Api\Validator\ValidatorInterface $validator
-     * @param \App\Modules\User\Model\Repository\UserPetRepository $userPetRepository
      * @param \App\Modules\Pet\Model\Repository\PetRepository $petRepository
      */
     public function __construct(
         PDO $db,
         ValidatorInterface $validator,
-        UserPetRepository $userPetRepository,
         PetRepository $petRepository
     ) {
         parent::__construct($db, $validator);
         $this->table = "user";
         $this->entityClass = UserEntity::class;
-        $this->userPetRepository = $userPetRepository;
         $this->petRepository = $petRepository;
     }
 
@@ -88,39 +82,10 @@ class UserRepository extends DefaultRepository
      */
     public function savePet(UserEntity $user, PetEntity $pet): EntityInterface
     {
+        $pet->setUserId($user->getId());
         $savedPet = $this->petRepository->save($pet);
-        $userPetEntity = new UserPetEntity();
-        $userPetEntity
-            ->setUserId($user->getId())
-            ->setPetId($savedPet->getId());
-
-        try {
-            $this->userPetRepository->fetchPetByUserId($user->getId(), $savedPet->getId());
-        } catch (Exception $exception) {
-            $this->userPetRepository->create($userPetEntity);
-        }
 
         return $savedPet;
-    }
-
-    /**
-     * @return array
-     * @throws \Framework\Exception\RepositoryException
-     * @throws \Exception
-     */
-    public function fetchAll(): array
-    {
-        $users = parent::fetchAll();
-
-        foreach ($users as $userKey => $user) {
-            $userPets = $this->userPetRepository->fetchAllByUserId($user->getId());
-            foreach ($userPets as $userPetKey => $userPet) {
-                $pet = $this->petRepository->fetchOne($userPet->getPetId());
-                $users[$userKey]->addPet($pet);
-            }
-        }
-
-        return $users;
     }
 
     /**

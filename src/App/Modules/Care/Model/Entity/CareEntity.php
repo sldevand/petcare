@@ -14,6 +14,9 @@ class CareEntity extends DefaultEntity
     /** @var string */
     protected $title;
 
+    /** @var int */
+    protected $petId;
+
     /** @var string */
     protected $content;
 

@@ -10,6 +10,8 @@ use Framework\Traits\Entity\EntityTimestampableTrait;
 /**
  * Class PetEntity
  * @package App\Model\Entity
+ * @method getUserId
+ * @method setUserId($userId)
  * @method getName
  * @method getDob
  * @method getSpecy
@@ -24,6 +26,9 @@ use Framework\Traits\Entity\EntityTimestampableTrait;
 class PetEntity extends DefaultEntity
 {
     use EntityTimestampableTrait;
+
+    /** @var int */
+    protected $userId;
 
     /** @var string */
     protected $name;

@@ -20,8 +20,7 @@ class PetImageEntityProvider
         $petImages = [];
         foreach ($files as $key => $file) {
             $name = explode('.', basename($file))[0];
-            $encodedImage = base64_encode(file_get_contents($file));
-            $petImages[$name] = new PetImageEntity(['image' => $encodedImage, 'petId' => $key + 1]);
+            $petImages[$name] = new PetImageEntity(['image' => $file, 'petId' => $key + 1]);
         }
 
         return $petImages;

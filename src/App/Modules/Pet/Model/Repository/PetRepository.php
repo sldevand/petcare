@@ -23,9 +23,6 @@ class PetRepository extends DefaultRepository
     /** @var \App\Modules\Pet\Model\Repository\PetImageRepository */
     protected $petImageRepository;
 
-    /** @var \App\Modules\Pet\Model\Repository\PetCareRepository */
-    protected $petCareRepository;
-
     /** @var \App\Modules\Image\Service\ImageManager */
     protected $imageManager;
 
@@ -34,20 +31,17 @@ class PetRepository extends DefaultRepository
      * @param \PDO $db
      * @param \Framework\Api\Validator\ValidatorInterface $validator
      * @param \App\Modules\Pet\Model\Repository\PetImageRepository $petImageRepository
-     * @param \App\Modules\Pet\Model\Repository\PetCareRepository $petCareRepository
      * @param \App\Modules\Image\Service\ImageManager $imageManager
      */
     public function __construct(
         PDO $db,
         ValidatorInterface $validator,
         PetImageRepository $petImageRepository,
-        PetCareRepository $petCareRepository,
         ImageManager $imageManager
     ) {
         $this->table = "pet";
         $this->entityClass = PetEntity::class;
         $this->petImageRepository = $petImageRepository;
-        $this->petCareRepository = $petCareRepository;
         $this->imageManager = $imageManager;
         parent::__construct($db, $validator);
     }
@@ -65,13 +59,6 @@ class PetRepository extends DefaultRepository
             $image->setPetId($petEntity->getId());
             $petImageEntity = $this->petImageRepository->save($image);
             $petEntity->setImage($petImageEntity);
-        }
-
-        if (!empty($cares = $entity->getCares())) {
-            foreach ($cares as $care) {
-                $care->setPetId($petEntity->getId());
-                $this->petCareRepository->save($care);
-            }
         }
 
         return $petEntity;
@@ -94,18 +81,6 @@ class PetRepository extends DefaultRepository
         } catch (RepositoryException $e) {
             //Intentionally empty statement
         }
-
-        return $entity;
-    }
-
-    /**
-     * @param EntityInterface $entity
-     * @return EntityInterface
-     */
-    public function fetchCares(EntityInterface $entity): EntityInterface
-    {
-        $image = $this->petCareRepository->findAll('petId', $entity->getId());
-        $entity->setImage($image);
 
         return $entity;
     }

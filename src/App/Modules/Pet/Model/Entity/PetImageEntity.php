@@ -17,6 +17,9 @@ class PetImageEntity extends DefaultEntity
     /** @var string */
     protected $image;
 
+    /** @var string */
+    protected $thumbnail;
+
     /**
      * PetImageEntity constructor.
      * @param array $attributes

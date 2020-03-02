@@ -7,8 +7,6 @@ use App\Modules\Mail\Observer\UserSubscribeObserver;
 use App\Modules\Mail\Service\MailSender;
 use App\Modules\PasswordReset\Model\Repository\PasswordResetRepository;
 use App\Modules\Pet\Controller\PetController;
-use App\Modules\Pet\Controller\PetImageController;
-use App\Modules\Pet\Model\Repository\PetCareRepository;
 use App\Modules\Pet\Model\Repository\PetImageRepository;
 use App\Modules\Pet\Model\Repository\PetRepository;
 use App\Modules\Token\Helper\Token;
@@ -19,7 +17,6 @@ use App\Modules\User\Controller\PasswordResetController;
 use App\Modules\User\Controller\SubscribeController;
 use App\Modules\User\Controller\UserApiController;
 use App\Modules\User\Helper\ApiKey;
-use App\Modules\User\Model\Repository\UserPetRepository;
 use App\Modules\User\Model\Repository\UserRepository;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Dotenv\Dotenv;
@@ -91,22 +88,14 @@ $container['petImageRepository'] = function (ContainerInterface $c) {
     return new PetImageRepository($c->get('pdo'), $c->get('defaultValidator'));
 };
 
-$container['petCareRepository'] = function (ContainerInterface $c) {
-    return new PetCareRepository($c->get('pdo'), $c->get('defaultValidator'));
-};
 
 $container['petRepository'] = function (ContainerInterface $c) {
     return new PetRepository(
         $c->get('pdo'),
         $c->get('defaultValidator'),
         $c->get('petImageRepository'),
-        $c->get('petCareRepository'),
         $c->get('imageManager')
     );
-};
-
-$container['userPetRepository'] = function (ContainerInterface $c) {
-    return new UserPetRepository($c->get('pdo'), $c->get('defaultValidator'));
 };
 
 $container['activationRepository'] = function (ContainerInterface $c) {
@@ -120,7 +109,6 @@ $container['userRepository'] = function (ContainerInterface $c) {
     return new UserRepository(
         $c->get('pdo'),
         $c->get('defaultValidator'),
-        $c->get('userPetRepository'),
         $c->get('petRepository')
     );
 };
@@ -134,16 +122,6 @@ $container['mailObserver'] = function (ContainerInterface $c) {
 $container['petController'] = function (ContainerInterface $c) {
     return new PetController(
         $c->get('petRepository'),
-        $c->get('userRepository'),
-        $c->get('apiKeyHelper'),
-        $c->get('logger'),
-        $c->get('imageManager')
-    );
-};
-
-$container['petImageController'] = function (ContainerInterface $c) {
-    return new PetImageController(
-        $c->get('petImageRepository'),
         $c->get('userRepository'),
         $c->get('apiKeyHelper'),
         $c->get('logger'),

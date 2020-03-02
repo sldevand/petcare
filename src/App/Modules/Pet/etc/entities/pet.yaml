@@ -11,6 +11,7 @@ fields:
                 cascade:
                 - delete
                 - update
+            unique: true
     name:
         column: name
         type: text
@@ -18,11 +19,10 @@ fields:
             nullable: false
             minLength: 3
             maxLength: 256
+            unique: true
     dob:
         column: dob
         type: text
-        constraints:
-            pattern: 
     specy:
         column: specy
         type: text

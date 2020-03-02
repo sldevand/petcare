@@ -125,4 +125,21 @@ class PetRepository extends DefaultRepository
 
         return $this->fetchImage($pet);
     }
+
+    /**
+     * @param string $field
+     * @param int|string $value
+     * @return array
+     * @throws Exception
+     */
+    public function fetchAllByField(string $field, $value): array
+    {
+        $pets = parent::fetchAllByField($field, $value);
+
+        foreach ($pets as $key => $pet) {
+            $pets[$key] = $this->fetchImage($pet);
+        }
+
+        return $pets;
+    }
 }

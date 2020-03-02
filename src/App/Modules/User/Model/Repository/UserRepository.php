@@ -5,7 +5,6 @@ namespace App\Modules\User\Model\Repository;
 use App\Modules\Pet\Model\Entity\PetEntity;
 use App\Modules\Pet\Model\Repository\PetRepository;
 use App\Modules\User\Model\Entity\UserEntity;
-use App\Modules\User\Model\Entity\UserPetEntity;
 use Exception;
 use Framework\Api\Entity\EntityInterface;
 use Framework\Api\Validator\ValidatorInterface;
@@ -60,22 +59,6 @@ class UserRepository extends DefaultRepository
 
     /**
      * @param UserEntity $user
-     * @param PetEntity[] $pets
-     * @return UserEntity
-     * @throws Exception
-     */
-    public function savePets(UserEntity $user, array $pets): UserEntity
-    {
-        foreach ($pets as $pet) {
-            $savedPet = $this->savePet($user, $pet);
-            $user->addPet($savedPet);
-        }
-
-        return $user;
-    }
-
-    /**
-     * @param UserEntity $user
      * @param PetEntity $pet
      * @return EntityInterface
      * @throws Exception
@@ -91,17 +74,11 @@ class UserRepository extends DefaultRepository
     /**
      * @param int $userId
      * @return PetEntity[]
-     * @throws \Framework\Exception\RepositoryException
+     * @throws Exception
      */
     public function fetchPets(int $userId): array
     {
-        $userPets = $this->userPetRepository->fetchAllByUserId($userId);
-        $pets = [];
-        foreach ($userPets as $userPetKey => $userPet) {
-            $pets[$userPet->getId()] = $this->petRepository->fetchOne($userPet->getPetId());
-        }
-
-        return $pets;
+        return $this->petRepository->fetchAllByField('userId', $userId);
     }
 
     /**
@@ -110,17 +87,10 @@ class UserRepository extends DefaultRepository
      * @param string $field
      * @return EntityInterface
      * @throws \Framework\Exception\RepositoryException
-     * @throws Exception
      */
-    public function fetchPet(int $userId, $value, string $field = 'id'): EntityInterface
+    public function fetchPetBy(int $userId, $value, string $field = 'id'): EntityInterface
     {
-        $pet = $this->petRepository->fetchOneBy($field, $value);
-        $userPet = $this->userPetRepository->fetchPetByUserId($userId, $pet->getId());
-        if (empty($userPet)) {
-            throw new Exception("No userPet found with this " . $pet->getId());
-        }
-
-        return $pet;
+        return $this->petRepository->fetchOneBy($field, $value, "userId=$userId");
     }
 
     /**

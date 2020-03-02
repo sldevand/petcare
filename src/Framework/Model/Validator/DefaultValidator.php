@@ -35,7 +35,6 @@ class DefaultValidator implements ValidatorInterface
             $constraints = $field['constraints'];
 
             $this->validateNullableField($constraints, $propertyName);
-            $this->checkUniqueField($constraints, $propertyName);
             $this->checkMinLength($constraints, $propertyName);
             $this->checkMaxLength($constraints, $propertyName);
         }
@@ -59,32 +58,8 @@ class DefaultValidator implements ValidatorInterface
         $propertyMethod = $this->entity->getPropertyMethod($propertyName);
         $fieldValue = $this->entity->$propertyMethod();
 
-        if ($constraintValue === false
-            && $fieldValue === null
-        ) {
+        if ($constraintValue === false && $fieldValue === null) {
             $this->throwException("$propertyName is not nullable");
-        }
-
-        return true;
-    }
-
-    /**
-     * @param array $constraints
-     * @param string $propertyName
-     * @return bool
-     * @throws Exception
-     */
-    public function checkUniqueField(array $constraints, string $propertyName): bool
-    {
-        foreach ($constraints as $constraintKey => $constraintValue) {
-            $propertyMethod = $this->entity->getPropertyMethod($propertyName);
-            if (
-                $constraintKey === 'unique'
-                && $constraintValue === true
-                && $this->entity->$propertyMethod() === null
-            ) {
-                $this->throwException("$propertyName must be unique");
-            }
         }
 
         return true;

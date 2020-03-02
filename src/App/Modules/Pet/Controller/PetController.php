@@ -70,7 +70,7 @@ class PetController extends DefaultController
                 return $this->sendSuccess($response, 'List of pets', $pets);
             }
 
-            $pet = $this->userRepository->fetchPet($user->getId(), $args['name'], 'name');
+            $pet = $this->userRepository->fetchPetBy($user->getId(), $args['name'], 'name');
 
             return $this->sendSuccess($response, "Informations on " . $args['name'], $pet);
         } catch (Exception $exception) {
@@ -108,7 +108,8 @@ class PetController extends DefaultController
             if (!empty($params['image'])) {
                 $file = $this->imageManager->getImagesDirectory() . '/' . $user->getId() . '/pets/' .  $params['name'];
                 $imagePath = $this->imageManager->generateImage($params['image'], $file);
-                $pet->setImage(new PetImageEntity(['image' => $imagePath]));
+                $thumbnailPath = $this->imageManager->generateImage($params['image'], $file, true);
+                $pet->setImage(new PetImageEntity(['image' => $imagePath, 'thumbnail' => $thumbnailPath]));
             }
 
             $newPet = $this->userRepository->savePet($user, $pet);

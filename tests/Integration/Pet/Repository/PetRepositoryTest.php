@@ -202,6 +202,7 @@ class PetRepositoryTest extends TestCase
 
         $encodedImage = self::$imageManager->getImageFromPath($dogImageEntity->getImage());
         $dogImageEntity->setImage($encodedImage);
+        $dogImageEntity->setThumbnail($encodedImage);
         $dogImageEntity->setId($entityWithImageSaved->getImage()->getId());
         $entityWithImageSaved->setImage($dogImageEntity);
 
@@ -231,6 +232,7 @@ class PetRepositoryTest extends TestCase
         $catImageEntity = $savedCatEntity->getImage();
         $encodedImage = self::$imageManager->getImageFromPath($catImageEntity->getImage());
         $catImageEntity->setImage($encodedImage);
+        $catImageEntity->setThumbnail($encodedImage);
         $savedCatEntity->setImage($catImageEntity);
 
         $expected = [

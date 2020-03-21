@@ -102,11 +102,15 @@ class PetController extends DefaultController
 
             if (!empty($args['id'])) {
                 $pet->setId($args['id']);
-                $this->userRepository->fetchPet($user->getId(), $pet->getId());
+                $pet = $this->userRepository->fetchPetBy($user->getId(), $pet->getId());
+                $pet
+                    ->setName($entityParams['name'])
+                    ->setSpecy($entityParams['specy'])
+                    ->setDob($entityParams['dob']);
             }
 
             if (!empty($params['image'])) {
-                $file = $this->imageManager->getImagesDirectory() . '/' . $user->getId() . '/pets/' .  $params['name'];
+                $file = $this->imageManager->getImagesDirectory() . '/' . $user->getId() . '/pets/' . $params['name'];
                 $imagePath = $this->imageManager->generateImage($params['image'], $file);
                 $thumbnailPath = $this->imageManager->generateImage($params['image'], $file, true);
                 $pet->setImage(new PetImageEntity(['image' => $imagePath, 'thumbnail' => $thumbnailPath]));

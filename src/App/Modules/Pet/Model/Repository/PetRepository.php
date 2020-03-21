@@ -55,9 +55,16 @@ class PetRepository extends DefaultRepository
     {
         $petEntity = parent::save($entity);
 
-        if (!empty($image = $entity->getImage())) {
-            $image->setPetId($petEntity->getId());
-            $petImageEntity = $this->petImageRepository->save($image);
+        if (!empty($entity->getImage())) {
+            try {
+                $imageEntity = $this->petImageRepository->fetchOneBy('petId', $petEntity->getId());
+                $imageEntity->setImage($entity->getImage()->getImage());
+                $imageEntity->setThumbnail($entity->getImage()->getThumbnail());
+            } catch (\Exception $exception) {
+                $imageEntity = $entity->getImage();
+                $imageEntity->setPetId($petEntity->getId());
+            }
+            $petImageEntity = $this->petImageRepository->save($imageEntity);
             $petEntity->setImage($petImageEntity);
         }
 

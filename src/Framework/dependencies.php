@@ -64,7 +64,6 @@ $container['fileManager'] = function (ContainerInterface $c) {
 $container['installer'] = function (ContainerInterface $c) {
     return new Installer(
         $c->get('pdo'),
-        $c->get('settings')['pdo']['prod']['db-file'],
         $c->get('consoleOutput'),
         $c->get('queryBuilder'),
         $c->get('installedRepository')

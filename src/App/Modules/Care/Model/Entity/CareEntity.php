@@ -21,6 +21,9 @@ class CareEntity extends DefaultEntity
     protected $content;
 
     /** @var string */
+    protected $appointmentDate;
+
+    /** @var string */
     protected $createdAt;
 
     /** @var string */

@@ -2,6 +2,7 @@
 
 const SRC_DIR = __DIR__;
 const APP_DIR = SRC_DIR . '/App';
+const MODULES_DIR = APP_DIR . '/Modules';
 const VENDOR_DIR = __DIR__ . '/../vendor';
 const FRAMEWORK_DIR = SRC_DIR . '/Framework';
 const VAR_DIR = __DIR__ . '/../var';

@@ -20,9 +20,6 @@ class Installer implements InstallerInterface
     /** @var PDO */
     protected $pdo;
 
-    /** @var string */
-    protected $sqlFile;
-
     /** @var OutputInterface */
     protected $output;
 
@@ -35,20 +32,18 @@ class Installer implements InstallerInterface
     /**
      * Installer constructor.
      * @param PDO $pdo
-     * @param string $sqlFile
      * @param OutputInterface $output
      * @param Builder $builder
      * @param InstalledRepository $installedRepository
      */
     public function __construct(
         PDO $pdo,
-        string $sqlFile,
         OutputInterface $output,
         Builder $builder,
         InstalledRepository $installedRepository
-    ) {
+    )
+    {
         $this->pdo = $pdo;
-        $this->sqlFile = $sqlFile;
         $this->output = $output;
         $this->builder = $builder;
         $this->installedRepository = $installedRepository;
@@ -89,10 +84,24 @@ class Installer implements InstallerInterface
                 continue;
             }
 
+            $moduleConfig = $moduleName !== 'Installed'
+                ? Yaml::parseFile(MODULES_DIR . '/' . $moduleName . '/etc/module.yaml')
+                : [];
+
             if ($installedModule = $this->isModuleAlreadyInstalled($moduleName, $installedModules)) {
                 $name = $installedModule->getName();
                 $version = $installedModule->getVersion();
                 $this->writeComment("$name Module is already installed with version $version!");
+
+                $configVersion = $moduleConfig['module']['version'] ?? '1.0.0';
+                $versionCompare = version_compare($configVersion, $version);
+
+                if (!empty($moduleConfig) && $versionCompare == 1) {
+                    $this->writeInfo("$name Module needs to upgrade to version $configVersion!");
+                    $this->updateModule($scopeDir, $moduleName);
+                    $this->saveModuleVersion($scopeDir, $moduleName);
+                }
+
                 continue;
             }
 
@@ -101,7 +110,12 @@ class Installer implements InstallerInterface
         }
     }
 
-    protected function isModuleAlreadyInstalled($moduleName, $installedModules)
+    /**
+     * @param string $moduleName
+     * @param array $installedModules
+     * @return bool
+     */
+    protected function isModuleAlreadyInstalled(string $moduleName, array $installedModules)
     {
         foreach ($installedModules as $installedModule) {
             if ($moduleName === $installedModule->getName()) {
@@ -138,34 +152,64 @@ class Installer implements InstallerInterface
         }
     }
 
+
     /**
-     * @param $scopeDir
-     * @param $moduleName
+     * @param string $scopeDir
+     * @param string $moduleName
      * @throws Exception
      */
-    protected function saveModuleVersion($scopeDir, $moduleName)
+    protected function updateModule(string $scopeDir, string $moduleName)
+    {
+        $this->writeInfo("Upgrading $moduleName Module...");
+        $pattern = $scopeDir . "/Modules/$moduleName/etc/entities/*.yaml";
+        $entityFiles = glob($pattern);
+        foreach ($entityFiles as $entityFile) {
+            //TODO alterTable
+            $this->writeInfo("Altering Table with entity file $entityFile");
+        }
+    }
+
+
+    /**
+     * @param string $scopeDir
+     * @param string $moduleName
+     * @throws Exception
+     */
+    protected function saveModuleVersion(string $scopeDir, string $moduleName)
     {
         $moduleConfig = $this->getModuleConfig($scopeDir, $moduleName);
         $version = $moduleConfig['version'];
         $name = $moduleConfig['name'];
-        $this->installedRepository->save(
-            new InstalledEntity(
+
+        try {
+            $installedEntity = $this->installedRepository->fetchOneBy('name', $name);
+            $installedEntity->setVersion($version);
+        } catch (\Exception $exception) {
+            $installedEntity = new InstalledEntity(
                 [
                     'name' => $name,
                     'version' => $version
                 ]
-            )
-        );
+            );
+        }
+
+        $this->installedRepository->save($installedEntity);
 
         $this->writeInfo("Module $name installed with version $version");
     }
 
-    protected function writeInfo($str)
+    /**
+     * @param string $str
+     */
+    protected function writeInfo(string $str)
     {
         $this->output->writeln("<info>$str</info>");
     }
 
-    protected function writeComment($str)
+    /**
+     * @param string $str
+     */
+    protected function writeComment(string $str)
     {
         $this->output->writeln("<comment>$str</comment>");
     }

@@ -21,6 +21,9 @@ fields:
     content:
         column: content
         type: text
+    appointmentDate:
+        column: appointmentDate
+        type: text
     createdAt:
         column: createdAt
         type: text

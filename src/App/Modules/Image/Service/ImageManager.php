@@ -24,8 +24,7 @@ class ImageManager
     public function __construct(
         \Framework\Service\FileManager $fileManager,
         array $settings
-    )
-    {
+    ) {
         $this->fileManager = $fileManager;
         $this->settings = $settings;
     }
@@ -39,11 +38,6 @@ class ImageManager
         $type = pathinfo($path, PATHINFO_EXTENSION);
         $data = file_get_contents($path);
         return 'data:image/' . $type . ';base64,' . base64_encode($data);
-    }
-
-    public function removeOriginal($path)
-    {
-
     }
 
     /**

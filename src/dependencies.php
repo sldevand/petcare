@@ -129,6 +129,13 @@ $container['petController'] = function (ContainerInterface $c) {
     );
 };
 
+$container['careController'] = function (ContainerInterface $c) {
+    return new PetController(
+        $c->get('careRepository'),
+        $c->get('userRepository')
+    );
+};
+
 $container['userApiController'] = function (ContainerInterface $c) {
     return new UserApiController($c->get('userRepository'), $c->get('userRepository'), $c->get('apiKeyHelper'));
 };

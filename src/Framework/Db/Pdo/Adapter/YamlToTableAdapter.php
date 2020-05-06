@@ -69,7 +69,7 @@ class YamlToTableAdapter
             if ($field->getName() === 'id') {
                 continue;
             }
-            $fields[] = $field;
+            $fields[$field->getName()] = $field;
         }
 
         if (!empty($uniqueColumns)) {

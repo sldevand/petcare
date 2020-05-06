@@ -98,7 +98,6 @@ class Table extends Hydratable
         return $this;
     }
 
-
     /**
      * @return string
      */
@@ -139,7 +138,6 @@ class Table extends Hydratable
     $constraintsPart
 SQL;
         }
-
 
         return <<<SQL
 CREATE TABLE IF NOT EXISTS $this->name

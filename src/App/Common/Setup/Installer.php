@@ -5,6 +5,7 @@ namespace App\Common\Setup;
 use Exception;
 use Framework\Api\Installer\InstallerInterface;
 use Framework\Db\Pdo\Query\Builder;
+use Framework\Model\Validator\YamlEntityValidator;
 use Framework\Modules\Installed\Model\Entity\InstalledEntity;
 use Framework\Modules\Installed\Model\Repository\InstalledRepository;
 use PDO;
@@ -41,8 +42,7 @@ class Installer implements InstallerInterface
         OutputInterface $output,
         Builder $builder,
         InstalledRepository $installedRepository
-    )
-    {
+    ) {
         $this->pdo = $pdo;
         $this->output = $output;
         $this->builder = $builder;
@@ -96,7 +96,7 @@ class Installer implements InstallerInterface
                 $configVersion = $moduleConfig['module']['version'] ?? '1.0.0';
                 $versionCompare = version_compare($configVersion, $version);
 
-                if (!empty($moduleConfig) && $versionCompare == 1) {
+                if ($versionCompare == 1) {
                     $this->writeInfo("$name Module needs to upgrade to version $configVersion!");
                     $this->updateModule($scopeDir, $moduleName);
                     $this->saveModuleVersion($scopeDir, $moduleName);
@@ -152,7 +152,6 @@ class Installer implements InstallerInterface
         }
     }
 
-
     /**
      * @param string $scopeDir
      * @param string $moduleName
@@ -164,11 +163,17 @@ class Installer implements InstallerInterface
         $pattern = $scopeDir . "/Modules/$moduleName/etc/entities/*.yaml";
         $entityFiles = glob($pattern);
         foreach ($entityFiles as $entityFile) {
-            //TODO alterTable
-            $this->writeInfo("Altering Table with entity file $entityFile");
+            $validator = new YamlEntityValidator($entityFile);
+            $yamlConfig = $validator->getYaml();
+
+            $sql = $this->builder->alterTable($yamlConfig['table'], $entityFile);
+
+            if (!empty($sql)) {
+                $this->writeInfo($sql);
+                $this->pdo->exec($sql);
+            }
         }
     }
-
 
     /**
      * @param string $scopeDir

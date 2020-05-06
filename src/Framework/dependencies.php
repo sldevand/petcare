@@ -40,7 +40,7 @@ $container['consoleOutput'] = function (ContainerInterface $c) {
 };
 
 $container['queryBuilder'] = function (ContainerInterface $c) {
-    return new Builder();
+    return new Builder($c->get('pdo'));
 };
 
 // validators

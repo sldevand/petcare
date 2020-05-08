@@ -6,6 +6,7 @@ use Exception;
 use Framework\Db\Pdo\Query\Constraint\Constraint;
 use Framework\Db\Pdo\Query\Field;
 use Framework\Db\Pdo\Query\Table;
+use Framework\Db\Pdo\Sqlite\Query\CreateTable;
 
 /**
  * Class TableTest
@@ -40,13 +41,13 @@ class TableTest extends BaseQueryTest
             'constraints' => $constraints
         ];
 
-        $expectedTable = new Table();
+        $expectedTable = new CreateTable();
         $expectedTable
             ->setName($name)
             ->addConstraint($constraints[0])
             ->setFields($fields);
 
-        $table = new Table($tableData);
+        $table = new CreateTable($tableData);
 
         $this->assertEquals($expectedTable, $table);
     }

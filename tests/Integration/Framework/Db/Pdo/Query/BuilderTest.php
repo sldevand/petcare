@@ -4,6 +4,7 @@ namespace Tests\Integration\Framework\Db\Pdo\Query;
 
 use Exception;
 use Framework\Db\Pdo\Query\Builder;
+use Tests\Integration\Framework\BaseTestFramework;
 
 /**
  * Class BuilderTest
@@ -11,6 +12,15 @@ use Framework\Db\Pdo\Query\Builder;
  */
 class BuilderTest extends BaseQueryTest
 {
+    protected static $db;
+
+    public static function setUpBeforeClass(): void
+    {
+        $app = BaseTestFramework::generateApp();
+        $container = $app->getContainer();
+        self::$db = $container->get('pdoTest');
+    }
+
     /**
      * @throws Exception
      */
@@ -18,7 +28,7 @@ class BuilderTest extends BaseQueryTest
     {
         $file = __DIR__ . '/../../../data/testValid.yaml';
 
-        $builder = new Builder();
+        $builder = new Builder(self::$db);
         $sql = $builder->createTable($file);
         $expectedSql = <<<SQL
 CREATE TABLE IF NOT EXISTS test

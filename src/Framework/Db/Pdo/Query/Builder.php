@@ -2,10 +2,11 @@
 
 namespace Framework\Db\Pdo\Query;
 
-use Exception;
 use Framework\Api\Query\BuilderInterface;
-use Framework\Db\Pdo\Adapter\SqlSchemaToTableAdapter;
 use Framework\Db\Pdo\Adapter\YamlToTableAdapter;
+use Framework\Db\Pdo\Sqlite\Adapter\SqliteSchemaToTableAdapter;
+use Framework\Db\Pdo\Sqlite\Query\AlterTable;
+use Framework\Db\Pdo\Sqlite\Query\CreateTable;
 use PDO;
 
 /**
@@ -25,21 +26,20 @@ class Builder implements BuilderInterface
      */
     public function __construct(
         PDO $pdo
-    )
-    {
+    ) {
         $this->pdo = $pdo;
     }
 
     /**
      * @param string $entityFile
      * @return string
-     * @throws Exception
+     * @throws \Exception
      */
     public function createTable(string $entityFile): string
     {
         $adapter = new YamlToTableAdapter();
         $tableData = $adapter->adapt($entityFile);
-        $table = new Table($tableData);
+        $table = new CreateTable($tableData);
 
         return $table->toSql();
     }
@@ -48,13 +48,13 @@ class Builder implements BuilderInterface
      * @param string $tableName
      * @param string $entityFile
      * @return string
-     * @throws Exception
+     * @throws \Exception
      */
     public function alterTable(string $tableName, string $entityFile): string
     {
-        $sqlSchemaAdapter = new SqlSchemaToTableAdapter($this->pdo);
+        $sqlSchemaAdapter = new SqliteSchemaToTableAdapter($this->pdo);
         $oldTableData = $sqlSchemaAdapter->adapt($tableName);
-        $oldTable = new Table($oldTableData);
+        $oldTable = new CreateTable($oldTableData);
 
         $yamlAdapter = new YamlToTableAdapter();
         $newTableData = $yamlAdapter->adapt($entityFile);

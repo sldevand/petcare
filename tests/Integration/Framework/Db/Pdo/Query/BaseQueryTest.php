@@ -10,7 +10,6 @@ abstract class BaseQueryTest extends TestCase
     /** @var TableMocks */
     public static $mocks;
 
-
     public static function setUpBeforeClass(): void
     {
         self::$mocks = new TableMocks();

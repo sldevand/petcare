@@ -1,15 +1,17 @@
 <?php
 
-namespace Framework\Db\Pdo\Query;
+namespace Framework\Db\Pdo\Sqlite\Query;
+
+use Framework\Db\Pdo\Query\AbstractTable;
 
 /**
  * Class Table
  * @package Framework\Db\Pdo\Query
  */
-class AlterTable extends Table
+class AlterTable extends AbstractTable
 {
     /**
-     * @var Table
+     * @var CreateTable
      */
     protected $oldTable;
 
@@ -25,11 +27,11 @@ class AlterTable extends Table
 
     /**
      * AlterTable constructor.
-     * @param Table $oldTable
+     * @param \Framework\Db\Pdo\Sqlite\Query\CreateTable $oldTable
      * @param array $properties
      * @throws \Exception
      */
-    public function __construct(Table $oldTable, array $properties = [])
+    public function __construct(CreateTable $oldTable, array $properties = [])
     {
         parent::__construct($properties);
 
@@ -56,7 +58,7 @@ class AlterTable extends Table
     /**
      * @return bool
      */
-    public function hasChanges()
+    public function hasChanges(): bool
     {
         return !empty($this->fieldsToAdd) || !empty($this->fieldsToRemove);
     }

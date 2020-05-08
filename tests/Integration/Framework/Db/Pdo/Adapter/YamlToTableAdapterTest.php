@@ -22,18 +22,21 @@ class YamlToTableAdapterTest extends TestCase
     public function testAdapt()
     {
         $fields = [
-            new Field([
-                'name' => 'testProperty',
-                'column' => 'testProperty',
-                'type' => 'TEXT',
-                'constraints' => [
-                    new Constraint(
-                        [
-                            'name' => 'NOT NULL'
+            'testProperty' =>
+                new Field(
+                    [
+                        'name' => 'testProperty',
+                        'column' => 'testProperty',
+                        'type' => 'TEXT',
+                        'constraints' => [
+                            new Constraint(
+                                [
+                                    'name' => 'NOT NULL'
+                                ]
+                            )
                         ]
-                    )
-                ]
-            ])
+                    ]
+                )
         ];
 
         $constraints = [

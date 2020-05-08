@@ -2,13 +2,14 @@
 
 namespace Framework\Db\Pdo\Query;
 
+use Framework\Api\Db\Pdo\Query\TableInterface;
 use Framework\Db\Pdo\Query\Constraint\Constraint;
 
 /**
- * Class Table
+ * Class AbstractTable
  * @package Framework\Db\Pdo\Query
  */
-class Table extends Hydratable
+abstract class AbstractTable extends Hydratable implements TableInterface
 {
     /** @var string */
     protected $name = '';
@@ -21,9 +22,9 @@ class Table extends Hydratable
 
     /**
      * @param Field $field
-     * @return Table
+     * @return AbstractTable
      */
-    public function addField(Field $field): Table
+    public function addField(Field $field): AbstractTable
     {
         $this->fields[$field->getName()] = $field;
 
@@ -32,9 +33,9 @@ class Table extends Hydratable
 
     /**
      * @param Constraint $constraint
-     * @return Table
+     * @return AbstractTable
      */
-    public function addConstraint(Constraint $constraint): Table
+    public function addConstraint(Constraint $constraint): AbstractTable
     {
         $this->constraints[] = $constraint;
 
@@ -51,9 +52,9 @@ class Table extends Hydratable
 
     /**
      * @param string $name
-     * @return Table
+     * @return AbstractTable
      */
-    public function setName(string $name): Table
+    public function setName(string $name): AbstractTable
     {
         $this->name = $name;
 
@@ -70,9 +71,9 @@ class Table extends Hydratable
 
     /**
      * @param Field[] $fields
-     * @return Table
+     * @return AbstractTable
      */
-    public function setFields(array $fields): Table
+    public function setFields(array $fields): AbstractTable
     {
         $this->fields = $fields;
 
@@ -89,9 +90,9 @@ class Table extends Hydratable
 
     /**
      * @param Constraint[] $constraints
-     * @return Table
+     * @return AbstractTable
      */
-    public function setConstraints(array $constraints): Table
+    public function setConstraints(array $constraints): AbstractTable
     {
         $this->constraints = $constraints;
 
@@ -122,29 +123,5 @@ class Table extends Hydratable
             }
         }
         return implode(',' . PHP_EOL . '    ', $constraintPartArr);
-    }
-
-    /**
-     * @return string
-     */
-    public function toSql(): string
-    {
-        $fieldsSql = $this->getFieldsSql();
-        $constraintsPart = $this->getConstraintsSql();
-        $endPart = $fieldsSql;
-        if (!empty($constraintsPart)) {
-            $endPart .= <<<SQL
-,
-    $constraintsPart
-SQL;
-        }
-
-        return <<<SQL
-CREATE TABLE IF NOT EXISTS $this->name
-(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    $endPart
-);
-SQL;
     }
 }

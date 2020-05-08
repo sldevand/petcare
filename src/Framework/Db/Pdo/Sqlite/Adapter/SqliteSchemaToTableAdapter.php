@@ -1,6 +1,6 @@
 <?php
 
-namespace Framework\Db\Pdo\Adapter;
+namespace Framework\Db\Pdo\Sqlite\Adapter;
 
 use Exception;
 use Framework\Db\Pdo\Query\Constraint\Constraint;
@@ -10,10 +10,10 @@ use Framework\Db\Pdo\Query\Field;
 use PDO;
 
 /**
- * Class SqlSchemaToTableAdapter
- * @package Framework\Db\Pdo\Adapter
+ * Class SqliteSchemaToTableAdapter
+ * @package Framework\Db\Pdo\Sqlite\Adapter
  */
-class SqlSchemaToTableAdapter
+class SqliteSchemaToTableAdapter
 {
     /** @var array */
     protected $tableData;
@@ -22,7 +22,7 @@ class SqlSchemaToTableAdapter
     protected $pdo;
 
     /**
-     * SqlSchemaToTableAdapter constructor.
+     * SqliteSchemaToTableAdapter constructor.
      * @param PDO $pdo
      */
     public function __construct(

@@ -22,7 +22,7 @@ class YamlToTableAdapter
     /**
      * @param string $file
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function adapt(string $file): array
     {
@@ -36,34 +36,14 @@ class YamlToTableAdapter
         $fields = [];
         foreach ($yamlConfig['fields'] as $propertyName => $fieldConfig) {
             $fieldConfig['name'] = $propertyName;
-            $field = new Field();
-            $field
-                ->setName($propertyName)
-                ->setColumn($fieldConfig['column'])
-                ->setType($fieldConfig['type']);
+            $field = $this->createField($fieldConfig);
 
             if (!empty($fieldConfig['size'])) {
                 $field->setSize($fieldConfig['size']);
             }
 
             if (!empty($fieldConfig['constraints'])) {
-                /** @var array | bool $constraint */
-                foreach ($fieldConfig['constraints'] as $key => $constraint) {
-                    if ($key === 'nullable' && $constraint === false) {
-                        $field->addConstraint(new Constraint(['name' => 'NOT NULL']));
-                    }
-
-                    if ($key === 'unique' && $constraint === true) {
-                        $uniqueColumns[] = $field->getColumn();
-                    }
-
-
-                    if ($key !== 'fk') {
-                        continue;
-                    }
-
-                    $this->tableData['constraints'][] = $this->getForeignKey($constraint, $field);
-                }
+                $field = $this->addConstraints($fieldConfig['constraints'], $field);
             }
 
             if ($field->getName() === 'id') {
@@ -83,9 +63,9 @@ class YamlToTableAdapter
 
     /**
      * @param array $constraint
-     * @param Field $field
-     * @return ForeignKey
-     * @throws Exception
+     * @param \Framework\Db\Pdo\Query\Field $field
+     * @return \Framework\Db\Pdo\Query\Constraint\ForeignKey\ForeignKey
+     * @throws \Exception
      */
     protected function getForeignKey(array $constraint, Field $field): ForeignKey
     {
@@ -100,12 +80,57 @@ class YamlToTableAdapter
         }
 
         foreach ($constraint['cascade'] as $cascade) {
-            $foreignKey->addReferenceOption(new ReferenceOption([
-                'on' => $cascade,
-                'action' => 'cascade'
-            ]));
+            $foreignKey->addReferenceOption(
+                new ReferenceOption(
+                    [
+                        'on' => $cascade,
+                        'action' => 'cascade'
+                    ]
+                )
+            );
         }
 
         return $foreignKey;
+    }
+
+    /**
+     * @param array $constraints
+     * @param \Framework\Db\Pdo\Query\Field $field
+     * @return \Framework\Db\Pdo\Query\Field
+     * @throws \Exception
+     */
+    protected function addConstraints(array $constraints, Field $field)
+    {
+        foreach ($constraints as $key => $constraint) {
+            if ($key === 'nullable' && $constraint === false) {
+                $field->addConstraint(new Constraint(['name' => 'NOT NULL']));
+            }
+
+            if ($key === 'unique' && $constraint === true) {
+                $uniqueColumns[] = $field->getColumn();
+            }
+
+            if ($key !== 'fk') {
+                continue;
+            }
+
+            $this->tableData['constraints'][] = $this->getForeignKey($constraint, $field);
+        }
+
+        return $field;
+    }
+
+    /**
+     * @param array $fieldConfig
+     * @return \Framework\Db\Pdo\Query\Field
+     * @throws \Exception
+     */
+    protected function createField(array $fieldConfig)
+    {
+        $field = new Field();
+        return $field
+            ->setName($fieldConfig['name'])
+            ->setColumn($fieldConfig['column'])
+            ->setType($fieldConfig['type']);
     }
 }

@@ -59,10 +59,9 @@ class BaseTestFramework
         $container['installerTest'] = function (ContainerInterface $container) {
             $settings = $container->get('settings')['pdo']['test'];
             $output = new ConsoleOutput();
-            $queryBuilder = new Builder();
+            $queryBuilder = new Builder($container->get('pdoTest'));
             return new Installer(
                 $container->get('pdoTest'),
-                $settings['db-file'],
                 $output,
                 $queryBuilder,
                 $container->get('installedRepository')

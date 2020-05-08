@@ -85,6 +85,7 @@ class BaseTestFramework
                 $container->get('pdoTest'),
                 $container->get('defaultValidator'),
                 $container->get('petImageRepository'),
+                $container->get('careRepository'),
                 $container->get('imageManager')
             );
         };

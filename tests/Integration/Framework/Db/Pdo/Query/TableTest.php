@@ -5,7 +5,6 @@ namespace Tests\Integration\Framework\Db\Pdo\Query;
 use Exception;
 use Framework\Db\Pdo\Query\Constraint\Constraint;
 use Framework\Db\Pdo\Query\Field;
-use Framework\Db\Pdo\Query\Table;
 use Framework\Db\Pdo\Sqlite\Query\CreateTable;
 
 /**

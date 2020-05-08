@@ -4,7 +4,6 @@ namespace Framework\Controller;
 
 use App\Modules\User\Model\Repository\UserRepository;
 use Exception;
-use Framework\Api\Entity\EntityInterface;
 use Framework\Api\Repository\RepositoryInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -64,15 +63,17 @@ class DefaultController extends AbstractController
      */
     public function post(Request $request, Response $response, array $args = []): Response
     {
-        $args = $request->getParams();
+        $body = $request->getParams();
 
-        if (!empty($args['id'])) {
+        if (!empty($body['id'])) {
             return $this->sendError(
                 $response,
                 "Cannot create an entity with an id in a POST method",
                 StatusCode::HTTP_NOT_ACCEPTABLE
             );
         }
+
+        $args = array_merge($body, $args);
 
         return $this->save($request, $response, $args);
     }

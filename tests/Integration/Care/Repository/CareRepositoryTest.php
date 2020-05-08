@@ -43,6 +43,8 @@ class CareRepositoryTest extends TestCase
 
         $attributes = [
             'title' => 'Care 1',
+            'petId' => 1,
+            'appointmentDate' => $now,
             'content' => 'Test 1 description',
             'createdAt' => $now
         ];

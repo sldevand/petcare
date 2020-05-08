@@ -5,6 +5,7 @@ fields:
         column: petId
         type: integer
         constraints:
+            nullable: false
             fk:
                 reference: id
                 table: pet

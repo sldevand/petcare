@@ -48,8 +48,6 @@ class CareController extends DefaultController
     }
 
     /**
-     *
-     *
      * @param \Slim\Http\Request $request
      * @param \Slim\Http\Response $response
      * @param array $args
@@ -64,7 +62,7 @@ class CareController extends DefaultController
             if (empty($args['careId'])) {
                 $cares = $this->repository->fetchAllByField('petId', $pet->getId());
 
-                return $this->sendSuccess($response, "Cares of " . $args['petName'] . " pet", $cares);
+                return $this->sendSuccess($response, "List of Cares", $cares);
             }
 
             $care = $this->repository->fetchOneBy('careId', $args['careId'], "petId=" . $pet->getId());
@@ -72,7 +70,7 @@ class CareController extends DefaultController
             return $this->sendSuccess($response, "Care of " . $args['petName'], $care);
         } catch (Exception $exception) {
             $this->logger->alert($exception->getMessage());
-            return $this->sendError($response, "An error occurred when fetching Pet");
+            return $this->sendError($response, "An error occurred when fetching Care");
         }
     }
 
@@ -85,16 +83,14 @@ class CareController extends DefaultController
     protected function save(Request $request, Response $response, array $args = []): Response
     {
         try {
-            $params = $this->getBodyJsonParams($request);
-
             $user = $this->apiKeyHelper->getUserByApiKey($request);
             $pet = $this->userRepository->fetchPetBy($user->getId(), $args['petName'], 'name');
 
             $entityParams = [
-                'title' => $params['title'] ?? null,
+                'title' => $args['title'] ?? null,
                 'petId' => $pet->getId() ?? null,
-                'content' => $params['content'] ?? "",
-                'appointmentDate' => $params['appointmentDate'] ?? ""
+                'content' => $args['content'] ?? "",
+                'appointmentDate' => $args['appointmentDate'] ?? ""
             ];
 
             $care = new CareEntity($entityParams);
@@ -108,10 +104,12 @@ class CareController extends DefaultController
                 $status = StatusCode::HTTP_OK;
             }
 
-            return $this->sendSuccess($response, 'Care has been saved!', $care, $status);
+            $savedCare = $this->repository->save($care);
+
+            return $this->sendSuccess($response, 'Care has been saved!', $savedCare, $status);
         } catch (Exception $exception) {
             $this->logger->alert($exception->getMessage());
-            return $this->sendError($response, "An error occurred when Pet save");
+            return $this->sendError($response, "An error occurred when Care save");
         }
     }
 }

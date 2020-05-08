@@ -2,6 +2,7 @@
 
 namespace App\Modules\Pet\Model\Repository;
 
+use App\Modules\Care\Model\Repository\CareRepository;
 use App\Modules\Image\Service\ImageManager;
 use App\Modules\Pet\Model\Entity\PetEntity;
 use Exception;
@@ -26,23 +27,29 @@ class PetRepository extends DefaultRepository
     /** @var \App\Modules\Image\Service\ImageManager */
     protected $imageManager;
 
+    /** @var \App\Modules\Care\Model\Repository\CareRepository */
+    protected $careRepository;
+
     /**
      * PetRepository constructor.
      * @param \PDO $db
      * @param \Framework\Api\Validator\ValidatorInterface $validator
      * @param \App\Modules\Pet\Model\Repository\PetImageRepository $petImageRepository
+     * @param \App\Modules\Care\Model\Repository\CareRepository $careRepository
      * @param \App\Modules\Image\Service\ImageManager $imageManager
      */
     public function __construct(
         PDO $db,
         ValidatorInterface $validator,
         PetImageRepository $petImageRepository,
+        CareRepository $careRepository,
         ImageManager $imageManager
     ) {
         $this->table = "pet";
         $this->entityClass = PetEntity::class;
         $this->petImageRepository = $petImageRepository;
         $this->imageManager = $imageManager;
+        $this->careRepository = $careRepository;
         parent::__construct($db, $validator);
     }
 

@@ -16,6 +16,7 @@ use App\Modules\User\Controller\PasswordChangeController;
 use App\Modules\User\Controller\PasswordResetController;
 use App\Modules\User\Controller\SubscribeController;
 use App\Modules\User\Controller\UserApiController;
+use App\Modules\Care\Controller\CareController;
 use App\Modules\User\Helper\ApiKey;
 use App\Modules\User\Model\Repository\UserRepository;
 use Psr\Container\ContainerInterface;
@@ -94,6 +95,7 @@ $container['petRepository'] = function (ContainerInterface $c) {
         $c->get('pdo'),
         $c->get('defaultValidator'),
         $c->get('petImageRepository'),
+        $c->get('careRepository'),
         $c->get('imageManager')
     );
 };
@@ -130,9 +132,11 @@ $container['petController'] = function (ContainerInterface $c) {
 };
 
 $container['careController'] = function (ContainerInterface $c) {
-    return new PetController(
+    return new CareController(
         $c->get('careRepository'),
-        $c->get('userRepository')
+        $c->get('userRepository'),
+        $c->get('apiKeyHelper'),
+        $c->get('logger')
     );
 };
 

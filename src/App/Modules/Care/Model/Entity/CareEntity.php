@@ -4,6 +4,7 @@ namespace App\Modules\Care\Model\Entity;
 
 use Exception;
 use Framework\Model\Entity\DefaultEntity;
+use Framework\Traits\Entity\EntityTimestampableTrait;
 
 /**
  * Class CareEntity
@@ -11,6 +12,8 @@ use Framework\Model\Entity\DefaultEntity;
  */
 class CareEntity extends DefaultEntity
 {
+    use EntityTimestampableTrait;
+
     /** @var string */
     protected $title;
 

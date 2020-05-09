@@ -21,9 +21,6 @@ class CareLifeCycleTest extends DefaultLifeCycleTest
     /** @var \App\Modules\Pet\Model\Repository\PetRepository */
     public static $petRepository;
 
-    /** @var \App\Modules\Care\Model\Repository\CareRepository */
-    public static $careRepository;
-
     /** @var array */
     private static $petResponse;
 
@@ -43,7 +40,6 @@ class CareLifeCycleTest extends DefaultLifeCycleTest
         'content' => 'Content here',
         'appointmentDate' => '2020-05-11 10:30:00'
     ];
-
 
     /**
      * @throws \Exception
@@ -69,27 +65,19 @@ class CareLifeCycleTest extends DefaultLifeCycleTest
 
     public function testPost()
     {
-//        $this->get('/{petName}/{careId}', 'careController:get');
-//        $this->get('/{petName}', 'careController:get');
-//        $this->put('/{petName}/{careId}', 'petController:put');
-//        $this->delete('/{petName}/{careId}', 'careController:delete');
-
-        $url = self::$websiteUrl . '/api/pets';
-        $res = $this->postWithBody($url, self::$pet, true);
-        $contents = $res->getBody()->getContents();
-        self::$petResponse = \json_decode($contents, true);
+        // Post one pet
+        $petsUrl = self::$websiteUrl . '/api/pets';
+        $petResponse = $this->postWithBody($petsUrl, self::$pet, true);
+        self::$petResponse = \json_decode($petResponse->getBody()->getContents(), true);
         $petId = self::$petResponse['data']['id'];
 
-        $url = self::$websiteUrl . '/api/cares/' . self::$pet['name'];
+        //Post one care
+        $oneCarePostUrl = self::$websiteUrl . '/api/cares/' . self::$pet['name'];
+        $oneCarePostResponse = $this->postWithBody($oneCarePostUrl, self::$care, true);
+        $oneCarePostDecodedResponse = \json_decode($oneCarePostResponse->getBody()->getContents(), true);
 
-        $res = $this->postWithBody($url, self::$care, true);
-
-        self::assertEquals("201", $res->getStatusCode());
-        self::assertEquals("application/json", $res->getHeader('content-type')[0]);
-        $contents = $res->getBody()->getContents();
-        $jsonResponse = \json_decode($contents, true);
-        self::assertEquals($jsonResponse['status'], "1");
-        self::assertEquals($jsonResponse['message'], "Care has been saved!");
+        self::assertEquals("201", $oneCarePostResponse->getStatusCode());
+        self::assertEquals("application/json", $oneCarePostResponse->getHeader('content-type')[0]);
 
         $expected = [
             'petId' => $petId,
@@ -98,12 +86,12 @@ class CareLifeCycleTest extends DefaultLifeCycleTest
             'appointmentDate' => '2020-05-11 10:30:00'
         ];
 
-        self::$careId = $jsonResponse['data']['id'];
+        self::assertEquals("1", $oneCarePostDecodedResponse['status']);
+        self::assertEquals("Care Title here has been saved!", $oneCarePostDecodedResponse['message']);
 
-        self::assertEquals($expected['petId'], $jsonResponse['data']['petId']);
-        self::assertEquals($expected['title'], $jsonResponse['data']['title']);
-        self::assertEquals($expected['content'], $jsonResponse['data']['content']);
-        self::assertEquals($expected['appointmentDate'], $jsonResponse['data']['appointmentDate']);
+        foreach ($expected as $key => $value) {
+            self::assertEquals($value, $oneCarePostDecodedResponse['data'][$key]);
+        }
     }
 
     public function testGetList()
@@ -128,11 +116,11 @@ class CareLifeCycleTest extends DefaultLifeCycleTest
         }
 
         $res = $this->get($url, true);
+        $contents = $res->getBody()->getContents();
+        $jsonResponse = \json_decode($contents, true);
 
         self::assertEquals("200", $res->getStatusCode());
         self::assertEquals("application/json", $res->getHeader('content-type')[0]);
-        $contents = $res->getBody()->getContents();
-        $jsonResponse = \json_decode($contents, true);
         self::assertEquals("1", $jsonResponse['status']);
         self::assertEquals("List of Cares", $jsonResponse['message']);
         self::assertEquals(3, count($jsonResponse['data']));
@@ -141,32 +129,94 @@ class CareLifeCycleTest extends DefaultLifeCycleTest
     /**
      * @throws \Framework\Exception\RepositoryException
      */
-//    public function testGetOne()
-//    {
-//        $url = self::$websiteUrl . '/api/cares/' . self::$petResponse['data']['name'] . '/' . self::$careId;
-//
-//        $fetchedCare = self::$petRepository->fetchOne(self::$careId);
-//
-//        $res = $this->get($url, true);
-//
-//        self::assertEquals("200", $res->getStatusCode());
-//        self::assertEquals("application/json", $res->getHeader('content-type')[0]);
-//        $contents = $res->getBody()->getContents();
-//        $jsonResponse = \json_decode($contents, true);
-//        self::assertEquals("1", $jsonResponse['status']);
-//        self::assertEquals("Informations on self::$careId", $jsonResponse['message']);
-//
-//        $expectedData = [
-//            'id' => $fetchedCare->getId(),
-//            'name' => 'TESTName',
-//            'dob' => '2015-10-25',
-//            'specy' => 'cat',
-//            'image' => null
-//        ];
-//
-//        self::assertEquals($expectedData, $jsonResponse['data']);
-//    }
-//
+    public function testGetOne()
+    {
+        // Post one pet
+        $petsUrl = self::$websiteUrl . '/api/pets';
+        $petResponse = $this->postWithBody($petsUrl, self::$pet, true);
+        $petDecodedResponse = \json_decode($petResponse->getBody()->getContents(), true);
+        $petName = $petDecodedResponse['data']['name'];
+
+        //Post one care
+        $oneCarePostUrl = self::$websiteUrl . '/api/cares/' . self::$pet['name'];
+        $oneCarePostResponse = $this->postWithBody($oneCarePostUrl, self::$care, true);
+        $oneCarePostDecodedResponse = \json_decode($oneCarePostResponse->getBody()->getContents(), true);
+
+        //Get one Care
+        $oneCareGetUrl = self::$websiteUrl . '/api/cares/' . $petName . '/' . $oneCarePostDecodedResponse['data']['id'];
+        $oneCareGetResponse = $this->get($oneCareGetUrl, true);
+        $oneCareGetDecodedResponse = \json_decode($oneCareGetResponse->getBody()->getContents(), true);
+        $title = $oneCareGetDecodedResponse['data']['title'];
+
+        self::assertEquals("200", $oneCareGetResponse->getStatusCode());
+        self::assertEquals("application/json", $oneCareGetResponse->getHeader('content-type')[0]);
+        self::assertEquals("1", $oneCareGetDecodedResponse['status']);
+        self::assertEquals($oneCarePostDecodedResponse['data'], $oneCareGetDecodedResponse['data']);
+        self::assertEquals("Care $title for $petName", $oneCareGetDecodedResponse['message']);
+    }
+
+    /**
+     * @throws \Framework\Exception\RepositoryException
+     */
+    public function testPut()
+    {
+        // Post one pet
+        $petsUrl = self::$websiteUrl . '/api/pets';
+        $petResponse = $this->postWithBody($petsUrl, self::$pet, true);
+        $petDecodedResponse = \json_decode($petResponse->getBody()->getContents(), true);
+        $petName = $petDecodedResponse['data']['name'];
+
+        //Post one care
+        $oneCarePostUrl = self::$websiteUrl . '/api/cares/' . self::$pet['name'];
+        $oneCarePostResponse = $this->postWithBody($oneCarePostUrl, self::$care, true);
+        $oneCarePostDecodedResponse = \json_decode($oneCarePostResponse->getBody()->getContents(), true);
+
+        $putData = $oneCarePostDecodedResponse['data'];
+
+        $putData['content'] = 'testPut';
+
+        //Put one Care
+        $oneCarePutUrl = self::$websiteUrl . '/api/cares/' . $petName . '/' . $oneCarePostDecodedResponse['data']['id'];
+        $oneCarePutResponse = $this->putWithBody($oneCarePutUrl, $putData, true);
+        $oneCarePutDecodedResponse = \json_decode($oneCarePutResponse->getBody()->getContents(), true);
+        $title = $oneCarePutDecodedResponse['data']['title'];
+
+        $putData['updatedAt'] = $oneCarePutDecodedResponse['data']['updatedAt'];
+
+        self::assertEquals("200", $oneCarePutResponse->getStatusCode());
+        self::assertEquals("application/json", $oneCarePutResponse->getHeader('content-type')[0]);
+        self::assertEquals("1", $oneCarePutDecodedResponse['status']);
+        self::assertEquals($putData, $oneCarePutDecodedResponse['data']);
+        self::assertEquals("Care $title has been saved!", $oneCarePutDecodedResponse['message']);
+    }
+
+    /**
+     * @throws \Framework\Exception\RepositoryException
+     */
+    public function testDelete()
+    {
+        // Post one pet
+        $petsUrl = self::$websiteUrl . '/api/pets';
+        $petResponse = $this->postWithBody($petsUrl, self::$pet, true);
+        $petDecodedResponse = \json_decode($petResponse->getBody()->getContents(), true);
+        $petName = $petDecodedResponse['data']['name'];
+
+        //Post one care
+        $oneCarePostUrl = self::$websiteUrl . '/api/cares/' . self::$pet['name'];
+        $oneCarePostResponse = $this->postWithBody($oneCarePostUrl, self::$care, true);
+        $oneCarePostDecodedResponse = \json_decode($oneCarePostResponse->getBody()->getContents(), true);
+
+        //Delete one Care
+        $oneCareDeleteUrl = self::$websiteUrl . '/api/cares/' . $petName . '/' . $oneCarePostDecodedResponse['data']['id'];
+        $oneCareGetResponse = $this->delete($oneCareDeleteUrl, true);
+        $oneCareGetDecodedResponse = \json_decode($oneCareGetResponse->getBody()->getContents(), true);
+
+        self::assertEquals("200", $oneCareGetResponse->getStatusCode());
+        self::assertEquals("application/json", $oneCareGetResponse->getHeader('content-type')[0]);
+        self::assertEquals("1", $oneCareGetDecodedResponse['status']);
+        self::assertEquals($oneCarePostDecodedResponse['data'], $oneCareGetDecodedResponse['data']);
+        self::assertEquals("Entity successfully deleted", $oneCareGetDecodedResponse['message']);
+    }
 
     /**
      * @throws \Exception

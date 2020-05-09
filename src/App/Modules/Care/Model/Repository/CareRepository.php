@@ -5,6 +5,7 @@ namespace App\Modules\Care\Model\Repository;
 use App\Modules\Care\Model\Entity\CareEntity;
 use Framework\Api\Validator\ValidatorInterface;
 use Framework\Model\Repository\DefaultRepository;
+use Framework\Traits\Repository\RepositoryTimestampableTrait;
 use PDO;
 
 /**
@@ -13,6 +14,8 @@ use PDO;
  */
 class CareRepository extends DefaultRepository
 {
+    use RepositoryTimestampableTrait;
+
     /**
      * CareRepository constructor.
      * @param PDO $db

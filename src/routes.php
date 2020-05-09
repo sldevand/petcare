@@ -11,11 +11,11 @@ $app->group('/api', function () {
         $this->delete('/{id}', 'petController:delete');
     });
     $this->group('/cares', function () {
-        $this->get('/{petName}/{careId}', 'careController:get');
+        $this->get('/{petName}/{id}', 'careController:get');
         $this->get('/{petName}', 'careController:get');
         $this->post('/{petName}', 'careController:post');
-        $this->put('/{petName}/{careId}', 'petController:put');
-        $this->delete('/{petName}/{careId}', 'careController:delete');
+        $this->put('/{petName}/{id}', 'careController:put');
+        $this->delete('/{petName}/{id}', 'careController:delete');
     });
     $this->group('/user', function () {
         $this->get('', 'userApiController:get');

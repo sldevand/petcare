@@ -59,15 +59,17 @@ class CareController extends DefaultController
             $user = $this->apiKeyHelper->getUserByApiKey($request);
             $pet = $this->userRepository->fetchPetBy($user->getId(), $args['petName'], 'name');
 
-            if (empty($args['careId'])) {
+            if (empty($args['id'])) {
                 $cares = $this->repository->fetchAllByField('petId', $pet->getId());
 
                 return $this->sendSuccess($response, "List of Cares", $cares);
             }
 
-            $care = $this->repository->fetchOneBy('careId', $args['careId'], "petId=" . $pet->getId());
+            $care = $this->repository->fetchOneBy('id', $args['id'], "petId=" . $pet->getId());
+            $title = $care->getTitle();
+            $petName = $pet->getName();
 
-            return $this->sendSuccess($response, "Care of " . $args['petName'], $care);
+            return $this->sendSuccess($response, "Care $title for $petName", $care);
         } catch (Exception $exception) {
             $this->logger->alert($exception->getMessage());
             return $this->sendError($response, "An error occurred when fetching Care");
@@ -83,30 +85,39 @@ class CareController extends DefaultController
     protected function save(Request $request, Response $response, array $args = []): Response
     {
         try {
+            $params = $this->getBodyJsonParams($request);
             $user = $this->apiKeyHelper->getUserByApiKey($request);
             $pet = $this->userRepository->fetchPetBy($user->getId(), $args['petName'], 'name');
 
             $entityParams = [
-                'title' => $args['title'] ?? null,
+                'title' => $params['title'] ?? $args['title'] ?? null,
                 'petId' => $pet->getId() ?? null,
-                'content' => $args['content'] ?? "",
-                'appointmentDate' => $args['appointmentDate'] ?? ""
+                'content' => $params['content'] ?? $args['content'] ?? '',
+                'appointmentDate' => $params['appointmentDate'] ?? $args['appointmentDate'] ?? ''
             ];
+
+            foreach ($entityParams as $key => $entityParam) {
+                if (is_null($entityParam)) {
+                    return $this->sendError($response, "No $key has been sent");
+                }
+            }
 
             $care = new CareEntity($entityParams);
 
             $status = StatusCode::HTTP_CREATED;
 
             if (!empty($args['id'])) {
-                $care->setId($args['id']);
+                $care->setId(intval($args['id']));
                 //Just to check if care entity exists, else throws an Exception
-                $this->repository->fetchOneBy('careId', $args['careId'], "petId=" . $pet->getId());
+                $this->repository->fetchOneBy('id', $args['id'], "petId=" . $pet->getId());
                 $status = StatusCode::HTTP_OK;
             }
 
             $savedCare = $this->repository->save($care);
 
-            return $this->sendSuccess($response, 'Care has been saved!', $savedCare, $status);
+            $title = $savedCare->getTitle();
+
+            return $this->sendSuccess($response, "Care $title has been saved!", $savedCare, $status);
         } catch (Exception $exception) {
             $this->logger->alert($exception->getMessage());
             return $this->sendError($response, "An error occurred when Care save");

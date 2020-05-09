@@ -84,6 +84,59 @@ abstract class DefaultLifeCycleTest extends TestCase
 
     /**
      * @param string $url
+     * @param array $body
+     * @param bool $auth
+     * @return mixed
+     */
+    public function putWithBody(string $url, array $body, bool $auth = false)
+    {
+        $options =
+            [
+                'headers' => [
+                    'Content-Type' => 'application/json'
+                ]
+            ];
+
+        if ($auth) {
+            $options['headers']['Authorization'] = 'Bearer ' . self::$savedUser->getApiKey();
+        }
+
+        $client = new Client($options);
+
+        return $client->put(
+            $url,
+            ['body' => json_encode($body)]
+        );
+    }
+
+    /**
+     * @param string $url
+     * @param array $body
+     * @param bool $auth
+     * @return mixed
+     */
+    public function delete(string $url, bool $auth = false)
+    {
+        $options =
+            [
+                'headers' => [
+                    'Content-Type' => 'application/json'
+                ]
+            ];
+
+        if ($auth) {
+            $options['headers']['Authorization'] = 'Bearer ' . self::$savedUser->getApiKey();
+        }
+
+        $client = new Client($options);
+
+        return $client->delete(
+            $url
+        );
+    }
+
+    /**
+     * @param string $url
      * @param bool $auth
      * @return mixed
      */

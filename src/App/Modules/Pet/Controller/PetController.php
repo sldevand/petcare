@@ -101,7 +101,7 @@ class PetController extends DefaultController
             $pet = new PetEntity($entityParams);
 
             if (!empty($args['id'])) {
-                $pet->setId($args['id']);
+                $pet->setId(intval($args['id']));
                 $pet = $this->userRepository->fetchPetBy($user->getId(), $pet->getId());
                 $pet
                     ->setName($entityParams['name'])

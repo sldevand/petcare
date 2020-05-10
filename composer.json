@@ -26,7 +26,6 @@
         "ext-json": "*",
         "ext-yaml": "*",
         "ext-pdo": "*",
-        "ext-http": "*",
         "andrewdyer/slim3-mailer": "^1.1"
     },
     "require-dev": {

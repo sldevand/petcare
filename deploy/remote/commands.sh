@@ -18,8 +18,8 @@ REMOTE_APP_NAME=petcare
 REMOTE_APP_LINK=petcare-api
 REMOTE_APP_PATH=$REMOTE_WWW_PATH/$REMOTE_APP_NAME
 REMOTE_APP_LINK_PATH=$REMOTE_WWW_PATH/$REMOTE_APP_LINK
-REMOTE_COMPOSER=/usr/sbin/composer
-REMOTE_ENV_FILE=/home/pi/deployScripts/petcare/.env
+REMOTE_COMPOSER=/usr/bin/composer
+REMOTE_ENV_FILE=/home/pi/deployFiles/petcare-api/.env
 
 myEcho "***Remote : removing previous symbolic link***"
 sudo rm -rvf $REMOTE_WWW_PATH/$REMOTE_APP_LINK

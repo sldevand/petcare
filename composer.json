@@ -37,7 +37,6 @@
         "ext-json": "*",
         "ext-yaml": "*",
         "ext-pdo": "*",
-        "ext-http": "*",
         "ext-gd": "*"
     },
     "autoload-dev": {

@@ -60,7 +60,8 @@ class CareController extends DefaultController
             $pet = $this->userRepository->fetchPetBy($user->getId(), $args['petName'], 'name');
 
             if (empty($args['id'])) {
-                $cares = $this->repository->fetchAllByField('petId', $pet->getId());
+                $options = ['orderBy' => 'appointmentDate', 'direction' => 'desc'];
+                $cares = $this->repository->fetchAllByField('petId', $pet->getId(), $options);
 
                 return $this->sendSuccess($response, "List of Cares", $cares);
             }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "214631510f490a985e20b29f97a31cf3",
+    "content-hash": "1d9e64119fb0c37c0f3c26d3d1434bf6",
     "packages": [
         {
             "name": "andrewdyer/slim3-mailer",
@@ -120,6 +120,54 @@
                 "php"
             ],
             "time": "2020-05-25T17:44:05+00:00"
+        },
+        {
+            "name": "dragonmantank/cron-expression",
+            "version": "3.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dragonmantank/cron-expression.git",
+                "reference": "fa4e95ff5a7f1d62c3fbc05c32729b7f3ca14b52"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dragonmantank/cron-expression/zipball/fa4e95ff5a7f1d62c3fbc05c32729b7f3ca14b52",
+                "reference": "fa4e95ff5a7f1d62c3fbc05c32729b7f3ca14b52",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1"
+            },
+            "replace": {
+                "mtdowling/cron-expression": "^1.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^0.11",
+                "phpunit/phpunit": "^6.4|^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Cron\\": "src/Cron/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Tankersley",
+                    "email": "chris@ctankersley.com",
+                    "homepage": "https://github.com/dragonmantank"
+                }
+            ],
+            "description": "CRON for PHP: Calculate the next or previous run date and determine if a CRON expression is due",
+            "keywords": [
+                "cron",
+                "schedule"
+            ],
+            "time": "2020-08-21T02:30:13+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -592,6 +640,41 @@
                 "psr-3"
             ],
             "time": "2020-03-23T09:12:05+00:00"
+        },
+        {
+            "name": "sldevand/cron",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sldevand/cron.git",
+                "reference": "31533b963622d564f167d5c6cc9ee4467f487df5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sldevand/cron/zipball/31533b963622d564f167d5c6cc9ee4467f487df5",
+                "reference": "31533b963622d564f167d5c6cc9ee4467f487df5",
+                "shasum": ""
+            },
+            "require": {
+                "dragonmantank/cron-expression": "^3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Sldevand\\Cron\\": "src"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Sébastien Lorrain",
+                    "email": "sldeveloperand@gmail.com"
+                }
+            ],
+            "support": {
+                "source": "https://github.com/sldevand/cron/tree/1.0.1",
+                "issues": "https://github.com/sldevand/cron/issues"
+            },
+            "time": "2020-08-23T11:20:08+00:00"
         },
         {
             "name": "slim/php-view",
@@ -2631,6 +2714,7 @@
             "keywords": [
                 "tokenizer"
             ],
+            "abandoned": true,
             "time": "2017-11-27T05:48:46+00:00"
         },
         {

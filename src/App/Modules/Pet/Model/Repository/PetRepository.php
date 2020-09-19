@@ -115,12 +115,13 @@ class PetRepository extends DefaultRepository
     }
 
     /**
-     * @return EntityInterface[]
-     * @throws Exception
+     * @param array $options
+     * @return array
+     * @throws \Exception
      */
-    public function fetchAll(): array
+    public function fetchAll(array $options = []): array
     {
-        $pets = parent::fetchAll();
+        $pets = parent::fetchAll($options);
 
         foreach ($pets as $key => $pet) {
             $pets[$key] = $this->fetchImage($pet);
@@ -158,12 +159,13 @@ class PetRepository extends DefaultRepository
     /**
      * @param string $field
      * @param int|string $value
+     * @param array $options
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
-    public function fetchAllByField(string $field, $value): array
+    public function fetchAllByField(string $field, $value, $options = []): array
     {
-        $pets = parent::fetchAllByField($field, $value);
+        $pets = parent::fetchAllByField($field, $value, $options);
 
         foreach ($pets as $key => $pet) {
             $pets[$key] = $this->fetchImage($pet, true);

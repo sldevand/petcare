@@ -4,8 +4,9 @@
 require __DIR__ . '/../src/bootstrap.php';
 require VENDOR_DIR . '/autoload.php';
 
-use App\Common\Command\DeleteNeverActivatedUsers;
+
 use App\Common\Command\SetupInstall;
+use App\Modules\User\Command\DeleteNeverActivatedUsers;
 use Slim\App;
 use Symfony\Component\Console\Application;
 

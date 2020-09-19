@@ -245,6 +245,75 @@ class PetRepositoryTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
+
+    public function testFetchAllByField()
+    {
+        $dogEntity = new PetEntity(
+            [
+                'name' => 'waf', 'dob' => '2014-05-14T14:58:00.000Z', 'specy' => 'dog'
+            ]
+        );
+
+        $elie = new PetEntity(
+            [
+                'name' => 'elie', 'dob' => '2013-10-15T14:58:00.000Z', 'specy' => 'cat'
+            ]
+        );
+
+        $oliver = new PetEntity(
+            [
+                'name' => 'oliver', 'dob' => '2016-10-15T14:58:00.000Z', 'specy' => 'cat'
+            ]
+        );
+
+        $milo = new PetEntity(
+            [
+                'name' => 'milo', 'dob' => '2015-10-15T14:58:00.000Z', 'specy' => 'cat'
+            ]
+        );
+
+
+        self::$petRepository->save($dogEntity);
+        $savedElie   = self::$petRepository->save($elie);
+        $savedOliver = self::$petRepository->save($oliver);
+        $savedMilo   = self::$petRepository->save($milo);
+
+        $expected = [
+            $savedOliver,
+            $savedMilo,
+            $savedElie
+        ];
+
+        $options = ['orderBy' => 'dob', 'direction' => 'desc'];
+
+        $actual = self::$petRepository->fetchAllByField('specy', 'cat', $options);
+        $this->assertEquals($expected, $actual);
+
+        $expected = [
+            $savedElie,
+            $savedMilo,
+            $savedOliver
+        ];
+
+        $options = ['orderBy' => 'dob', 'direction' => 'asc'];
+
+        $actual = self::$petRepository->fetchAllByField('specy', 'cat', $options);
+        $this->assertEquals($expected, $actual);
+
+        $expected = [
+            $savedMilo,
+            $savedOliver
+        ];
+
+        $options = ['orderBy' => 'dob', 'direction' => 'asc', 'offset' => 1, 'limit' => 2];
+        $actual = self::$petRepository->fetchAllByField('specy', 'cat', $options);
+        $this->assertEquals($expected, $actual);
+
+        $options = ['orderBy' => 'dob', 'direction' => 'asc', 'offset' => 1];
+        $this->expectExceptionMessage('You must specify a limit when offset is set');
+        self::$petRepository->fetchAllByField('specy', 'cat', $options);
+    }
+
     protected function tearDown(): void
     {
         self::$db->exec("PRAGMA foreign_keys=ON");

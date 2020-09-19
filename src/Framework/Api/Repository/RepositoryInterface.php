@@ -47,7 +47,7 @@ interface RepositoryInterface
     /**
      * @return array
      */
-    public function fetchAll(): array;
+    public function fetchAll(array $options = []): array;
 
     /**
      * @param int $id

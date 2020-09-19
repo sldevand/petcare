@@ -143,12 +143,23 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
     }
 
     /**
+     * @param array $options
      * @return EntityInterface[]
-     * @throws Exception
+     * @throws \Exception
      */
-    public function fetchAll(): array
+    public function fetchAll(array $options = []): array
     {
-        $sql = "SELECT * FROM $this->table";
+        $orderBy   = isset($options['orderBy']) ? "ORDER BY {$options['orderBy']}" : '';
+        $direction =  isset($options['direction']) ? "{$options['direction']}" : '';
+        $limit = isset($options['limit']) ? "LIMIT {$options['limit']}" : '';
+        $offset =  isset($options['offset']) ? "OFFSET {$options['offset']}" : '';
+
+        $sql = <<<SQL
+SELECT * FROM $this->table
+$orderBy $direction
+$limit
+$offset
+SQL;
         $st = $this->prepare($sql);
         $st->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $this->entityClass);
         $st->execute();
@@ -159,12 +170,26 @@ class DefaultRepository extends MagicObject implements RepositoryInterface
     /**
      * @param string $field
      * @param string | int $value
+     * @param array $options
      * @return EntityInterface[]
-     * @throws Exception
+     * @throws \Exception
      */
-    public function fetchAllByField(string $field, $value): array
+    public function fetchAllByField(string $field, $value, $options = []): array
     {
-        $sql = "SELECT * FROM $this->table WHERE $field=:$field";
+        $orderBy   = isset($options['orderBy']) ? "ORDER BY {$options['orderBy']}" : '';
+        $direction =  isset($options['direction']) ? "{$options['direction']}" : '';
+        $limit = isset($options['limit']) ? "LIMIT {$options['limit']}" : '';
+        $offset =  isset($options['offset']) ? "OFFSET {$options['offset']}" : '';
+
+        if (!$limit && $offset) {
+            throw new Exception('You must specify a limit when offset is set');
+        }
+
+        $sql = <<<SQL
+SELECT * FROM $this->table WHERE $field=:$field
+$orderBy $direction
+$limit $offset
+SQL;
 
         $st = $this->prepare($sql);
         $st->bindValue(":$field", $value);

@@ -2,9 +2,8 @@
 
 namespace App\Common\Command;
 
+use App\Common\Command;
 use Exception;
-use Slim\App;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -16,9 +15,6 @@ require_once __DIR__ . '/../../../bootstrap.php';
  */
 class SetupInstall extends Command
 {
-    /** @var string */
-    protected static $defaultName = 'setup:install';
-
     protected function configure()
     {
         $this
@@ -33,13 +29,8 @@ class SetupInstall extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        require_once VENDOR_DIR . '/autoload.php';
-        session_start();
-        $settings = require_once SRC_DIR . '/settings.php';
-        $container = new \Slim\Container($settings);
-        require_once SRC_DIR . '/dependencies.php';
-        $app = new App($container);
-
-        $app->getContainer()->get('installer')->execute();
+        /** @var \App\Common\Setup\Installer $installer */
+        $installer = $this->app->getContainer()->get('installer');
+        $installer->execute();
     }
 }

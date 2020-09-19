@@ -111,7 +111,8 @@ $container['userRepository'] = function (ContainerInterface $c) {
     return new UserRepository(
         $c->get('pdo'),
         $c->get('defaultValidator'),
-        $c->get('petRepository')
+        $c->get('petRepository'),
+        $c->get('activationRepository')
     );
 };
 

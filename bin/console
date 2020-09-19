@@ -1,11 +1,25 @@
 #!/usr/bin/env php
 <?php
 
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../src/bootstrap.php';
+require VENDOR_DIR . '/autoload.php';
 
+use App\Common\Command\DeleteNeverActivatedUsers;
 use App\Common\Command\SetupInstall;
+use Slim\App;
 use Symfony\Component\Console\Application;
 
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$settings = require SRC_DIR . '/settings.php';
+$container = new \Slim\Container($settings);
+require SRC_DIR . '/dependencies.php';
+$app = new App($container);
+
 $application = new Application();
-$application->add(new SetupInstall());
+$application->add(new SetupInstall('setup:install', $app));
+$application->add(new DeleteNeverActivatedUsers('users:purge', $app));
 $application->run();

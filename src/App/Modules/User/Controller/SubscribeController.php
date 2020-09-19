@@ -84,8 +84,8 @@ class SubscribeController extends AbstractController
                 new ActivationEntity(
                     [
                         'userId'         => $this->currentUser->getId(),
-                        'activated'      => false,
-                        'mailSent'       => false,
+                        'activated'      => "0",
+                        'mailSent'       => "0",
                         'activationCode' => $activationCode
                     ]
                 )

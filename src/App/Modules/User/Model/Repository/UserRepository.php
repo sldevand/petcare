@@ -2,6 +2,7 @@
 
 namespace App\Modules\User\Model\Repository;
 
+use App\Modules\Activation\Model\Repository\ActivationRepository;
 use App\Modules\Pet\Model\Entity\PetEntity;
 use App\Modules\Pet\Model\Repository\PetRepository;
 use App\Modules\User\Model\Entity\UserEntity;
@@ -23,21 +24,27 @@ class UserRepository extends DefaultRepository
     /** @var \App\Modules\Pet\Model\Repository\PetRepository */
     protected $petRepository;
 
+    /** @var \App\Modules\Activation\Model\Repository\ActivationRepository */
+    protected $activationRepository;
+
     /**
      * UserRepository constructor.
      * @param PDO $db
      * @param \Framework\Api\Validator\ValidatorInterface $validator
      * @param \App\Modules\Pet\Model\Repository\PetRepository $petRepository
+     * @param \App\Modules\Activation\Model\Repository\ActivationRepository $activationRepository
      */
     public function __construct(
         PDO $db,
         ValidatorInterface $validator,
-        PetRepository $petRepository
+        PetRepository $petRepository,
+        ActivationRepository $activationRepository
     ) {
         parent::__construct($db, $validator);
         $this->table = "user";
         $this->entityClass = UserEntity::class;
         $this->petRepository = $petRepository;
+        $this->activationRepository = $activationRepository;
     }
 
     /**
@@ -101,5 +108,23 @@ class UserRepository extends DefaultRepository
     public function fetchByApiKey($apiKey): EntityInterface
     {
         return $this->fetchOneBy('apiKey', $apiKey);
+    }
+
+    /**
+     * @param int $minutes
+     * @return array
+     * @throws \Exception
+     */
+    public function purgeNeverActivatedUsers(int $minutes)
+    {
+        $deletedUserIds = [];
+        if ($activations = $this->activationRepository->getNotActivatedForMinutes($minutes)) {
+            foreach ($activations as $activation) {
+                $this->deleteOne($activation->getUserId());
+                $deletedUserIds[] = $activation->getUserId();
+            }
+        }
+
+        return $deletedUserIds;
     }
 }

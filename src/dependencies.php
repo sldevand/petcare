@@ -5,6 +5,7 @@ use App\Modules\Care\Model\Repository\CareRepository;
 use App\Modules\Image\Service\ImageManager;
 use App\Modules\Mail\Observer\UserSubscribeObserver;
 use App\Modules\Mail\Service\MailSender;
+use App\Modules\Notification\Model\Repository\NotificationRepository;
 use App\Modules\PasswordReset\Model\Repository\PasswordResetRepository;
 use App\Modules\Pet\Controller\PetController;
 use App\Modules\Pet\Model\Repository\PetImageRepository;
@@ -113,6 +114,16 @@ $container['userRepository'] = function (ContainerInterface $c) {
         $c->get('defaultValidator'),
         $c->get('petRepository'),
         $c->get('activationRepository')
+    );
+};
+
+$container['notificationRepository'] = function (ContainerInterface $c) {
+    return new NotificationRepository(
+        $c->get('pdo'),
+        $c->get('defaultValidator'),
+        $c->get('careRepository'),
+        $c->get('petRepository'),
+        $c->get('userRepository')
     );
 };
 

@@ -21,6 +21,7 @@ fields:
                 cascade:
                 - delete
                 - update
+            unique: true
     petId:
         column: petId
         type: integer

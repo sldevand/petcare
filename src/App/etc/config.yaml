@@ -9,3 +9,5 @@ modules:
         enabled: true
     PasswordReset:
         enabled: true
+    Notification:
+        enabled: true

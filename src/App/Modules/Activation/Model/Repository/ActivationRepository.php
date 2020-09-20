@@ -2,7 +2,7 @@
 
 namespace App\Modules\Activation\Model\Repository;
 
-use App\Modules\Activation\Model\Entity\ActivationEntity;
+use App\Modules\Activation\Model\Entity\NotificationEntity;
 use Framework\Api\Validator\ValidatorInterface;
 use Framework\Model\Repository\DefaultRepository;
 use Framework\Traits\Repository\RepositoryTimestampableTrait;
@@ -27,7 +27,7 @@ class ActivationRepository extends DefaultRepository
     ) {
         parent::__construct($db, $validator);
         $this->table = "activation";
-        $this->entityClass = ActivationEntity::class;
+        $this->entityClass = NotificationEntity::class;
     }
 
     /**

@@ -3,7 +3,7 @@
 namespace Tests\Integration\Framework;
 
 use App\Common\Setup\Installer;
-use App\Modules\Activation\Model\Repository\ActivationRepository;
+use App\Modules\Activation\Model\Repository\NotificationRepository;
 use App\Modules\Care\Model\Repository\CareRepository;
 use App\Modules\Image\Service\ImageManager;
 use App\Modules\Pet\Model\Repository\PetImageRepository;
@@ -92,7 +92,7 @@ class BaseTestFramework
         };
 
         $container['activationRepository'] = function (ContainerInterface $container) {
-            return new ActivationRepository(
+            return new NotificationRepository(
                 $container->get('pdoTest'),
                 $container->get('defaultValidator')
             );

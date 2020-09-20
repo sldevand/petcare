@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Modules\Activation\Model\Repository;
+namespace App\Modules\Notification\Model\Repository;
 
-use App\Modules\Activation\Model\Entity\NotificationEntity;
+use App\Modules\Notification\Model\Entity\NotificationEntity;
 use Framework\Api\Validator\ValidatorInterface;
 use Framework\Model\Repository\DefaultRepository;
 use Framework\Traits\Repository\RepositoryTimestampableTrait;
 use PDO;
 
 /**
- * Class ActivationRepository
+ * Class NotificationRepository
  * @package App\Modules\Activation\Model\Repository
  */
-class ActivationRepository extends DefaultRepository
+class NotificationRepository extends DefaultRepository
 {
     use RepositoryTimestampableTrait;
 
@@ -26,7 +26,7 @@ class ActivationRepository extends DefaultRepository
         ValidatorInterface $validator
     ) {
         parent::__construct($db, $validator);
-        $this->table = "activation";
+        $this->table = "notifcation";
         $this->entityClass = NotificationEntity::class;
     }
 

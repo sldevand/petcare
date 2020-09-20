@@ -2,32 +2,15 @@
 
 namespace App\Modules\User\Cron;
 
-use Sldevand\Cron\ExecutorInterface;
-use Slim\App;
+use Framework\Cron\AbstractExecutor;
 
 /**
  * Class DeleteNeverActivatedUsersExecutor
  * @package App\Modules\User\Cron
  */
-class DeleteNeverActivatedUsersExecutor implements ExecutorInterface
+class DeleteNeverActivatedUsersExecutor extends AbstractExecutor
 {
     const MINUTES_ELAPSED = 10;
-
-    /** @var \Slim\App */
-    protected $app;
-
-    /** @var \Symfony\Component\Console\Output\OutputInterface */
-    protected $output;
-
-    /**
-     * DeleteNeverActivatedUsersExecutor constructor.
-     * @param array|null $args
-     */
-    public function __construct(?array $args = null)
-    {
-        $this->app = $args['app'];
-        $this->output = $this->app->getContainer()->get('consoleOutput');
-    }
 
     /**
      * @throws \Exception

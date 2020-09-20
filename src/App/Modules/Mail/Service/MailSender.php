@@ -45,4 +45,30 @@ class MailSender
             }
         );
     }
+
+    /**
+     * @param string $view
+     * @param EntityInterface $user
+     * @param string $link
+     * @param string $subject
+     * @return int
+     */
+    public function notifyUsersForApproachingAppointment(
+        string $view,
+        EntityInterface $user,
+        string $link,
+        string $subject
+    ): int {
+        return $this->mailer->sendMessage(
+            $view,
+            [
+                'firstName' => $user->getFirstName(),
+                'link' => $link
+            ],
+            function ($message) use ($user, $subject) {
+                $message->setTo($user->getEmail(), $user->getFirstName());
+                $message->setSubject($subject);
+            }
+        );
+    }
 }

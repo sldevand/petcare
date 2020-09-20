@@ -2,7 +2,7 @@
 
 namespace App\Modules\User\Model\Repository;
 
-use App\Modules\Activation\Model\Repository\ActivationRepository;
+use App\Modules\Activation\Model\Repository\NotificationRepository;
 use App\Modules\Pet\Model\Entity\PetEntity;
 use App\Modules\Pet\Model\Repository\PetRepository;
 use App\Modules\User\Model\Entity\UserEntity;
@@ -24,7 +24,7 @@ class UserRepository extends DefaultRepository
     /** @var \App\Modules\Pet\Model\Repository\PetRepository */
     protected $petRepository;
 
-    /** @var \App\Modules\Activation\Model\Repository\ActivationRepository */
+    /** @var \App\Modules\Activation\Model\Repository\NotificationRepository */
     protected $activationRepository;
 
     /**
@@ -32,13 +32,13 @@ class UserRepository extends DefaultRepository
      * @param PDO $db
      * @param \Framework\Api\Validator\ValidatorInterface $validator
      * @param \App\Modules\Pet\Model\Repository\PetRepository $petRepository
-     * @param \App\Modules\Activation\Model\Repository\ActivationRepository $activationRepository
+     * @param \App\Modules\Activation\Model\Repository\NotificationRepository $activationRepository
      */
     public function __construct(
         PDO $db,
         ValidatorInterface $validator,
         PetRepository $petRepository,
-        ActivationRepository $activationRepository
+        NotificationRepository $activationRepository
     ) {
         parent::__construct($db, $validator);
         $this->table = "user";

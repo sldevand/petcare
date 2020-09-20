@@ -19,6 +19,11 @@ $crontab = [
         'expression' => '* * * * *',
         'executor' => '\App\Modules\User\Cron\DeleteNeverActivatedUsersExecutor',
         'args' => ['app' => $app]
+    ],
+    'notify_users' => [
+        'expression' => '* * * * *',
+        'executor' => '\App\Modules\User\Cron\NotificationsExecutor',
+        'args' => ['app' => $app]
     ]
 ];
 

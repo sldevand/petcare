@@ -17,7 +17,7 @@ class UserLifeCycleTest extends DefaultLifeCycleTest
     /** @var \App\Modules\User\Model\Repository\UserRepository */
     public static $userRepository;
 
-    /** @var \App\Modules\Activation\Model\Repository\ActivationRepository */
+    /** @var \App\Modules\Activation\Model\Repository\NotificationRepository */
     public static $activationRepository;
 
     /** @var \App\Modules\PasswordReset\Model\Repository\PasswordResetRepository */

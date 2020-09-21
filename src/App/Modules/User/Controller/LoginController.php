@@ -2,7 +2,7 @@
 
 namespace App\Modules\User\Controller;
 
-use App\Modules\Activation\Model\Repository\NotificationRepository;
+use App\Modules\Activation\Model\Repository\ActivationRepository;
 use Exception;
 use Framework\Api\Repository\RepositoryInterface;
 use Framework\Controller\AbstractController;
@@ -17,7 +17,7 @@ use Slim\Http\StatusCode;
  */
 class LoginController extends AbstractController
 {
-    /** @var NotificationRepository */
+    /** @var ActivationRepository */
     protected $activationRepository;
 
     /** @var LoggerInterface */
@@ -27,12 +27,12 @@ class LoginController extends AbstractController
      * LoginController constructor
      *
      * @param RepositoryInterface $repository
-     * @param NotificationRepository $activationRepository
+     * @param ActivationRepository $activationRepository
      * @param LoggerInterface $logger
      */
     public function __construct(
         RepositoryInterface $repository,
-        NotificationRepository $activationRepository,
+        ActivationRepository $activationRepository,
         LoggerInterface $logger
     ) {
         parent::__construct($repository);

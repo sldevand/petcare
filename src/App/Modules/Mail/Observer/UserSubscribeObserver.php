@@ -2,7 +2,7 @@
 
 namespace App\Modules\Mail\Observer;
 
-use App\Modules\Activation\Model\Repository\NotificationRepository;
+use App\Modules\Activation\Model\Repository\ActivationRepository;
 use App\Modules\Mail\Service\MailSender;
 use Framework\Api\Entity\EntityInterface;
 use Framework\Api\Observer\SubjectInterface;
@@ -18,18 +18,18 @@ class UserSubscribeObserver extends Observer
     /** @var MailSender */
     protected $mailSender;
 
-    /** @var NotificationRepository */
+    /** @var ActivationRepository */
     protected $activationRepository;
 
     /**
      * UserSubscribeObserver constructor.
      * @param MailSender $mailSender
-     * @param NotificationRepository $activationRepository
+     * @param ActivationRepository $activationRepository
      * @param null $subject
      */
     public function __construct(
         MailSender $mailSender,
-        NotificationRepository $activationRepository,
+        ActivationRepository $activationRepository,
         $subject = null
     ) {
         parent::__construct($subject);

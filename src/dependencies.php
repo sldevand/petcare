@@ -22,6 +22,7 @@ use App\Modules\User\Helper\ApiKey;
 use App\Modules\User\Model\Repository\UserRepository;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Dotenv\Dotenv;
+use Framework\Mail\MailerFactory;
 
 require_once FRAMEWORK_DIR . '/dependencies.php';
 
@@ -31,14 +32,7 @@ $dotenv->load(ENV_FILE);
 //core dependencies
 $container['mailer'] = function ($container) {
     $twig = $container['view'];
-    $mailer = new \Anddye\Mailer\Mailer($twig, [
-        'host' => $_ENV['SMTP_HOST'],  // SMTP Host
-        'port' => $_ENV['SMTP_PORT'],  // SMTP Port
-        'username' => $_ENV['SMTP_USERNAME'],  // SMTP Username
-        'password' => $_ENV['SMTP_PASSWORD'],  // SMTP Password
-        'protocol' => $_ENV['SMTP_PROTOCOL']   // SSL or TLS
-    ]);
-
+    $mailer = \Framework\Mail\MailerFactory::create($twig);
     $mailer->setDefaultFrom('no-reply@mail.com', 'Petcare Team');
 
     return $mailer;

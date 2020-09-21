@@ -2,8 +2,8 @@
 
 namespace App\Modules\User\Controller;
 
-use App\Modules\Activation\Model\Entity\NotificationEntity;
-use App\Modules\Activation\Model\Repository\NotificationRepository;
+use App\Modules\Activation\Model\Entity\ActivationEntity;
+use App\Modules\Activation\Model\Repository\ActivationRepository;
 use App\Modules\Token\Helper\Token;
 use App\Modules\User\Model\Entity\UserEntity;
 use Exception;
@@ -29,7 +29,7 @@ class SubscribeController extends AbstractController
     /** @var Token */
     protected $token;
 
-    /** @var NotificationRepository */
+    /** @var ActivationRepository */
     protected $activationRepository;
 
     /** @var LoggerInterface */
@@ -40,14 +40,14 @@ class SubscribeController extends AbstractController
      *
      * @param RepositoryInterface $repository
      * @param Token $token
-     * @param NotificationRepository $activationRepository
+     * @param ActivationRepository $activationRepository
      * @param LoggerInterface $logger
      * @param array $settings
      */
     public function __construct(
         RepositoryInterface $repository,
         Token $token,
-        NotificationRepository $activationRepository,
+        ActivationRepository $activationRepository,
         LoggerInterface $logger,
         array $settings
     ) {
@@ -81,7 +81,7 @@ class SubscribeController extends AbstractController
             $this->currentUser = $this->repository->save($user);
 
             $this->activationRepository->save(
-                new NotificationEntity(
+                new ActivationEntity(
                     [
                         'userId'         => $this->currentUser->getId(),
                         'activated'      => "0",

@@ -120,11 +120,13 @@ class PasswordResetController extends AbstractController
         $dotenv->load(ENV_FILE);
         $frontWebsiteUrl = $_ENV['FRONT_WEBSITE_URL'];
 
-        $view = 'email/password-reset.html';
+        $view = VIEWS_DIR . '/email/password-reset.html';
+        $body = file_get_contents($view);
+
         $link = $frontWebsiteUrl . "/passwordChange/" . $user->getId() . "/" . $resetCode;
         $subject = 'PetCare password reset';
 
-        return $this->mailSender->sendMailWithLink($view, $user, $link, $subject);
+        return $this->mailSender->sendMailWithLink($body, $user, $link, $subject);
     }
 
     /**

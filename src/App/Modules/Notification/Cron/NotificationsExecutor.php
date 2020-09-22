@@ -3,7 +3,9 @@
 namespace App\Modules\Notification\Cron;
 
 use App\Modules\Notification\Model\Entity\NotificationEntity;
+use DateInterval;
 use DateTime;
+use DateTimeZone;
 use Framework\Cron\AbstractExecutor;
 use Symfony\Component\Dotenv\Dotenv;
 
@@ -16,8 +18,9 @@ class NotificationsExecutor extends AbstractExecutor
     /** @var \App\Modules\Notification\Model\Repository\NotificationRepository */
     protected $notificationRepository;
 
-    /** @var \Anddye\Mailer\Mailer */
-    protected $mailer;
+    /** @var \App\Modules\Mail\Service\MailSender */
+    protected $mailSender;
+
 
     /**
      * NotificationsExecutor constructor.
@@ -27,7 +30,7 @@ class NotificationsExecutor extends AbstractExecutor
     {
         parent::__construct($args);
         $this->notificationRepository = $this->app->getContainer()->get('notificationRepository');
-        $this->mailer = $this->app->getContainer()->get('mailer');
+        $this->mailSender = $this->app->getContainer()->get('mailSender');
     }
 
     /**
@@ -58,24 +61,21 @@ class NotificationsExecutor extends AbstractExecutor
     /**
      * @param array $userToNotify
      * @return int
+     * @throws \PHPMailer\PHPMailer\Exception
      */
     protected function sendMail(array $userToNotify): int
     {
-        $view = 'email/user-appointment.html';
+        $view = VIEWS_DIR . '/email/user-appointment.html';
+        $body = file_get_contents($view);
+
         $subject = 'PetCare appointment notification';
 
         $date = new DateTime($userToNotify['appointmentDate']);
+        $date->add(new DateInterval('PT2H'));
         $userToNotify['appointmentDate'] = $date->format('d/m/Y');
         $userToNotify['appointmentTime'] = $date->format('H:i:s');
 
-        return $this->mailer->sendMessage(
-            $view,
-            $userToNotify,
-            function ($message) use ($userToNotify, $subject) {
-                $message->setTo($userToNotify['userEmail'], $userToNotify['userFirstname']);
-                $message->setSubject($subject);
-            }
-        );
+        return $this->mailSender->sendMail($body, $userToNotify, $userToNotify['userEmail'], $subject);
     }
 
     /**

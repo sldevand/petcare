@@ -37,7 +37,11 @@ class NotificationRepository extends DefaultRepository
             try {
                 return $this->create($entity);
             } catch (\Exception $e) {
-                $notification = $this->fetchOneBy('careId', $entity->getCareId());
+                try {
+                    $notification = $this->fetchOneBy('careId', $entity->getCareId());
+                } catch (\Exception $e) {
+                    return $this->create($entity);
+                }
                 $entity->setId($notification->getId());
                 return $this->update($entity);
             }
@@ -67,7 +71,7 @@ FROM user
        LEFT JOIN pet p on user.id = p.userId
        LEFT JOIN care c on p.id = c.petId
        LEFT JOIN notification ON c.id = notification.careId
-WHERE diff > 0
+WHERE diff > 0 AND diff < 86400
   AND notification.sent ISNULL;
 SQL;
         $st = $this->prepare($sql);

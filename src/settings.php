@@ -2,6 +2,9 @@
 
 use Symfony\Component\Dotenv\Dotenv;
 
+date_default_timezone_set('Europe/Paris');
+setlocale(LC_TIME, 'fr_FR.utf8', 'fra');
+
 $dotEnv = new Dotenv();
 $dotEnv->load(__DIR__ . '/.env');
 

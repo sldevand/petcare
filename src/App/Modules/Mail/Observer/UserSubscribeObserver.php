@@ -65,12 +65,15 @@ class UserSubscribeObserver extends Observer
         $dotenv->load(ENV_FILE);
 
         $frontWebsiteUrl = $_ENV['FRONT_WEBSITE_URL'];
-        $view = 'email/user-activation.html';
+
+        $view = VIEWS_DIR . '/email/user-activation.html';
+        $body = file_get_contents($view);
+
         $link = $frontWebsiteUrl . "/account/activate/" . $user->getId() . "/" . $activationCode;
         $subject = 'PetCare subscription';
 
         try {
-            return $this->mailSender->sendMailWithLink($view, $user, $link, $subject);
+            return $this->mailSender->sendMailWithLink($body, $user, $link, $subject);
         } catch (Exception $e) {
         }
     }

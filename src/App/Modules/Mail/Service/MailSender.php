@@ -35,18 +35,30 @@ class MailSender
      */
     public function sendMailWithLink(string $view, EntityInterface $user, string $link, string $subject): int
     {
+        $vars = [
+            'firstName' => $user->getFirstName(),
+            'link' => $link
+        ];
+
+        return $this->sendMail($view, $vars, $user->getEmail(), $subject);
+    }
+
+    /**
+     * @param string $view
+     * @param array $vars
+     * @param string $to
+     * @param string $subject
+     * @return bool
+     * @throws \PHPMailer\PHPMailer\Exception
+     */
+    public function sendMail(string $view, array $vars, string $to, string $subject)
+    {
         $this->mailer->Subject = $subject;
 
-        $body = TemplateProcessor::process(
-            $view,
-            [
-                'firstName' => $user->getFirstName(),
-                'link' => $link
-            ]
-        );
+        $body = TemplateProcessor::process($view, $vars);
 
         $this->mailer->MsgHTML($body);
-        $this->mailer->AddAddress($user->getEmail());
+        $this->mailer->AddAddress($to);
 
         return $this->mailer->send();
     }

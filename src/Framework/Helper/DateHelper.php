@@ -3,6 +3,7 @@
 namespace Framework\Helper;
 
 use DateTime;
+use DateTimeZone;
 use Exception;
 
 /**
@@ -17,7 +18,7 @@ class DateHelper
      */
     public static function now()
     {
-        return (new DateTime())->format('Y-m-d H:i:s');
+        return (new DateTime('now', new DateTimeZone('Europe/Paris')))->format('Y-m-d H:i:s');
     }
 
     /**

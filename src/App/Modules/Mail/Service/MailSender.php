@@ -2,8 +2,9 @@
 
 namespace App\Modules\Mail\Service;
 
-use Anddye\Mailer\Mailer;
 use Framework\Api\Entity\EntityInterface;
+use Framework\Mail\TemplateProcessor;
+use PHPMailer\PHPMailer\PHPMailer;
 
 /**
  * Class MailSender
@@ -11,64 +12,42 @@ use Framework\Api\Entity\EntityInterface;
  */
 class MailSender
 {
-    /** @var Mailer */
+    /** @var \PHPMailer\PHPMailer\PHPMailer */
     protected $mailer;
 
     /**
      * MailSender constructor.
-     * @param Mailer $mailer
+     * @param \PHPMailer\PHPMailer\PHPMailer $mailer
      */
     public function __construct(
-        Mailer $mailer
+        PHPMailer $mailer
     ) {
         $this->mailer = $mailer;
     }
 
     /**
      * @param string $view
-     * @param EntityInterface $user
+     * @param \Framework\Api\Entity\EntityInterface $user
      * @param string $link
      * @param string $subject
      * @return int
+     * @throws \PHPMailer\PHPMailer\Exception
      */
     public function sendMailWithLink(string $view, EntityInterface $user, string $link, string $subject): int
     {
-        return $this->mailer->sendMessage(
-            $view,
-            [
-                'firstName' => $user->getFirstName(),
-                'link' => $link
-            ],
-            function ($message) use ($user, $subject) {
-                $message->setTo($user->getEmail(), $user->getFirstName());
-                $message->setSubject($subject);
-            }
-        );
-    }
+        $this->mailer->Subject = $subject;
 
-    /**
-     * @param string $view
-     * @param EntityInterface $user
-     * @param string $link
-     * @param string $subject
-     * @return int
-     */
-    public function notifyUsersForApproachingAppointment(
-        string $view,
-        EntityInterface $user,
-        string $link,
-        string $subject
-    ): int {
-        return $this->mailer->sendMessage(
+        $body = TemplateProcessor::process(
             $view,
             [
                 'firstName' => $user->getFirstName(),
                 'link' => $link
-            ],
-            function ($message) use ($user, $subject) {
-                $message->setTo($user->getEmail(), $user->getFirstName());
-                $message->setSubject($subject);
-            }
+            ]
         );
+
+        $this->mailer->MsgHTML($body);
+        $this->mailer->AddAddress($user->getEmail());
+
+        return $this->mailer->send();
     }
 }

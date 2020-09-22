@@ -112,6 +112,7 @@ class PasswordResetController extends AbstractController
      * @param EntityInterface $user
      * @param string $resetCode
      * @return int
+     * @throws \PHPMailer\PHPMailer\Exception
      */
     protected function sendMail(EntityInterface $user, string $resetCode): int
     {
@@ -119,7 +120,7 @@ class PasswordResetController extends AbstractController
         $dotenv->load(ENV_FILE);
         $frontWebsiteUrl = $_ENV['FRONT_WEBSITE_URL'];
 
-        $view = 'email/password-reset.html.twig';
+        $view = 'email/password-reset.html';
         $link = $frontWebsiteUrl . "/passwordChange/" . $user->getId() . "/" . $resetCode;
         $subject = 'PetCare password reset';
 

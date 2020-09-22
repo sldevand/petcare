@@ -31,9 +31,8 @@ $dotenv->load(ENV_FILE);
 
 //core dependencies
 $container['mailer'] = function ($container) {
-    $twig = $container['view'];
-    $mailer = \Framework\Mail\MailerFactory::create($twig);
-    $mailer->setDefaultFrom('no-reply@mail.com', 'Petcare Team');
+    $mailer = \Framework\Mail\MailerFactory::create();
+    $mailer->setFrom($_ENV['SMTP_EMAIL'], 'Petcare');
 
     return $mailer;
 };

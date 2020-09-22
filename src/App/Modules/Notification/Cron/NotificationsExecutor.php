@@ -61,7 +61,7 @@ class NotificationsExecutor extends AbstractExecutor
      */
     protected function sendMail(array $userToNotify): int
     {
-        $view = 'email/user-appointment.html.twig';
+        $view = 'email/user-appointment.html';
         $subject = 'PetCare appointment notification';
 
         $date = new DateTime($userToNotify['appointmentDate']);

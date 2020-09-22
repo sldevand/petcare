@@ -2,29 +2,55 @@
 
 namespace Framework\Mail;
 
-use Anddye\Mailer\Mailer;
-use Slim\Views\Twig;
+use League\OAuth2\Client\Provider\Google;
+use PHPMailer\PHPMailer\OAuth;
+use PHPMailer\PHPMailer\PHPMailer;
 
 /**
- * Class Mailer
+ * Class MailerFactory
  * @package Framework\Mail
  */
 class MailerFactory
 {
     /**
-     * @param \Slim\Views\Twig $twig
-     * @return \Anddye\Mailer\Mailer
+     * @return \PHPMailer\PHPMailer\PHPMailer
      */
-    public static function create(Twig $twig)
+    public static function create()
     {
-        $mailer = new Mailer($twig, [
-            'host' => $_ENV['SMTP_HOST'],
-            'port' => $_ENV['SMTP_PORT'],
-            'username' => $_ENV['SMTP_USERNAME'],
-            'password' => $_ENV['SMTP_PASSWORD'],
-            'protocol' => $_ENV['SMTP_PROTOCOL']
-        ]);
+        $mail = new PHPMailer();
+        //Server settings
+        $mail->isSMTP();
+        $mail->SMTPDebug = $_ENV['SMTP_DEBUG_ENV'];
+        $mail->Host = $_ENV['SMTP_HOST'];
+        $mail->Port = $_ENV['SMTP_PORT'];
+        $mail->SMTPSecure =  PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->SMTPAuth = true;
+        $mail->AuthType = 'XOAUTH2';
 
-        return $mailer;
+        $email = $_ENV['SMTP_EMAIL'];
+        $clientId = $_ENV['OAUTH_CLIENT_ID'];
+        $clientSecret = $_ENV['OAUTH_SECRET'];
+        $refreshToken = $_ENV['OAUTH_TOKEN'];
+
+        $provider = new Google(
+            [
+                'clientId' => $clientId,
+                'clientSecret' => $clientSecret,
+            ]
+        );
+
+        $mail->setOAuth(
+            new OAuth(
+                [
+                    'provider' => $provider,
+                    'clientId' => $clientId,
+                    'clientSecret' => $clientSecret,
+                    'refreshToken' => $refreshToken,
+                    'userName' => $email,
+                ]
+            )
+        );
+
+        return $mail;
     }
 }

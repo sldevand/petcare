@@ -19,6 +19,9 @@ class YamlToTableAdapter
     /** @var array */
     protected $tableData;
 
+    /** @var array */
+    protected $uniqueColumns = [];
+
     /**
      * @param string $file
      * @return array
@@ -52,8 +55,8 @@ class YamlToTableAdapter
             $fields[$field->getName()] = $field;
         }
 
-        if (!empty($uniqueColumns)) {
-            $this->tableData['constraints'][] = new Unique(['columns' => $uniqueColumns]);
+        if (!empty($this->uniqueColumns)) {
+            $this->tableData['constraints'][] = new Unique(['columns' => $this->uniqueColumns]);
         }
 
         $this->tableData['fields'] = $fields;
@@ -107,7 +110,7 @@ class YamlToTableAdapter
             }
 
             if ($key === 'unique' && $constraint === true) {
-                $uniqueColumns[] = $field->getColumn();
+                $this->uniqueColumns[] = $field->getColumn();
             }
 
             if ($key !== 'fk') {

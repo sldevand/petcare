@@ -1,0 +1,46 @@
+table:
+    notification
+fields:
+    userId:
+        column: userId
+        type: integer
+        constraints:
+            fk:
+                reference: id
+                table: user
+                cascade:
+                - delete
+                - update
+    careId:
+        column: careId
+        type: integer
+        constraints:
+            fk:
+                reference: id
+                table: care
+                cascade:
+                - delete
+                - update
+            unique: true
+    petId:
+        column: petId
+        type: integer
+        constraints:
+            fk:
+                reference: id
+                table: pet
+                cascade:
+                - delete
+                - update
+    sent:
+        column: sent
+        type: integer
+    read:
+        column: read
+        type: integer
+    createdAt:
+        column: createdAt
+        type: text
+    updatedAt:
+        column: updatedAt
+        type: text

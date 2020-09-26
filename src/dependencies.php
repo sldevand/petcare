@@ -5,6 +5,7 @@ use App\Modules\Care\Model\Repository\CareRepository;
 use App\Modules\Image\Service\ImageManager;
 use App\Modules\Mail\Observer\UserSubscribeObserver;
 use App\Modules\Mail\Service\MailSender;
+use App\Modules\Notification\Model\Repository\NotificationRepository;
 use App\Modules\PasswordReset\Model\Repository\PasswordResetRepository;
 use App\Modules\Pet\Controller\PetController;
 use App\Modules\Pet\Model\Repository\PetImageRepository;
@@ -21,6 +22,7 @@ use App\Modules\User\Helper\ApiKey;
 use App\Modules\User\Model\Repository\UserRepository;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Dotenv\Dotenv;
+use Framework\Mail\MailerFactory;
 
 require_once FRAMEWORK_DIR . '/dependencies.php';
 
@@ -29,16 +31,8 @@ $dotenv->load(ENV_FILE);
 
 //core dependencies
 $container['mailer'] = function ($container) {
-    $twig = $container['view'];
-    $mailer = new \Anddye\Mailer\Mailer($twig, [
-        'host' => $_ENV['SMTP_HOST'],  // SMTP Host
-        'port' => $_ENV['SMTP_PORT'],  // SMTP Port
-        'username' => $_ENV['SMTP_USERNAME'],  // SMTP Username
-        'password' => $_ENV['SMTP_PASSWORD'],  // SMTP Password
-        'protocol' => $_ENV['SMTP_PROTOCOL']   // SSL or TLS
-    ]);
-
-    $mailer->setDefaultFrom('no-reply@mail.com', 'Petcare Team');
+    $mailer = \Framework\Mail\MailerFactory::create();
+    $mailer->setFrom($_ENV['SMTP_EMAIL'], 'Petcare');
 
     return $mailer;
 };
@@ -113,6 +107,16 @@ $container['userRepository'] = function (ContainerInterface $c) {
         $c->get('defaultValidator'),
         $c->get('petRepository'),
         $c->get('activationRepository')
+    );
+};
+
+$container['notificationRepository'] = function (ContainerInterface $c) {
+    return new NotificationRepository(
+        $c->get('pdo'),
+        $c->get('defaultValidator'),
+        $c->get('careRepository'),
+        $c->get('petRepository'),
+        $c->get('userRepository')
     );
 };
 

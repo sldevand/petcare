@@ -22,7 +22,7 @@ $crontab = [
     ],
     'notify_users' => [
         'expression' => '* * * * *',
-        'executor' => '\App\Modules\User\Cron\NotificationsExecutor',
+        'executor' => '\App\Modules\Notification\Cron\NotificationsExecutor',
         'args' => ['app' => $app]
     ]
 ];

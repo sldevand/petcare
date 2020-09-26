@@ -27,4 +27,24 @@ class CareRepository extends DefaultRepository
         $this->table = "care";
         $this->entityClass = CareEntity::class;
     }
+
+
+    /**
+     * @return array
+     * @throws \Exception
+     */
+    public function fetchNextCares()
+    {
+        $sql = <<<SQL
+SELECT id, petId,title, content, appointmentDate,strftime('%s', appointmentDate) - strftime('%s','now', 'localtime') AS diff
+FROM care
+WHERE diff > 0
+SQL;
+
+        $st = $this->prepare($sql);
+        $st->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $this->entityClass);
+        $st->execute();
+
+        return $st->fetchAll();
+    }
 }

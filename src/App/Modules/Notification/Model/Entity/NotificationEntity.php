@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Modules\Activation\Model\Entity;
+namespace App\Modules\Notification\Model\Entity;
 
-use Exception;
 use Framework\Model\Entity\DefaultEntity;
 use Framework\Traits\Entity\EntityTimestampableTrait;
 
 /**
  * Class NotificationEntity
- * @package App\Modules\Activation\Model\Entity
+ * @package App\Modules\Notification\Model\Entity
  */
 class NotificationEntity extends DefaultEntity
 {
@@ -17,7 +16,11 @@ class NotificationEntity extends DefaultEntity
     /** @var int */
     protected $userId;
 
-    protected careId;
+    /** @var int */
+    protected $careId;
+
+    /** @var int */
+    protected $petId;
 
     /** @var bool */
     protected $sent;

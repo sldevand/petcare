@@ -7,6 +7,7 @@ use App\Modules\Mail\Service\MailSender;
 use Framework\Api\Entity\EntityInterface;
 use Framework\Api\Observer\SubjectInterface;
 use Framework\Observer\Observer;
+use PHPMailer\PHPMailer\Exception;
 use Symfony\Component\Dotenv\Dotenv;
 
 /**
@@ -64,10 +65,16 @@ class UserSubscribeObserver extends Observer
         $dotenv->load(ENV_FILE);
 
         $frontWebsiteUrl = $_ENV['FRONT_WEBSITE_URL'];
-        $view = 'email/user-activation.html.twig';
+
+        $view = VIEWS_DIR . '/email/user-activation.html';
+        $body = file_get_contents($view);
+
         $link = $frontWebsiteUrl . "/account/activate/" . $user->getId() . "/" . $activationCode;
         $subject = 'PetCare subscription';
 
-        return $this->mailSender->sendMailWithLink($view, $user, $link, $subject);
+        try {
+            return $this->mailSender->sendMailWithLink($body, $user, $link, $subject);
+        } catch (Exception $e) {
+        }
     }
 }
